@@ -1,2 +1,2 @@
-# arcd
+# ArchiveIO
 Personal archive with highlighter
