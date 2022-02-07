@@ -10,9 +10,10 @@
   }
 
  :aliases
- {:dev
+ {; clj -M:dev
+  :dev
   {:extra-paths ["dev/src"]
-   :extra-deps {ring/ring-devel {:mvn/version "1.9.4"}}}
+   :extra-deps  {ring/ring-devel {:mvn/version "1.9.4"}}}
 
   ; clj -M:run
   :run
