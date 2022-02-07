@@ -25,13 +25,10 @@
         single-file-bin (which "single-file")
         ;; https://github.com/gildas-lormeau/SingleFile/tree/master/cli
         cmd [single-file-bin (format "--browser-executable-path=%s" chrome-bin)
-             url
-             out-path]]
+             url out-path]]
     (assert chrome-bin "Could not find `CHROME_BINARY` in your system")
     (assert single-file-bin "Could not find `single-file` in your system")
     (apply sh cmd)))
-
-(single-file "https://en.wikipedia.org/wiki/Quantum_mechanics" "/Users/earther/Desktop/abc")
 
 (defn pdf
   [url]

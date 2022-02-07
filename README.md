@@ -7,3 +7,7 @@ Features:
 - [ ] Listing page
 - [ ] Download youtube video with youtube-dl
 - [ ] Upload images,videos ?
+
+
+TODO next:
+- setup db, models, connect to db
