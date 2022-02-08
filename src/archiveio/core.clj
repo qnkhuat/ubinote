@@ -1,7 +1,9 @@
 (ns archiveio.core
-  (:require [ring.adapter.jetty :refer [run-jetty]]
+  (:require [archiveio.api.core :as api]
+            [archiveio.db :as adb]
+            [archiveio.migration :as am]
+            [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
-            [archiveio.api.core :as api]
             [compojure.route :as route]
             [compojure.core :refer [context defroutes GET]]))
 
@@ -25,5 +27,7 @@
   (apply-middleware routes))
 
 (defn -main []
+  (adb/setup-db! ".archiveio")
+  (am/migrate!)
   (run-jetty app {:port 3000
                   :join? false}))

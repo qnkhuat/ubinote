@@ -2,11 +2,19 @@
 
  :deps
  {
-  compojure/compojure     {:mvn/version "1.6.2"}
   org.clojure/clojure     {:mvn/version "1.10.1"}
+  ;; webserver+routing
+  compojure/compojure     {:mvn/version "1.6.2"}
   ring/ring-core          {:mvn/version "1.9.4"}
   ring-logger/ring-logger {:mvn/version "1.0.1"}
   ring/ring-jetty-adapter {:mvn/version "1.9.5"}
+  ;; log
+  com.taoensso/timbre     {:mvn/version "5.1.2"}
+  ;; database
+  org.clojure/java.jdbc   {:mvn/version "0.7.12"}
+  toucan/toucan           {:mvn/version "1.17.0"}
+  com.h2database/h2       {:mvn/version "1.4.197"}
+  com.mchange/c3p0        {:mvn/version "0.9.5.5"}
   }
 
  :aliases
@@ -21,6 +29,7 @@
 
   ; clj -T:build uber
   :build
-  {:deps {io.github.clojure/tools.build {:git/tag "v0.6.2" :git/sha "226fb52"}}
+  {:deps       {io.github.clojure/tools.build {:git/tag "v0.6.2" :git/sha "226fb52"}}
    :ns-default build}
+
   }}
