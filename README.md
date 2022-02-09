@@ -10,4 +10,5 @@ Features:
 
 
 TODO next:
-- setup db, models, connect to db
+- fingure out how to store file name
+- Create POST api to archive it

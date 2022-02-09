@@ -1,33 +1,50 @@
-(ns archiveio.cmd.which
-  (:require [clojure.java.io :as io]
-            [clojure.string :as string])
+(ns archiveio.util.fs
+  (:require [clojure.java.io :as io])
   (:import java.nio.file.Files))
 
 (defn env-path [] (System/getenv "PATH"))
 (def path-separator (System/getProperty "path.separator"))
 
-(defn- executable? [p]
+(defn executable? [p]
   (-> p
       (io/file)
       (.toPath)
       (Files/isExecutable)))
 
-(defn- exists? [p]
+(defn dir? [p]
+  (-> p
+      (io/file)
+      (.isDirectory)))
+
+(defn exists? [p]
   (-> p
       (io/file)
       (.exists)))
+
+(defn absolute? [p]
+  (-> p
+      (io/file)
+      (.isAbsolute)))
 
 (defn path-join [& args]
   (->> args
        (apply io/file)
        str))
 
-(defn absolute? [p]
+(defn absolute
+  [p]
   (-> p
-    (io/file)
-    (.isAbsolute)))
+      (io/file)
+      (.getAbsolutePath)))
 
-(defn- find-in
+(defn make-dirs
+  "Recursively make dir, will return true if it's created, false if it's already created"
+  [p]
+  (-> p
+      (io/file)
+      (.mkdirs)))
+
+(defn find-in
   "Finds file in provided paths."
   ([paths target] (find-in paths target exists?))
   ([paths target check]
@@ -39,11 +56,3 @@
            (let [more (rest ps)]
              (when (seq more)
                (recur more)))))))))
-
-(defn which [exe]
-  ;; like `which` command
-  (if (absolute? exe)
-    (executable? exe)
-    (find-in (-> (env-path)
-                 (string/split (re-pattern path-separator)))
-             exe executable?)))
