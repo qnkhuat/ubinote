@@ -23,7 +23,9 @@
        str))
 
 (defn absolute? [p]
-  (.isAbsolute (java.io.File. p)))
+  (-> p
+    (io/file)
+    (.isAbsolute)))
 
 (defn- find-in
   "Finds file in provided paths."

@@ -7,7 +7,7 @@
 (def migrations (atom []))
 
 (defn- create-migrations-table-if-needed! []
-  (jdbc/execute! (db/connection) ["CREATE TABLE IF NOT EXISTS \"migration\" (\"name\" VARCHAR PRIMARY KEY NOT NULL);"]))
+  (jdbc/execute! (db/connection) ["CREATE TABLE IF NOT EXISTS migration (name VARCHAR PRIMARY KEY NOT NULL);"]))
 
 (defn- previous-migrations []
   (db/select-field :name Migration))
