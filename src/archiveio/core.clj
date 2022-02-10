@@ -2,6 +2,7 @@
   (:require [archiveio.api.core :as api]
             [archiveio.db :as adb]
             [archiveio.migration :as am]
+            [archiveio.api.response :as resp]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
@@ -23,12 +24,15 @@
 
 (defn wrap-json-response-convert
   "wrap-json-response but with convert dashes->underscores"
-  [req] (wrap-json-response req
-                            {:key-fn (fn [k]
-                                       (string/replace (name k) "-" "_"))}))
+  [req]
+  (wrap-json-response req {:key-fn (fn [k]
+                                     (string/replace (name k) "-" "_"))}))
+
 (def middlewares
   ;; middleware will be applied from bottom->top
-  [wrap-json-response-convert ; convert response to json form
+  [
+   resp/wrap-error-response
+   wrap-json-response-convert ; convert response to json form
    wrap-keyword-params        ; converts string keys in :params to keyword keys
    wrap-json-params-convert   ; extracts json POST body and makes it avaliable on request
    wrap-params                ; parses GET and POST params as :query-params/:form-params and both as :params
@@ -42,7 +46,10 @@
           middlewares))
 
 (def app
-  (apply-middleware routes middlewares))
+  (apply-middleware
+    routes
+    ;(-> routes resp/wrap-error-response)
+                    middlewares))
 
 (defn -main []
   (adb/setup-db! ".archiveio")

@@ -3,13 +3,14 @@
  :deps
  {
   org.clojure/clojure       {:mvn/version "1.10.1"}
+  ;; util
+  slingshot/slingshot       {:mvn/version "0.12.2"}  ; better exception handling
   ;; webserver+routing
   compojure/compojure       {:mvn/version "1.6.2"}
   ring/ring-core            {:mvn/version "1.9.4"}
   ring-logger/ring-logger   {:mvn/version "1.0.1"}
   ring/ring-jetty-adapter   {:mvn/version "1.9.5"}
   ring/ring-json            {:mvn/version "0.5.1"}
-
   ;; log
   com.taoensso/timbre       {:mvn/version "5.1.2"}
   ;; database

@@ -30,14 +30,16 @@
 
 (defn single-file
   "download an url as a single fs with name is the page {title}-{time-locale}.html"
-  [url out-path]
-  {:pre [(fs/absolute? out-path)]}
-  (let [chrome-bin      (find-chrome-binary)
-        single-file-bin (which "single-file")
-        ;; https://github.com/gildas-lormeau/SingleFile/tree/master/cli
-        cmd [single-file-bin (format "--browser-executable-path=%s" chrome-bin)
-             (format "--filename-template={page-title}-{time-locale}.html")
-             url out-path]]
-    (assert chrome-bin "Could not find `CHROME_BINARY` in your system")
-    (assert single-file-bin "Could not find `single-file` in your system")
-    (apply sh cmd)))
+  ([url]
+   (single-file url nil))
+  ([url out-path]
+   {:pre [(fs/absolute? out-path)]}
+   (let [chrome-bin      (find-chrome-binary)
+         single-file-bin (which "single-file")
+         ;; https://github.com/gildas-lormeau/SingleFile/tree/master/cli
+         args (filter some? [single-file-bin (format "--browser-executable-path=%s" chrome-bin)
+                             (format "--filename-template={page-title}-{time-locale}.html")
+                             url out-path])]
+     (assert chrome-bin "Could not find `CHROME_BINARY` in your system")
+     (assert single-file-bin "Could not find `single-file` in your system")
+     (apply sh args))))

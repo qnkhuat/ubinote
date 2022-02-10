@@ -1,5 +1,6 @@
 # archiveio
 .archiveio.mv.db
+.archiveio/
 
 pom.xml
 pom.xml.asc
