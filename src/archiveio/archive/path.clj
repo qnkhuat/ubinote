@@ -12,6 +12,7 @@
   "Get out path to save an url and create the folder if not exists"
   [url]
   (let [domain (get-domain url)
+        _      (assert (some? domain) "Domain not found")
         now    (java.time.LocalDate/now)
         year   (str (.getYear now))
         month  (str (.getMonthValue now))

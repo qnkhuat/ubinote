@@ -55,4 +55,4 @@
   ([db db-type]
    (db/set-default-quoting-style! (db-type quoting-style))
    (db/set-default-db-connection!
-     (connection-pool (db-details db db-type)))))
+     (db-details db db-type))))

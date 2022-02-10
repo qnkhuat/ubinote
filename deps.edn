@@ -8,6 +8,8 @@
   ring/ring-core            {:mvn/version "1.9.4"}
   ring-logger/ring-logger   {:mvn/version "1.0.1"}
   ring/ring-jetty-adapter   {:mvn/version "1.9.5"}
+  ring/ring-json            {:mvn/version "0.5.1"}
+
   ;; log
   com.taoensso/timbre       {:mvn/version "5.1.2"}
   ;; database
