@@ -32,27 +32,25 @@
    :mysql    :mysql})
 
 (defn db-details
-  ([]
-   (db-details :h2))
-  ([db-type]
-   (connection-pool
-     (case db-type
-       :h2       {:classname       "org.h2.Driver"
-                  :subprotocol     "h2:file"
-                  :subname         (.getAbsolutePath (io/file (cfg/config-kw :archiveio-db-name)))
-                  "MVCC"           "TRUE"
-                  "DB_CLOSE_DELAY" "-1"
-                  "DEFRAG_ALWAYS"  "TRUE"}
-       :postgres {:classname       "org.postgresql.Driver"
-                  :subprotocol     "postgresql"
-                  :subname        (str "//localhost:5432/" (cfg/config-kw :archiveio-db-name))
-                  "MVCC"           "TRUE"
-                  "DB_CLOSE_DELAY" "-1"
-                  "DEFRAG_ALWAYS"  "TRUE"}))))
+  [db-type]
+  (connection-pool
+    (case db-type
+      :h2       {:classname       "org.h2.Driver"
+                 :subprotocol     "h2:file"
+                 :subname         (.getAbsolutePath (io/file (cfg/config-str :aio-db-name)))
+                 "MVCC"           "TRUE"
+                 "DB_CLOSE_DELAY" "-1"
+                 "DEFRAG_ALWAYS"  "TRUE"}
+      :postgres {:classname       "org.postgresql.Driver"
+                 :subprotocol     "postgresql"
+                 :subname        (str "//localhost:5432/" #p (cfg/config-str :aio-db-name))
+                 "MVCC"           "TRUE"
+                 "DB_CLOSE_DELAY" "-1"
+                 "DEFRAG_ALWAYS"  "TRUE"})))
 
 (defn setup-db!
   []
-  (let [db-type (cfg/config-kw :archiveio-db-type)]
+  (let [db-type (cfg/config-kw :aio-db-type)]
     (db/set-default-quoting-style! (db-type quoting-style))
     (db/set-default-db-connection!
-      (db-details db-type))))
+      (db-details #p db-type))))

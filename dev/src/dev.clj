@@ -9,8 +9,8 @@
 (defonce ^:private instance* (atom nil))
 
 (defn start! []
-  (let [port (cfg/config-int :archiveio-port)]
-    (println "Serving at localhost: 3000" )
+  (let [port (cfg/config-int :aio-port)]
+    (println "Serving at localhost:" port)
     (adb/setup-db!)
     (am/migrate!)
     (reset! instance* (run-jetty (wrap-reload #'app) {:port  port

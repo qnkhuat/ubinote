@@ -1,23 +1,44 @@
 (ns archiveio.config
-  (:require [environ.core :as env]
-            [clojure.string :as string]))
+  (:require [clojure.string :as string]))
+
+(defn- keywordize [s]
+  (-> (string/lower-case s)
+      (string/replace "_" "-")
+      (string/replace "." "-")
+      (keyword)))
+
+(defn- read-system-props []
+  (->> (System/getProperties)
+       (map (fn [[k v]] [(keywordize k) v]))
+       (into {})))
+
+(defn- read-system-env []
+  (->> (System/getenv)
+       (map (fn [[k v]] [(keywordize k) v]))
+       (into {})))
+
+(defn- read-env []
+  (apply merge
+         (read-system-props)
+         (read-system-env)))
+
+(defonce env (read-env))
 
 ;; TODO: validate config with spec
-(def default
-  {:archiveio-db-type "h2" ; #{h2, postgres}
-   :archiveio-db-name ".archiveio"
-   :archiveio-port    8000})
+(defonce default
+  {:aio-db-type "h2" ; #{h2, postgres}
+   :aio-db-name ".archiveio"
+   :aio-port    "8000"})
 
 (defn config-str
   "Retrieve value for a single configuration key
   These values could be configured from:
-  1.  environment variables (ex: MB_DB_TYPE -> :mb-db-type)
-  2.  jvm options (ex: -Dmb.db.type -> :mb-db-type)
+  1.  environment variables (ex: AIO_DB_TYPE -> :aio-db-type)
+  2.  jvm options (ex: -Daio.db.type -> :aio-db-type)
   3.  hard coded `app-defaults`"
-
   [k]
   (let [k       (keyword k)
-        env-val (k env/env)]
+        env-val (k env)]
     (or (when-not (string/blank? env-val) env-val)
         (k default))))
 
