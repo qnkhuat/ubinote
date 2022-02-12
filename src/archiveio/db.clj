@@ -1,5 +1,6 @@
 (ns archiveio.db
-  (:require [clojure.java.io :as io]
+  (:require [archiveio.config :as cfg]
+            [clojure.java.io :as io]
             [toucan.db :as db])
   (:import java.util.Properties
            com.mchange.v2.c3p0.ComboPooledDataSource))
@@ -31,28 +32,27 @@
    :mysql    :mysql})
 
 (defn db-details
-  ([db]
-   (db-details db :h2))
-  ([db db-type]
+  ([]
+   (db-details :h2))
+  ([db-type]
    (connection-pool
      (case db-type
        :h2       {:classname       "org.h2.Driver"
                   :subprotocol     "h2:file"
-                  :subname         (.getAbsolutePath (io/file db))
+                  :subname         (.getAbsolutePath (io/file (cfg/config-kw :archiveio-db-name)))
                   "MVCC"           "TRUE"
                   "DB_CLOSE_DELAY" "-1"
                   "DEFRAG_ALWAYS"  "TRUE"}
        :postgres {:classname       "org.postgresql.Driver"
                   :subprotocol     "postgresql"
-                  :subname        (str "//localhost:5432/" db)
+                  :subname        (str "//localhost:5432/" (cfg/config-kw :archiveio-db-name))
                   "MVCC"           "TRUE"
                   "DB_CLOSE_DELAY" "-1"
                   "DEFRAG_ALWAYS"  "TRUE"}))))
 
 (defn setup-db!
-  ([db]
-   (setup-db! db :h2))
-  ([db db-type]
-   (db/set-default-quoting-style! (db-type quoting-style))
-   (db/set-default-db-connection!
-     (db-details db db-type))))
+  []
+  (let [db-type (cfg/config-kw :archiveio-db-type)]
+    (db/set-default-quoting-style! (db-type quoting-style))
+    (db/set-default-db-connection!
+      (db-details db-type))))

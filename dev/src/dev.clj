@@ -1,18 +1,20 @@
 (ns dev
-  (:require [ring.adapter.jetty :refer [run-jetty]]
-            [ring.middleware.reload :refer [wrap-reload]]
+  (:require [archiveio.config :as cfg]
             [archiveio.core :refer [app]]
             [archiveio.db :as adb]
-            [archiveio.migration :as am]))
+            [archiveio.migration :as am]
+            [ring.adapter.jetty :refer [run-jetty]]
+            [ring.middleware.reload :refer [wrap-reload]]))
 
 (defonce ^:private instance* (atom nil))
 
 (defn start! []
-  (println "Serving at localhost: 3000" )
-  (adb/setup-db! ".archiveio")
-  (am/migrate!)
-  (reset! instance* (run-jetty (wrap-reload #'app) {:port 3000
-                                                    :join? false})))
+  (let [port (cfg/config-int :archiveio-port)]
+    (println "Serving at localhost: 3000" )
+    (adb/setup-db!)
+    (am/migrate!)
+    (reset! instance* (run-jetty (wrap-reload #'app) {:port  port
+                                                      :join? false}))))
 
 (defn stop! []
   (when @instance*

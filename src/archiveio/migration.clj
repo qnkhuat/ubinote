@@ -39,3 +39,7 @@
 
 (defmacro ^:private defmigration {:style/indent 1} [migration-name & sql-statements]
   `(defmigration* ~(str migration-name) ~@sql-statements))
+
+(defmigration add-archive-table
+  )
+

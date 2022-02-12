@@ -3,6 +3,7 @@
             [archiveio.db :as adb]
             [archiveio.migration :as am]
             [archiveio.api.response :as resp]
+            [archiveio.config :as cfg]
             [clojure.string :as string]
             [compojure.route :as route]
             [compojure.core :refer [context defroutes GET]]
@@ -49,8 +50,14 @@
 (def app
   (apply-middleware routes middlewares))
 
+(defn start-server
+  ([]
+   (adb/setup-db!)
+   (am/migrate!)
+   (run-jetty app
+              {:port  (cfg/config-int :archiveio-port)
+               :join? false})))
+
+
 (defn -main []
-  (adb/setup-db! ".archiveio")
-  (am/migrate!)
-  (run-jetty app {:port 3000
-                  :join? false}))
+  (start-server))
