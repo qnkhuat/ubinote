@@ -1,5 +1,6 @@
 (ns archiveio.api.response
-  (:require [slingshot.slingshot :refer [try+]]))
+  (:require [slingshot.slingshot :refer [try+]]
+            [taoensso.timbre :as log]))
 
 (defn entity-response
   "Structure a response for a single entity"
@@ -33,8 +34,12 @@
   [handler]
   (fn [request]
     (try+
-     (handler request)
-     (catch [:type ::bad-parameter] e
-       (error-response 400 {(:field e) (:message &throw-context)}))
-     (catch [:type ::not-found] _
-       {:status 404, :body {:error (:message &throw-context)}}))))
+      (handler request)
+      (catch [:type ::bad-parameter] e
+        (error-response 400 {(:field e) (:message &throw-context)}))
+      (catch [:type ::not-found] _
+        {:status 404, :body {:error (:message &throw-context)}})
+      ;; catch all
+      (catch Exception e
+        (log/error e)
+        {:status 500 :body {:error "Internal Error"}}))))

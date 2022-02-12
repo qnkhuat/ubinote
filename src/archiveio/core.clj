@@ -3,39 +3,40 @@
             [archiveio.db :as adb]
             [archiveio.migration :as am]
             [archiveio.api.response :as resp]
+            [clojure.string :as string]
+            [compojure.route :as route]
+            [compojure.core :refer [context defroutes GET]]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-params]]
-            [clojure.string :as string]
-            [compojure.route :as route]
-            [compojure.core :refer [context defroutes GET]]))
+            [taoensso.timbre :as log]))
 
 (defroutes routes
   (GET "/health" [_req] "fine 😁")
   (context "/api" [] api/routes)
   (route/not-found "<h1>Page not found</h1>"))
 
-(defn wrap-json-params-convert
+(defn wrap-json-params-normalize
   "wrap-json-parms but with underscores->dashes"
-  [req]
-  (wrap-json-params req {:key-fn (fn [k]
-                                   (string/replace k "_" "-"))}))
+  [handler]
+  (wrap-json-params handler {:key-fn (fn [k]
+                                       (string/replace k "_" "-"))}))
 
-(defn wrap-json-response-convert
-  "wrap-json-response but with convert dashes->underscores"
-  [req]
-  (wrap-json-response req {:key-fn (fn [k]
-                                     (string/replace (name k) "-" "_"))}))
+(defn wrap-json-response-normalize
+  "wrap-json-response but with normalize dashes->underscores"
+  [handler]
+  (wrap-json-response handler {:key-fn (fn [k]
+                                         (string/replace (name k) "-" "_"))}))
 
 (def middlewares
   ;; middleware will be applied from bottom->top
   [
    resp/wrap-error-response
-   wrap-json-response-convert ; convert response to json form
-   wrap-keyword-params        ; converts string keys in :params to keyword keys
-   wrap-json-params-convert   ; extracts json POST body and makes it avaliable on request
-   wrap-params                ; parses GET and POST params as :query-params/:form-params and both as :params
+   wrap-json-response-normalize ; normalize response to json form
+   wrap-keyword-params          ; normalizes string keys in :params to keyword keys
+   wrap-json-params-normalize   ; extracts json POST body and makes it avaliable on request
+   wrap-params                  ; parses GET and POST params as :query-params/:form-params and both as :params
    ])
 
 (defn apply-middleware
@@ -46,10 +47,7 @@
           middlewares))
 
 (def app
-  (apply-middleware
-    routes
-    ;(-> routes resp/wrap-error-response)
-                    middlewares))
+  (apply-middleware routes middlewares))
 
 (defn -main []
   (adb/setup-db! ".archiveio")

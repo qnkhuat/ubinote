@@ -8,7 +8,7 @@
   [{:keys [params] :as request}]
   (let [{:keys [url]} params
         out-dir       (apath/out-dir url)]
-    (cmd/single-file url (str out-dir "adfsf.html"))
+    ;(cmd/single-file url (str out-dir "adfsf.html"))
     (resp/response {:url url})))
 
 (defroutes routes
