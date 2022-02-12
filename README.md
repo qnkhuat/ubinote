@@ -10,7 +10,4 @@ Features:
 
 
 TODO next:
-- don't send cause messages when 500
-- filename for a url to donwload
-- complete the download url without adding to db
 - add it to db mf
