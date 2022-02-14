@@ -10,4 +10,6 @@ Features:
 
 
 TODO next:
-- add it to db mf
+- solve all TODO
+- server archive folder
+- have the front-end for add archive and view it

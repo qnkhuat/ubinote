@@ -1,12 +1,16 @@
 (ns archiveio.migration
   (:require [archiveio.model.migration :refer [Migration]]
+            [archiveio.config :as cfg]
             [clojure.java.jdbc :as jdbc]
+            [clojure.string :as string]
             [taoensso.timbre :as log]
             [toucan.db :as db]))
 
 (def migrations (atom #{}))
 
-(conj #{} [1 2])
+(defonce db-type (cfg/config-kw :aio-db-type))
+
+(def postgres? (= :postgres db-type))
 
 (defn- create-migrations-table-if-needed! []
   (jdbc/execute! (db/connection) ["CREATE TABLE IF NOT EXISTS migration (name VARCHAR PRIMARY KEY NOT NULL);"]))
@@ -36,22 +40,44 @@
   (memoize migrate!*))
 
 (defn- defmigration* [migration-name & sql-statements]
-  (swap! migrations conj [migration-name sql-statements])
+  (if (some #(= (str migration-name) (first %)) @migrations)
+    (throw (ex-info (format "Migration with name %s existed" migration-name) {:migration-name migration-name}))
+    (swap! migrations conj [migration-name sql-statements]))
   nil)
 
 (defmacro ^:private defmigration {:style/indent 1} [migration-name & sql-statements]
   `(defmigration* ~(str migration-name) ~@sql-statements))
 
+(when postgres?
+  (defmigration install-citext
+    "CREATE EXTENSION IF NOT EXISTS citext;"))
+
+(defn- postgres?->h2
+  "If protgres db, leave it as it, otherwise convert to h2"
+  [query]
+  (if postgres?
+    query
+    (case (string/upper-case query)
+      "TEXT"  "CLOB"
+      "CITEXT" "VARCHAR_IGNORECASE(255)")))
 
 (defmigration create-user-table
-  "CREATE TABLE \"user\" (
-  id SERIAL PRIMARY KEY NOT NULL,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  first_name VARCHAR(255) NOT NULL,
-  last_name VARCHAR(255) NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP NOT NULL DEFAULT now()
-  );"
-  "CREATE INDEX idx_user_email ON \"user\" (email);"
-  )
+  (str "CREATE TABLE \"user\" (
+       id SERIAL PRIMARY KEY NOT NULL,
+       email " (postgres?->h2 "CITEXT") " NOT NULL UNIQUE,"
+       "first_name VARCHAR(255) NOT NULL,
+       last_name VARCHAR(255)  NOT NULL,
+       password VARCHAR(255)  NOT NULL,
+       created_at TIMESTAMP NOT NULL DEFAULT now(),
+       updated_at TIMESTAMP NOT NULL DEFAULT now()
+       );"
+       "CREATE INDEX idx_user_email ON \"user\" (email);"))
+
+;; TODO add status
+(defmigration create-archive-table
+  (str "CREATE TABLE archive (
+       id SERIAL PRIMARY KEY NOT NULL,
+       url VARCHAR(255) NOT NULL,
+       path VARCHAR(255) NOT NULL,
+       created_at TIMESTAMP NOT NULL DEFAULT now(),
+       updated_at TIMESTAMP NOT NULL DEFAULT now());"))

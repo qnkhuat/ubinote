@@ -43,7 +43,7 @@
                  "DEFRAG_ALWAYS"  "TRUE"}
       :postgres {:classname       "org.postgresql.Driver"
                  :subprotocol     "postgresql"
-                 :subname        (str "//localhost:5432/" #p (cfg/config-str :aio-db-name))
+                 :subname        (str "//localhost:5432/" (cfg/config-str :aio-db-name))
                  "MVCC"           "TRUE"
                  "DB_CLOSE_DELAY" "-1"
                  "DEFRAG_ALWAYS"  "TRUE"})))

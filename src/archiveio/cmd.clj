@@ -1,7 +1,8 @@
 (ns archiveio.cmd
   (:require [archiveio.util.fs :as fs]
             [clojure.string :as string]
-            [clojure.java.shell :refer [sh]]))
+            [clojure.java.shell :refer [sh]]
+            [taoensso.timbre :as log]))
 
 (defn which
   "like `which` command"

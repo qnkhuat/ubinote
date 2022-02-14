@@ -1,5 +1,6 @@
 # Server
-.archiveio.mv.db
+*.mv.db
+*.trace.db
 .archiveio/
 
 pom.xml
