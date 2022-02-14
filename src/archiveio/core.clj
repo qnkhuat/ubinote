@@ -10,8 +10,7 @@
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
-            [ring.middleware.json :refer [wrap-json-response wrap-json-params]]
-            [taoensso.timbre :as log]))
+            [ring.middleware.json :refer [wrap-json-response wrap-json-params]]))
 
 (defroutes routes
   (GET "/health" [_req] "fine 😁")

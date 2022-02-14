@@ -53,4 +53,4 @@
   (let [db-type (cfg/config-kw :aio-db-type)]
     (db/set-default-quoting-style! (db-type quoting-style))
     (db/set-default-db-connection!
-      (db-details #p db-type))))
+      (db-details db-type))))
