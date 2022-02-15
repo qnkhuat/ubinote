@@ -15,7 +15,7 @@ const Home = () => {
   useEffect(() => {
     axios.get("http://localhost:8000/api/archive").then((resp) => setArchives(resp.data));
   }, [])
-  return  (<TableContainer component={Paper}>
+  return <TableContainer component={Paper}>
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
         <TableRow>
@@ -41,7 +41,7 @@ const Home = () => {
         ))}
       </TableBody>
     </Table>
-  </TableContainer>)
+  </TableContainer>
 }
 
 export default Home;

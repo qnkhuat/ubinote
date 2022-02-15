@@ -7,7 +7,7 @@
             [toucan.db :as db]))
 
 (defn add-archive
-  [{:keys [params] :as _request}]
+  [{:keys [params] :as _req}]
   (let [{:keys [url]}               params
         {:keys [relative absolute]} (path/out-path url)
         {:keys [err]}               (cmd/single-file url absolute)]
@@ -16,10 +16,18 @@
                                                    :path relative
                                                    :status "archived"}))))
 
+(defn get-archive
+  [{:keys [params] :as _req}]
+  (let [id (Integer/parseInt (:id params))
+        res (db/select-one Archive :id id)]
+    (resp/assert-400 res :id (format "Archive with id %d not found" id))
+    (resp/entity-response 200 res)))
+
 (defn list-archives
   [_req]
   (resp/entity-response 200 (db/select Archive)))
 
 (defroutes routes
   (POST "/" [] add-archive)
+  (GET "/:id" [] get-archive)
   (GET "/" [] list-archives))
