@@ -22,13 +22,15 @@
          (read-system-props)
          (read-system-env)))
 
-(defonce env (read-env))
+(def env (read-env))
 
 ;; TODO: validate config with spec
-(defonce default
+(def default
   {:aio-db-type "h2" ; #{h2, postgres}
    :aio-db-name ".archiveio"
-   :aio-port    "8000"})
+   :aio-port    "8000"
+   ;; root to store and serve archived files
+   :aio-root    ".archiveio"})
 
 (defn config-str
   "Retrieve value for a single configuration key

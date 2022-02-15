@@ -1,9 +1,12 @@
 (ns archiveio.archive.path
   (:require [archiveio.util.fs :as fs]
+            [archiveio.config :as cfg]
             [archiveio.util.b64 :as b64]
             [clojure.string :as string]))
 
-(def root (fs/absolute ".archiveio"))
+;; root to store archive files
+;; TODO: make sure it's exists, is a folder and writable
+(def root (fs/absolute (cfg/config-str :aio-root)))
 
 (defn get-domain
   [url]
@@ -35,16 +38,16 @@
   "Get out path to save an url and create the folder if not exists
   The out folder will have the path: root/domain/{year}{month}{date}_{hour}{minute}{second}_{b64}.{ext}"
   [url]
-  (let [domain  (get-domain url)
-        fname   (get-filename url)
-        dir     (fs/path-join root domain)
-        path    (fs/path-join dir fname)]
+  (let [domain   (get-domain url)
+        fname    (get-filename url)
+        dir      (fs/path-join root domain)
+        rel-path (fs/path-join domain fname)
+        abs-path (fs/path-join dir fname)]
     (assert (some? domain) "Domain not found")
     (fs/make-dirs dir)
-    (when (fs/exists? path)
-      (throw (ex-info "Path already existed" {:path path})))
+    (when (fs/exists? abs-path)
+      (throw (ex-info "Path already existed" {:path abs-path})))
     (when-not (fs/exists? dir)
       (throw (ex-info "Failed to out folder" {:url url})))
-    path))
-
-(format "%02d" 222)
+    {:relative rel-path
+     :absolute abs-path}))

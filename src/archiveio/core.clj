@@ -4,10 +4,13 @@
             [archiveio.migration :as am]
             [archiveio.api.response :as resp]
             [archiveio.config :as cfg]
+            [archiveio.archive.path :as apath]
             [clojure.string :as string]
             [compojure.route :as route]
             [compojure.core :refer [context defroutes GET]]
+            [taoensso.timbre :as log]
             [ring.adapter.jetty :refer [run-jetty]]
+            [ring.logger :as logger]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-params]]))
@@ -15,6 +18,7 @@
 (defroutes routes
   (GET "/health" [_req] "fine 😁")
   (context "/api" [] api/routes)
+  (route/files "/static" {:root apath/root})
   (route/not-found "<h1>Page not found</h1>"))
 
 (defn wrap-json-params-normalize
@@ -29,10 +33,16 @@
   (wrap-json-response handler {:key-fn (fn [k]
                                          (string/replace (name k) "-" "_"))}))
 
+(defn wrap-request-logger
+  [handler]
+  (logger/wrap-with-logger handler {:log-fn (fn [{:keys [level throwable message]}]
+                                              (log/log level throwable message))}))
+
 (def middlewares
   ;; middleware will be applied from bottom->top
   [
    resp/wrap-error-response
+   wrap-request-logger
    wrap-json-response-normalize ; normalize response to json form
    wrap-keyword-params          ; normalizes string keys in :params to keyword keys
    wrap-json-params-normalize   ; extracts json POST body and makes it avaliable on request

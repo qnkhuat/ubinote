@@ -8,11 +8,11 @@
   ;; webserver+routing
   compojure/compojure       {:mvn/version "1.6.2"}
   ring/ring-core            {:mvn/version "1.9.4"}
-  ring-logger/ring-logger   {:mvn/version "1.0.1"}
   ring/ring-jetty-adapter   {:mvn/version "1.9.5"}
   ring/ring-json            {:mvn/version "0.5.1"}
   ;; log
   com.taoensso/timbre       {:mvn/version "5.1.2"}
+  ring-logger/ring-logger   {:mvn/version "1.1.1"} ; log middleware
   ;; database
   org.clojure/java.jdbc     {:mvn/version "0.7.12"}
   toucan/toucan             {:mvn/version "1.17.0"}

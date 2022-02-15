@@ -8,15 +8,15 @@
 
 (defn add-archive
   [{:keys [params] :as _request}]
-  (let [{:keys [url]} params
-        out-path      (path/out-path url)
-        {:keys [err]} (cmd/single-file url out-path)]
+  (let [{:keys [url]}               params
+        {:keys [relative absolute]} (path/out-path url)
+        {:keys [err]}               (cmd/single-file url absolute)]
     (resp/assert-400 (= err "") :url "Failed to download single-file")
     ;; TODO: save relative path instead
     (db/insert! Archive {:url  url
-                         :path out-path})
+                         :path relative})
     (resp/entity-response 200 {:url url
-                               :out out-path})))
+                               :out relative})))
 
 (defn list-archives
   [_req]

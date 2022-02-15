@@ -11,5 +11,5 @@ Features:
 
 TODO next:
 - solve all TODO
-- server archive folder
+- serve archive folder
 - have the front-end for add archive and view it
