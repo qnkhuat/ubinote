@@ -11,6 +11,7 @@
             [taoensso.timbre :as log]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.logger :as logger]
+            [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-params]]))
@@ -38,6 +39,12 @@
   (logger/wrap-with-logger handler {:log-fn (fn [{:keys [level throwable message]}]
                                               (log/log level throwable message))}))
 
+(defn wrap-cors-aio
+  [handler]
+  (wrap-cors handler
+             :access-control-allow-origin [#".*"]
+             :access-control-allow-methods [:get :put :post :delete]))
+
 (def middlewares
   ;; middleware will be applied from bottom->top
   [
@@ -47,6 +54,7 @@
    wrap-keyword-params          ; normalizes string keys in :params to keyword keys
    wrap-json-params-normalize   ; extracts json POST body and makes it avaliable on request
    wrap-params                  ; parses GET and POST params as :query-params/:form-params and both as :params
+   wrap-cors-aio
    ])
 
 (defn apply-middleware
