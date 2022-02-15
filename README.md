@@ -8,8 +8,6 @@ Features:
 - [ ] Download youtube video with youtube-dl
 - [ ] Upload images,videos ?
 
-
 TODO next:
 - solve all TODO
-- serve archive folder
 - have the front-end for add archive and view it

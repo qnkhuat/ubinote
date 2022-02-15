@@ -1,16 +1,14 @@
 (ns archiveio.migration
+  "This migration should works for both h2 and postgres"
   (:require [archiveio.model.migration :refer [Migration]]
             [archiveio.config :as cfg]
             [clojure.java.jdbc :as jdbc]
             [clojure.string :as string]
             [taoensso.timbre :as log]
             [toucan.db :as db]))
-
 (def migrations (atom #{}))
 
-(defonce db-type (cfg/config-kw :aio-db-type))
-
-(def postgres? (= :postgres db-type))
+(def postgres? (= :postgres (cfg/config-kw :aio-db-type)))
 
 (defn- create-migrations-table-if-needed! []
   (jdbc/execute! (db/connection) ["CREATE TABLE IF NOT EXISTS migration (name VARCHAR PRIMARY KEY NOT NULL);"]))
@@ -66,8 +64,8 @@
        id SERIAL PRIMARY KEY NOT NULL,
        email " (postgres?->h2 "CITEXT") " NOT NULL UNIQUE,"
        "first_name VARCHAR(255) NOT NULL,
-       last_name VARCHAR(255)  NOT NULL,
-       password VARCHAR(255)  NOT NULL,
+       last_name VARCHAR(255) NOT NULL,
+       password VARCHAR(255) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now()
        );"
@@ -79,5 +77,6 @@
        id SERIAL PRIMARY KEY NOT NULL,
        url VARCHAR(255) NOT NULL,
        path VARCHAR(255) NOT NULL,
+       status VARCHAR(16) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now());"))

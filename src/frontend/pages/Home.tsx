@@ -1,8 +1,5 @@
 const Home = () => {
-  return (
-    <div>
-    </div>
-  )
+  return <h1>Sup</h1>
 }
 
 export default Home;

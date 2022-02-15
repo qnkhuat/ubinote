@@ -12,11 +12,9 @@
         {:keys [relative absolute]} (path/out-path url)
         {:keys [err]}               (cmd/single-file url absolute)]
     (resp/assert-400 (= err "") :url "Failed to download single-file")
-    ;; TODO: save relative path instead
-    (db/insert! Archive {:url  url
-                         :path relative})
-    (resp/entity-response 200 {:url url
-                               :out relative})))
+    (resp/entity-response 200 (db/insert! Archive {:url  url
+                                                   :path relative
+                                                   :status "archived"}))))
 
 (defn list-archives
   [_req]
