@@ -22,7 +22,7 @@
     :else                          ".html"))
 
 (defn get-filename
-  "Generate filename for a given url with format {year}{month}{date}_{hour}{minute}{second}_{b64}.{ext}"
+  "Generate filename for a given url with format {year}{month}{date}_{hour}{minute}{second}_{base64(url)}.{ext}"
   [url]
   (let [ext     (get-ext url)
         now     (java.time.LocalDateTime/now)
@@ -36,13 +36,13 @@
 
 (defn out-path
   "Get out path to save an url and create the folder if not exists
-  The out folder will have the path: root/domain/{year}{month}{date}_{hour}{minute}{second}_{b64}.{ext}"
+  The out folder will have the path: root/domain/{year}{month}{date}_{hour}{minute}{second}_{filename}.{ext}"
   [url]
-  (let [domain   (get-domain url)
-        fname    (get-filename url)
-        dir      (fs/path-join root domain)
-        rel-path (fs/path-join domain fname)
-        abs-path (fs/path-join dir fname)]
+  (let [domain          (get-domain url)
+        fname           (get-filename url)
+        dir             (fs/path-join root domain)
+        rel-path        (fs/path-join domain fname)
+        abs-path        (fs/path-join dir fname)]
     (assert (some? domain) "Domain not found")
     (fs/make-dirs dir)
     (when (fs/exists? abs-path)

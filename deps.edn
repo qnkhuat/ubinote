@@ -20,6 +20,8 @@
   com.h2database/h2         {:mvn/version "1.4.197"} ; H2 driver
   org.postgresql/postgresql {:mvn/version "42.2.13"} ; Postgres driver
   com.mchange/c3p0          {:mvn/version "0.9.5.5"}
+  enlive/enlive             {:mvn/version "1.1.6"} ; html parser
+  ;hickory/hickory           {:mvn/version "0.7.1"} ; seems like a fater parser than enlive, but using enlive for now bc it has selector
   }
 
  :aliases

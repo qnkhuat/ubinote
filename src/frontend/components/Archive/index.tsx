@@ -1,7 +1,7 @@
 import ArchiveView from "./View";
-import ArchiveItem from "./Item";
+import ArchiveList from "./List";
 
 export {
   ArchiveView,
-  ArchiveItem,
+  ArchiveList,
 }

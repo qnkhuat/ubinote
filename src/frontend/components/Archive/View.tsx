@@ -20,6 +20,7 @@ const ArchiveView = (props) => {
       console.log("User select:", selection);
       if (!selection.isCollapsed) {
         const range = selection.getRangeAt(0);
+        console.log("Range: ", range);
         const removeHighlights = highlightRange(range, 'span', { class: 'text-red-400' });
         // Running removeHighlights() would remove the highlight again.
 }

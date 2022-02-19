@@ -76,7 +76,10 @@
   (str "CREATE TABLE archive (
        id SERIAL PRIMARY KEY NOT NULL,
        url VARCHAR(255) NOT NULL,
+       domain VARCHAR(255) NOT NULL,
        path VARCHAR(255) NOT NULL,
-       status VARCHAR(16) NOT NULL,
+       title VARCHAR(255),
+       description " (postgres?->h2 "TEXT") ","
+       "status VARCHAR(16) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now());"))

@@ -6,6 +6,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+import { ArchiveList } from "components/Archive";
+
 import { useState, useEffect } from "react";
 import { TArchive } from "api/types";
 import { listArchives } from "api";
@@ -19,6 +21,7 @@ const Home = () => {
   }, [])
 
   return (<TableContainer component={Paper}>
+    <ArchiveList archives={archives} />
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
         <TableRow>
