@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { TArchive } from "../../api/types";
-import { Archive } from "../../components";
+import { ArchiveView } from "../../components/Archive";
 import { getArchive } from "../../api";
 
 const ArchiveID = () => {
@@ -18,7 +18,7 @@ const ArchiveID = () => {
     return <></>
   }
   return (<>
-    <Archive
+    <ArchiveView
       archive={archive}/>
   </>)
 }
