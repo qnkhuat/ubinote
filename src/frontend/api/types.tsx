@@ -1,4 +1,4 @@
-export interface Archive {
+export interface TArchive {
   id: number;
   url: string;
   path: string;

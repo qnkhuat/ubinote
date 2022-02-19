@@ -1,20 +1,26 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Archive } from "../../api/types";
+import { TArchive } from "../../api/types";
+import { Archive } from "../../components";
+import { getArchive } from "../../api";
 
-const ArchivePage = () => {
+const ArchiveID = () => {
   const { id } = useParams();
-  const [archive, setArchive] = useState<Archive | null>(null);
+  const [archive, setArchive] = useState<TArchive | null>(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/archive/${id}`).then((resp) => setArchive(resp.data)).catch(e => console.log(e))
+    getArchive(id!)
+      .then((resp) => setArchive(resp.data))
+      .catch(e => console.error(`Failed to get Archive with id ${id}: `, e))
   }, []);
 
   if (!archive) {
-    return <h1>Loading</h1>
+    return <></>
   }
-  return <div><iframe className="w-screen h-screen" src={`http://localhost:8000/static/${archive.path}`} title="description"></iframe></div>;
+  return (<>
+    <Archive
+      archive={archive}/>
+  </>)
 }
 
-export default ArchivePage;
+export default ArchiveID;

@@ -1,5 +1,6 @@
 (ns archiveio.api.archive
-  (:require [compojure.core :refer [defroutes POST GET]]
+  (:require [compojure.core :refer [context defroutes POST GET]]
+            [compojure.coercions :refer [as-int]]
             [archiveio.cmd :as cmd]
             [archiveio.archive.path :as path]
             [archiveio.api.response :as resp]
@@ -17,11 +18,10 @@
                                                    :status "archived"}))))
 
 (defn get-archive
-  [{:keys [params] :as _req}]
-  (let [id (Integer/parseInt (:id params))
-        res (db/select-one Archive :id id)]
-    (resp/assert-400 res :id (format "Archive with id %d not found" id))
-    (resp/entity-response 200 res)))
+  [id _req]
+  (let [archive (db/select-one Archive :id id)]
+    (resp/assert-404 archive "Archive not found")
+    (resp/entity-response 200 archive)))
 
 (defn list-archives
   [_req]
@@ -29,5 +29,6 @@
 
 (defroutes routes
   (POST "/" [] add-archive)
-  (GET "/:id" [] get-archive)
-  (GET "/" [] list-archives))
+  (GET "/" [] list-archives)
+  (context "/:id" [id :<< as-int]
+           (GET "/" [] (partial get-archive id))))

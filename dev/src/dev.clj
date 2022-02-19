@@ -3,6 +3,7 @@
             [archiveio.core :refer [app]]
             [archiveio.db :as adb]
             [archiveio.migration :as am]
+            [taoensso.timbre :as log]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.reload :refer [wrap-reload]]))
 
@@ -10,7 +11,7 @@
 
 (defn start! []
   (let [port (cfg/config-int :aio-port)]
-    (println "Serving at localhost:" port)
+    (log/info "Serving at localhost:" port)
     (adb/setup-db!)
     (am/migrate!)
     (reset! instance* (run-jetty (wrap-reload #'app) {:port  port
