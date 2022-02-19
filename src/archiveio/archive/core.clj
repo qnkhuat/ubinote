@@ -19,8 +19,6 @@
                        first)]
     {:title title}))
 
-(extract-html "/Users/earther/fun/4_archiveio/.archiveio/en.wikipedia.org/20220220_010907_aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvS2VyZXLFqw==.html")
-
 (defn add
   "Detect file type and archive file"
   [url]

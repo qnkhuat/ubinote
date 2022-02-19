@@ -25,7 +25,9 @@ const Home = () => {
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
         <TableRow>
-          <TableCell>Url</TableCell>
+          <TableCell align="right">Title</TableCell>
+          <TableCell align="right">Domain</TableCell>
+          <TableCell align="right">URL</TableCell>
           <TableCell align="right">Path</TableCell>
           <TableCell align="right">Created At</TableCell>
           <TableCell align="right">Updated At</TableCell>
@@ -34,6 +36,8 @@ const Home = () => {
       <TableBody>
         {archives.map((archive: TArchive) => (
           <TableRow key={archive.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <TableCell component="th" scope="row"><a target="_blank" rel="noreferrer" href={archive.title}>{archive.title}</a></TableCell>
+            <TableCell component="th" scope="row"><a target="_blank" rel="noreferrer" href={archive.domain}>{archive.domain}</a></TableCell>
             <TableCell component="th" scope="row"><a target="_blank" rel="noreferrer" href={archive.url}>{archive.url}</a></TableCell>
             <TableCell align="right"><a target="_blank" rel="noreferrer" href={`http://localhost:8000/static/${archive.path}`}>{archive.path}</a></TableCell>
             <TableCell align="right">{archive.created_at}</TableCell>
