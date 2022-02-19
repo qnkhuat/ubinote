@@ -1,4 +1,4 @@
-import {TArchive} from "../../api/types";
+import {TArchive} from "api/types";
 const ArchiveItem = (archive: TArchive) => {
   return <h3>{JSON.stringify(archive)}</h3>
 }

@@ -7,8 +7,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 import { useState, useEffect } from "react";
-import { TArchive } from "../api/types";
-import { listArchives } from "../api";
+import { TArchive } from "api/types";
+import { listArchives } from "api";
 
 const Home = () => {
   const [archives, setArchives] = useState<TArchive[]>([]);

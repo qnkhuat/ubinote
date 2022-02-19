@@ -3,8 +3,8 @@
 // we don't use: iframe for this because mouseup event can't
 // return the dom inside iframe
 import { useRef, useState, useEffect } from "react";
-import { TArchive } from "../../api/types";
-import { api, getStaticArchive } from "../../api";
+import { TArchive } from "api/types";
+import { api, getStaticArchive } from "api";
 import Button from "@mui/material/Button";
 
 import highlightRange from "./higlight-dom-range";

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "src/frontend",
     "target": "es5",
     "checkJs": false,
     "lib": [
