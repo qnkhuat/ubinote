@@ -1,9 +1,8 @@
 (ns archiveio.api.archive
   (:require [compojure.core :refer [context defroutes POST GET]]
             [compojure.coercions :refer [as-int]]
-            [archiveio.cmd :as cmd]
-            [archiveio.archive.path :as path]
             [archiveio.archive.core :as archive]
+            [archiveio.api.common :as common]
             [archiveio.api.response :as resp]
             [archiveio.model.archive :refer [Archive]]
             [toucan.db :as db]))
@@ -16,7 +15,7 @@
 (defn get-archive
   [id _req]
   (let [archive (db/select-one Archive :id id)]
-    (resp/assert-404 archive "Archive not found")
+    (common/assert-404 archive "Archive not found")
     (resp/entity-response 200 archive)))
 
 (defn list-archives

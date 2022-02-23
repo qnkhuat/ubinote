@@ -22,7 +22,7 @@
   []
   (log/info "Running migrations if needed...")
   (create-migrations-table-if-needed!)
-  (when-let [the-previous-migrations #p (previous-migrations)]
+  (when-let [the-previous-migrations (previous-migrations)]
     (db/transaction
       (doseq [[migration-name statements] @migrations]
         (when-not (the-previous-migrations migration-name)
