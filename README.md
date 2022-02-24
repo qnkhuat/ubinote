@@ -9,5 +9,4 @@ Features:
 - [ ] Upload images,videos ?
 
 TODO next:
-- forget about the error handing, we could do that later
-- focus on writing all the APIs first
+- Organizae the api a bit more: get archive will return all annotations and stuff
