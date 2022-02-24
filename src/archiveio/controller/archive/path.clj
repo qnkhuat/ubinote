@@ -1,18 +1,21 @@
-(ns archiveio.archive.path
+(ns archiveio.controller.archive.path
   (:require [archiveio.util.fs :as fs]
             [archiveio.config :as cfg]
             [archiveio.util.b64 :as b64]
+            [archiveio.model.common.schemas :as schemas]
             [clojure.string :as string]))
 
 ;; root to store archive files
 ;; TODO: make sure it's exists, is a folder and writable
 (def root (fs/absolute (cfg/config-str :aio-root)))
 
+;; https://stackoverflow.com/a/25703406
+(def url-regex #"^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)")
+
 (defn get-domain
   [url]
-  ;; https://stackoverflow.com/a/25703406
-  (second (re-find (re-pattern #"^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)") url)))
 
+  (second (re-find url-regex url)))
 
 (defn get-ext
   "Inference document's extension from url"

@@ -14,7 +14,7 @@
 (defn create-user
   [{:keys [params] :as _req}]
   (validate-create-user params)
-  (user/create-user params))
+  (user/create params))
 
 (defn get-user
   [id _req]
@@ -22,12 +22,12 @@
     (resp/assert-404 user "User not found")
     (resp/entity-response 200 user)))
 
-(defn list-user
+(defn list-users
   [_req]
   (resp/entity-response 200 (db/select User)))
 
 (defroutes routes
-  (GET "/" [] list-user)
+  (GET "/" [] list-users)
   (POST "/" [] create-user)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-user id))))

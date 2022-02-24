@@ -11,6 +11,6 @@
    :last-name  schemas/NonBlankString
    :password   schemas/Password})
 
-(s/defn create-user
+(s/defn create
   [new-user :- NewUser]
   (db/insert! User (assoc new-user :password (creds/hash-bcrypt (:password new-user)))))

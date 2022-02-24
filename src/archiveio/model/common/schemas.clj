@@ -38,5 +38,10 @@
     (fn [s] (and (seq s)
                  (re-matches email-regex (str/lower-case s))))))
 
+;; https://urlregex.com
+(def url-regex #"^https?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
+
+(def URL (s/constrained NonBlankString #(re-matches url-regex %)))
+
 (defn- string-starting-with-schema [prefix schema-name]
   (s/constrained s/Str #(str/starts-with? % prefix) schema-name))

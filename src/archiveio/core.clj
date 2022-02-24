@@ -4,7 +4,7 @@
             [archiveio.migration :as am]
             [archiveio.api.response :as resp]
             [archiveio.config :as cfg]
-            [archiveio.archive.path :as apath]
+            [archiveio.controller.archive.path :as apath]
             [clojure.string :as string]
             [compojure.route :as route]
             [compojure.core :refer [context defroutes GET]]

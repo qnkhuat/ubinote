@@ -1,15 +1,20 @@
 (ns archiveio.api.archive
   (:require [compojure.core :refer [context defroutes POST GET]]
             [compojure.coercions :refer [as-int]]
-            [archiveio.archive.core :as archive]
+            [archiveio.controller.archive :as archive]
             [archiveio.api.response :as resp]
             [archiveio.model.archive :refer [Archive]]
-            [toucan.db :as db]))
+            [toucan.db :as db]
+            [schema.core :as s]))
+
+(def validate-add-archive
+  (s/validator archive/NewArchive))
 
 (defn add-archive
   [{:keys [params] :as _req}]
-  (let [{:keys [url]} params]
-    (resp/entity-response 200 (archive/add url))))
+  (validate-add-archive params)
+  ;; TODO, :user-id should take from session
+  (resp/entity-response 200 (archive/create params)))
 
 (defn get-archive
   [id _req]

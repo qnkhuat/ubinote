@@ -85,7 +85,8 @@
        id SERIAL PRIMARY KEY NOT NULL,
        user_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        url VARCHAR(255) NOT NULL,
-       domain VARCHAR(255) NOT NULL,
+       tags VARCHAR(32)" (postgres?->h2 "[]") ","
+       "domain VARCHAR(255) NOT NULL,
        path VARCHAR(255) NOT NULL,
        title VARCHAR(255),
        description " (postgres?->h2 "TEXT") ","
@@ -102,7 +103,6 @@
        user_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        archive_id INTEGER NOT NULL REFERENCES archive (id) ON DELETE CASCADE,
        color VARCHAR(32) NOT NULL,
-       tags VARCHAR(32)" (postgres?->h2 "[]") ",
        coordinate VARCHAR(255) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now());"
