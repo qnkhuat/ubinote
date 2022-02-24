@@ -10,14 +10,15 @@ import { ArchiveList } from "components/Archive";
 
 import { useState, useEffect } from "react";
 import { TArchive } from "api/types";
-import { listArchives } from "api";
+import { api, listArchives } from "api";
 
 const Home = () => {
   const [archives, setArchives] = useState<TArchive[]>([]);
 
   useEffect(() => {
-    listArchives().then((resp) => setArchives(resp.data))
-      .catch(e => console.error("Failed to get Archives: ", e));
+    api.get("/health").then(resp => console.log(resp)).catch(e => console.error(e));
+    //listArchives().then((resp) => setArchives(resp.data))
+     // .catch(e => console.error("Failed to get Archives: ", e));
   }, [])
 
   return (<TableContainer component={Paper}>

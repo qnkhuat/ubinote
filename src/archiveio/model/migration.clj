@@ -1,4 +1,4 @@
 (ns archiveio.model.migration
-  (:require [toucan.models :as tm]))
+  (:require [toucan.models :as models]))
 
-(tm/defmodel Migration :migration)
+(models/defmodel Migration :migration)

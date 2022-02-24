@@ -1,4 +1,4 @@
 (ns archiveio.model.archive
-  (:require [toucan.models :as tm]))
+  (:require [toucan.models :as models]))
 
-(tm/defmodel Archive :archive)
+(models/defmodel Archive :archive)

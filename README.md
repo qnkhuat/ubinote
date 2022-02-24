@@ -9,5 +9,5 @@ Features:
 - [ ] Upload images,videos ?
 
 TODO next:
-- solve all TODO
-- have the front-end for add archive and view it
+- forget about the error handing, we could do that later
+- focus on writing all the APIs first

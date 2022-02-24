@@ -1,4 +1,4 @@
 (ns archiveio.model.comment
-  (:require [toucan.models :as tm]))
+  (:require [toucan.models :as models]))
 
-(tm/defmodel Comment :comment)
+(models/defmodel Comment :comment)

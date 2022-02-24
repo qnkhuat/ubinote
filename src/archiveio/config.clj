@@ -28,6 +28,8 @@
 (def default
   {:aio-db-type "h2" ; #{h2, postgres}
    :aio-db-name ".archiveio"
+   :aio-db-host "localhost" ; postgres
+   :aio-db-port "5432"      ; postgres
    :aio-port    "8000"
    ;; root to store and serve archived files
    :aio-root    ".archiveio"})

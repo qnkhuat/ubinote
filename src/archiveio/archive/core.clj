@@ -1,5 +1,5 @@
 (ns archiveio.archive.core
-  (:require [archiveio.api.common :as common]
+  (:require [archiveio.api.response :as resp]
             [archiveio.archive.path :as path]
             [archiveio.cmd :as cmd]
             [archiveio.model.archive :refer [Archive]]
@@ -24,7 +24,7 @@
   (let [{:keys [relative absolute]} (path/out-path url)
         domain                      (path/get-domain url)
         {:keys [err]}               (cmd/single-file url absolute)
-        _                           (common/assert-400 (= err "") :url "Failed to download single-file")
+        _                           (resp/assert-400 (= err "") :url "Failed to download single-file")
         {:keys [title]}             (extract-html absolute)]
     ;; TODO: move the file after download to name with title
     (db/insert! Archive {:url    url

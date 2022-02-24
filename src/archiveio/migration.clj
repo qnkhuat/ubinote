@@ -32,7 +32,7 @@
               (jdbc/execute! (db/connection) statement))
             (db/insert! Migration :name migration-name)
             (catch Exception e
-              (log/error (format "Data migration %s failed: %s" migration-name (.getMessage e)))))))))
+              (throw (ex-info (format "Data migration %s failed: %s" migration-name (.getMessage e)) {}))))))))
   (log/info "Migrations finished"))
 
 
@@ -67,7 +67,8 @@
       "[]"     " ARRAY")))
 
 (defmigration create-user-table
-  (str "CREATE TABLE \"user\" (
+  ;; we user core_user instead user because user is a preserved table for most dbs
+  (str "CREATE TABLE core_user (
        id SERIAL PRIMARY KEY NOT NULL,
        email " (postgres?->h2 "CITEXT") " NOT NULL UNIQUE,"
        "first_name VARCHAR(255) NOT NULL,
@@ -76,13 +77,13 @@
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now()
        );"
-       "CREATE INDEX idx_user_email ON \"user\" (email);"))
+       "CREATE INDEX idx_user_email ON core_user (email);"))
 
 ;; TODO add status
 (defmigration create-archive-table
   (str "CREATE TABLE archive (
        id SERIAL PRIMARY KEY NOT NULL,
-       user_id INTEGER NOT NULL REFERENCES \"user\" (id) ON DELETE CASCADE,
+       user_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        url VARCHAR(255) NOT NULL,
        domain VARCHAR(255) NOT NULL,
        path VARCHAR(255) NOT NULL,
@@ -98,7 +99,7 @@
 (defmigration create-annotation-table
   (str "CREATE TABLE annotation (
        id SERIAL PRIMARY KEY NOT NULL,
-       user_id INTEGER NOT NULL REFERENCES \"user\" (id) ON DELETE CASCADE,
+       user_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        archive_id INTEGER NOT NULL REFERENCES archive (id) ON DELETE CASCADE,
        color VARCHAR(32) NOT NULL,
        tags VARCHAR(32)" (postgres?->h2 "[]") ",
@@ -112,7 +113,7 @@
 (defmigration create-comment-table
   (str "CREATE TABLE comment (
        id SERIAL PRIMARY KEY NOT NULL,
-       user_id INTEGER NOT NULL REFERENCES \"user\" (id) ON DELETE CASCADE,
+       user_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        annotation_id INTEGER NOT NULL REFERENCES annotation (id) ON DELETE CASCADE,
        content " (postgres?->h2 "TEXT") " NOT NULL,"
        "created_at TIMESTAMP NOT NULL DEFAULT now(),

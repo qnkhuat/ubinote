@@ -1,4 +1,4 @@
 (ns archiveio.model.annotation
-  (:require [toucan.models :as tm]))
+  (:require [toucan.models :as models]))
 
-(tm/defmodel Annotation :annotation)
+(models/defmodel Annotation :annotation)

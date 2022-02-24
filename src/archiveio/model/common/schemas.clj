@@ -11,9 +11,9 @@
   (s/constrained s/Str (complement str/blank?)))
 
 (def Password
-  "schema for email password"
+  "Schema for password and it's require to be atleast 8 chars"
   ;; TODO - enforce some sort of complexity
-  NonBlankString)
+  (s/constrained s/Str #(> (count %) 7)))
 
 (def IsoDateTimeMs
   "time in YYYY-MM-DDTmm:hh:ss.SSSSSSZ format"
