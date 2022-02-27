@@ -2,8 +2,9 @@
   (:require [toucan.models :as models]))
 
 (def ^:private default-user-columns
-  [:email :first-name :last-name :created-at :updated-at])
+  [:id :email :first-name :last-name :created-at :updated-at])
 
 (models/defmodel User :core_user
   models/IModel
-  (defaul-fields [_] default-user-columns))
+  (default-fields [_] default-user-columns)
+  (properties [_] {:timestamped? true}))
