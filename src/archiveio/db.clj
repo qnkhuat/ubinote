@@ -1,10 +1,43 @@
 (ns archiveio.db
   (:require [archiveio.config :as cfg]
+            [clojure.java.jdbc :as jdbc]
             [clojure.java.io :as io]
+            [clojure.string :as string]
             [toucan.db :as db])
   (:import java.util.Properties
+           java.io.BufferedReader
            com.mchange.v2.c3p0.ComboPooledDataSource))
 
+;; ------------------------------------------- Extend jdbc protocols -------------------------------------------
+(defn clob->str
+  "Convert an H2 clob to a String."
+  ^String [^org.h2.jdbc.JdbcClob clob]
+  (when clob
+    (letfn [(->str [^BufferedReader buffered-reader]
+              (loop [acc []]
+                (if-let [line (.readLine buffered-reader)]
+                  (recur (conj acc line))
+                  (string/join "\n" acc))))]
+      (with-open [reader (.getCharacterStream clob)]
+        (if (instance? BufferedReader reader)
+          (->str reader)
+          (with-open [buffered-reader (BufferedReader. reader)]
+            (->str buffered-reader)))))))
+
+;; Proudly stolen from https://github.com/metabase/metabase/blob/master/src/metabase/db/jdbc_protocols.clj
+(extend-protocol jdbc/IResultSetReadColumn
+  org.postgresql.util.PGobject
+  (result-set-read-column [clob _ _]
+    (.getValue clob))
+  org.h2.jdbc.JdbcClob
+  (result-set-read-column [clob _ _]
+    (clob->str clob))
+
+  org.h2.jdbc.JdbcBlob
+  (result-set-read-column [^org.h2.jdbc.JdbcBlob blob _ _]
+    (.getBytes blob 0 (.length blob))))
+
+;; ------------------------------------------- DB connections -------------------------------------------
 (defn connection-pool
   [{:keys [subprotocol subname classname] :as spec}]
   ; https://github.com/metabase/toucan/blob/29a921750f3051dce350255cfbd33512428bc3f8/docs/connection-pools.md#creating-the-connection-pool
