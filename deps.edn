@@ -30,7 +30,10 @@
  {; clj -M:dev
   :dev
   {:extra-paths ["dev/src"]
-   :extra-deps  {ring/ring-devel {:mvn/version "1.9.4"}}}
+   :extra-deps  {ring/ring-devel   {:mvn/version "1.9.4"}
+                 cider/cider-nrepl {:mvn/version "0.27.1"}
+                 hashp/hashp       {:mvn/version "0.2.1"}}
+    :main-opts ["-e" "(require 'hashp.core)(use 'dev)(dev/start!)" "-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]" "-i"]}
 
   ; clj -M:run
   :run
