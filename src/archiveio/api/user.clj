@@ -14,7 +14,7 @@
 (defn create-user
   [{:keys [params] :as _req}]
   (validate-create-user params)
-  (user/create params))
+  (resp/entity-response 200 (user/create params)))
 
 (defn get-user
   [id _req]

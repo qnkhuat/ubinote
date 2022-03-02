@@ -11,17 +11,19 @@
   "Schema for adding a user"
   (s/validator cmt/NewComment))
 
+;; TODO add convert clob for h2
+
 (defn create-comment
   [{:keys [params] :as _req}]
   ;; TODO :user-id shoudl take from req
   (validate-create-comment params)
-  (resp/entity-response 200 (cmt/create params)))
+  (resp/entity-response 200 (dissoc (cmt/create params) :content)))
 
 (defn get-comment
   [id _req]
   (let [comment (db/select-one Comment :id id)]
     (resp/assert-404 comment  "Comment not found")
-    (resp/entity-response 200 comment)))
+    (resp/entity-response 200 (dissoc comment :content))))
 
 (defroutes routes
   (POST "/" [] create-comment)

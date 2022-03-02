@@ -9,4 +9,6 @@ Features:
 - [ ] Upload images,videos ?
 
 TODO next:
+- figure out why when select toucan does not return an AnnotationInstance
+- figure out how to do hydaration, and  fix clob 500 when return to user
 - Organizae the api a bit more: get archive will return all annotations and stuff

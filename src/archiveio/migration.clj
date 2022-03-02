@@ -48,6 +48,7 @@
 (defmacro ^:private defmigration {:style/indent 1} [migration-name & sql-statements]
   `(defmigration* ~(str migration-name) ~@sql-statements))
 
+;; --------------------------- Utils ---------------------------
 (defn- create-index [table field]
   (format "CREATE INDEX idx_%s_%s ON %s (%s);" table field table field))
 
@@ -66,6 +67,8 @@
       ;; intentionally have a space here
       "[]"     " ARRAY")))
 
+
+;; --------------------------- Migrations ---------------------------
 (defmigration create-user-table
   ;; we user core_user instead user because user is a preserved table for most dbs
   (str "CREATE TABLE core_user (
@@ -79,7 +82,6 @@
        );"
        "CREATE INDEX idx_user_email ON core_user (email);"))
 
-;; TODO add status
 (defmigration create-archive-table
   (str "CREATE TABLE archive (
        id SERIAL PRIMARY KEY NOT NULL,

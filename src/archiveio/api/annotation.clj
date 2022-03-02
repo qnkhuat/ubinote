@@ -5,7 +5,8 @@
             [archiveio.controller.annotation :as ant]
             [archiveio.model.annotation :refer [Annotation]]
             [schema.core :as s]
-            [toucan.db :as db]))
+            [toucan.db :as db]
+            [toucan.hydrate :refer [hydrate]]))
 
 (def ^:private validate-create-annotation
   "Schema for adding a user"
@@ -13,13 +14,15 @@
 
 (defn create-annotation
   [{:keys [params] :as _req}]
-  ;; TODO :user-id shoudl take from req
+  ;; TODO :user-id should take from req
   (validate-create-annotation params)
   (resp/entity-response 200 (ant/create params)))
 
 (defn get-annotation
   [id _req]
-  (let [annotation (db/select-one Annotation :id id)]
+  (let [annotation (-> (db/select-one Annotation :id id)
+                       (hydrate :annotation
+                                [:annotation :comment]))]
     (resp/assert-404 annotation "Annotation not found")
     (resp/entity-response 200 annotation)))
 

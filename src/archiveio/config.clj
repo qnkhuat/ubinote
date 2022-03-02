@@ -26,8 +26,8 @@
 
 ;; TODO: validate config with spec
 (def default
-  {:aio-db-type "h2" ; #{h2, postgres}
-   :aio-db-name ".archiveio"
+  {:aio-db-type "postgres" ; #{h2, postgres}
+   :aio-db-name "archiveio"
    :aio-db-host "localhost" ; postgres
    :aio-db-port "5432"      ; postgres
    :aio-port    "8000"

@@ -3,6 +3,7 @@
             [clojure.java.jdbc :as jdbc]
             [clojure.java.io :as io]
             [clojure.string :as string]
+            [toucan.models :as models]
             [toucan.db :as db])
   (:import java.util.Properties
            java.io.BufferedReader
@@ -38,7 +39,7 @@
     (.getBytes blob 0 (.length blob))))
 
 ;; ------------------------------------------- DB connections -------------------------------------------
-(defn connection-pool
+(defn- connection-pool
   [{:keys [subprotocol subname classname] :as spec}]
   ; https://github.com/metabase/toucan/blob/29a921750f3051dce350255cfbd33512428bc3f8/docs/connection-pools.md#creating-the-connection-pool
   {:datasource (doto (ComboPooledDataSource.)
@@ -64,7 +65,7 @@
    :h2       :h2
    :mysql    :mysql})
 
-(defn db-details
+(defn- db-details
   [db-type]
   (connection-pool
     (case db-type
@@ -78,16 +79,25 @@
                  :subprotocol     "postgresql"
                  :subname         (format "//%s:%s/%s"
                                           (cfg/config-str :aio-db-host)
-                                          (cfg/config-str :aio-port)
+                                          (cfg/config-str :aio-db-port)
                                           (cfg/config-str :aio-db-name))
                  "MVCC"           "TRUE"
                  "DB_CLOSE_DELAY" "-1"
-                 "DEFRAG_ALWAYS"  "TRUE"
-                 })))
+                 "DEFRAG_ALWAYS"  "TRUE"})))
+
+(db/set-default-db-connection!
+  {:classname   "org.postgresql.Driver"
+   :subprotocol "postgresql"
+   :subname     "//localhost:5432/archiveio"
+   ;:user        "cam"
+   })
+
+(db/select-one archiveio.model.annotation/Annotation)
 
 (defn setup-db!
   []
   (let [db-type (cfg/config-kw :aio-db-type)]
+    (models/set-root-namespace! 'archiveio.model)
     (db/set-default-automatically-convert-dashes-and-underscores! true)
     (db/set-default-quoting-style! (db-type quoting-style))
     (db/set-default-db-connection!
