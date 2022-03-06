@@ -1,7 +1,7 @@
 (ns archiveio.api.annotation
   (:require [compojure.core :refer [context defroutes POST GET]]
             [compojure.coercions :refer [as-int]]
-            [archiveio.api.response :as resp]
+            [archiveio.api.common :as api]
             [archiveio.controller.annotation :as ant]
             [archiveio.model.annotation :refer [Annotation]]
             [schema.core :as s]
@@ -16,14 +16,14 @@
   [{:keys [params] :as _req}]
   ;; TODO :user-id should take from req
   (validate-create-annotation params)
-  (resp/entity-response 200 (ant/create params)))
+  (ant/create params))
 
 (defn get-annotation
   [id _req]
   (let [annotation (-> (db/select-one Annotation :id id)
                        (hydrate :user))]
-    (resp/assert-404 annotation "Annotation not found")
-    (resp/entity-response 200 annotation)))
+    (api/check-404 annotation)
+    annotation))
 
 (defroutes routes
   (POST "/" [] create-annotation)

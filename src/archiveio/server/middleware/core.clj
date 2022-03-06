@@ -1,6 +1,6 @@
-(ns archiveio.server.middleware
-  (:require [archiveio.api.response :as resp]
-            [archiveio.server.middleware.paging :refer [wrap-paging]]
+(ns archiveio.server.middleware.core
+  (:require [archiveio.server.middleware.paging :refer [wrap-paging]]
+            [archiveio.server.middleware.api :refer [wrap-response-if-needed wrap-api-exceptions]]
             [clojure.string :as string]
             [taoensso.timbre :as log]
             [ring.logger :as logger]
@@ -35,7 +35,8 @@
 (def middlewares
   ;; middleware will be applied from bottom->top
   [
-   resp/wrap-error-response
+   wrap-api-exceptions
+   wrap-response-if-needed      ; if resp is an object, turn it into a response
    wrap-request-logger
    wrap-json-response-normalize ; normalize response to json form
    wrap-paging

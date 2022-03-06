@@ -1,7 +1,7 @@
 (ns archiveio.api.comment
   (:require [compojure.core :refer [context defroutes POST GET]]
             [compojure.coercions :refer [as-int]]
-            [archiveio.api.response :as resp]
+            [archiveio.api.common :as api]
             [archiveio.controller.comment :as cmt]
             [archiveio.model.comment :refer [Comment]]
             [schema.core :as s]
@@ -16,14 +16,14 @@
   [{:keys [params] :as _req}]
   ;; TODO :user-id shoudl take from req
   (validate-create-comment params)
-  (resp/entity-response 200 (cmt/create params)))
+  (cmt/create params))
 
 (defn get-comment
   [id _req]
   (let [comment (-> (db/select-one Comment :id id)
                     (hydrate :annotation :user))]
-    (resp/assert-404 id  "Comment not found")
-    (resp/entity-response 200 comment)))
+    (api/check-404 comment)
+    comment))
 
 (defroutes routes
   (POST "/" [] create-comment)

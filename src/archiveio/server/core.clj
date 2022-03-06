@@ -2,7 +2,7 @@
   (:require [archiveio.api.core :as api]
             [archiveio.server.db :as adb]
             [archiveio.migration :as am]
-            [archiveio.server.middleware :as middleware]
+            [archiveio.server.middleware.core :as middleware]
             [archiveio.config :as cfg]
             [archiveio.controller.archive.path :as apath]
             [compojure.route :as route]

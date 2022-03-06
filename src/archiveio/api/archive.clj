@@ -2,10 +2,9 @@
   (:require [compojure.core :refer [context defroutes POST GET]]
             [compojure.coercions :refer [as-int]]
             [archiveio.controller.archive :as archive]
-            [archiveio.api.response :as resp]
+            [archiveio.api.common :as api]
             [archiveio.model.archive :refer [Archive]]
             [archiveio.model.annotation :refer [Annotation]]
-            [archiveio.model.comment :refer [Comment]]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
             [schema.core :as s]))
@@ -21,25 +20,25 @@
   [{:keys [params] :as _req}]
   (validate-add-archive params)
   ;; TODO, :user-id should take from session
-  (resp/entity-response 200 (archive/create params)))
+  (archive/create params))
 
 (defn get-archive
   [id _req]
   (let [archive (-> (db/select-one Archive :id id)
                     (hydrate :user :annotations
                              [:annotations :comments]))]
-    (resp/assert-404 archive "Archive not found")
-    (resp/entity-response 200 archive)))
+    (api/check-404 archive)
+    archive))
 
 (defn list-archives
   [_req]
-  (resp/entity-response 200 (-> (db/select Archive)
-                                (hydrate :user))))
+  (-> (db/select Archive)
+      (hydrate :user)))
 
 (defn get-annotation
   [id _req]
-  (resp/entity-response 200 (-> (db/select Annotation :archive-id id)
-                                (hydrate :an))))
+  (-> (db/select Annotation :archive-id id)
+      (hydrate :an)))
 
 (defroutes routes
   (POST "/" [] add-archive)

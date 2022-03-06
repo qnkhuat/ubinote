@@ -1,7 +1,7 @@
 (ns archiveio.api.user
   (:require [compojure.core :refer [context defroutes POST GET]]
             [compojure.coercions :refer [as-int]]
-            [archiveio.api.response :as resp]
+            [archiveio.api.common :as api]
             [archiveio.model.user :refer [User]]
             [archiveio.controller.user :as user]
             [schema.core :as s]
@@ -14,17 +14,17 @@
 (defn create-user
   [{:keys [params] :as _req}]
   (validate-create-user params)
-  (resp/entity-response 200 (user/create params)))
+  (user/create params))
 
 (defn get-user
   [id _req]
   (let [user (db/select-one User :id id)]
-    (resp/assert-404 user "User not found")
-    (resp/entity-response 200 user)))
+    (api/check-404 user)
+    user))
 
 (defn list-users
   [_req]
-  (resp/entity-response 200 (db/select User)))
+  (db/select User))
 
 (defroutes routes
   (GET "/" [] list-users)

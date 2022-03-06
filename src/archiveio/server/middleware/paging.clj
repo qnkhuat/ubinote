@@ -1,5 +1,4 @@
-(ns archiveio.server.middleware.paging
-  (:require [archiveio.api.response :as resp]))
+(ns archiveio.server.middleware.paging)
 
 (def default-offset 0)
 (def default-limit 50)
@@ -22,11 +21,10 @@
   (or limit offset))
 
 (defn wrap-paging
-  "Auto detect if a request needs to paging or not
+  "Check if a request needs to paging or not
   If it's then this will automatically add [:limit :paging] keys to request's params"
   [handler]
   (fn [{:keys [params] :as request}]
-    (resp/entity-response 200 {})
     (if (paged? params)
       (let [paging-params (try
                             (parse-paging-params params)
