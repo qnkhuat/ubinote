@@ -7,7 +7,8 @@
   (properties [_] {:timestamped? true})
   (hydration-keys [_] [:annotation]))
 
-(defn ^:hydrate annotations
+(defn hydrate-annotations
   "Hydrate all annotaitons for an archive"
+  {:hydrate :annotations}
   [{archive-id :id :as _archive}]
   (db/select Annotation :archive-id archive-id))
