@@ -3,4 +3,5 @@
 
 (models/defmodel Archive :archive
   models/IModel
-  (properties [_] {:timestamped? true}))
+  (properties [_] {:timestamped? true})
+  (hydration-keys [_] [:archive]))

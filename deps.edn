@@ -20,10 +20,7 @@
   org.clojure/java.jdbc     {:mvn/version "0.7.12"}
   com.h2database/h2         {:mvn/version "2.1.210"} ; H2 driver
   org.postgresql/postgresql {:mvn/version "42.2.13"} ; Postgres driver
-  toucan/toucan             {
-                             ;:mvn/version "1.17.0"
-                             :local/root "/Users/earther/metabase/toucan/target/toucan-1.18.0-standalone.jar"
-                             }
+  toucan/toucan             {:mvn/version "1.18.0"}
   com.mchange/c3p0          {:mvn/version "0.9.5.5"}
   enlive/enlive             {:mvn/version "1.1.6"} ; html parser
   ;hickory/hickory           {:mvn/version "0.7.1"} ; seems like a fater parser than enlive, but using enlive for now bc it has selector

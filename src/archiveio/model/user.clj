@@ -7,4 +7,5 @@
 (models/defmodel User :core_user
   models/IModel
   (default-fields [_] default-user-columns)
-  (properties [_] {:timestamped? true}))
+  (properties [_] {:timestamped? true})
+  (hydration-keys [_] [:user]))

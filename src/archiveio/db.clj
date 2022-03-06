@@ -85,14 +85,13 @@
                  "DB_CLOSE_DELAY" "-1"
                  "DEFRAG_ALWAYS"  "TRUE"})))
 
-(db/set-default-db-connection!
-  {:classname   "org.postgresql.Driver"
-   :subprotocol "postgresql"
-   :subname     "//localhost:5432/archiveio"
-   ;:user        "cam"
-   })
+;(db/set-default-db-connection!
+;  {:classname   "org.postgresql.Driver"
+;   :subprotocol "postgresql"
+;   :subname     "//localhost:5432/archiveio"
+;   })
 
-(db/select-one archiveio.model.annotation/Annotation)
+;(db/select-one archiveio.model.annotation/Annotation)
 
 (defn setup-db!
   []

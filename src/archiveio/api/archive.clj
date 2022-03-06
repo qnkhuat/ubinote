@@ -21,27 +21,10 @@
 
 (defn get-archive
   [id _req]
-  (let [archive #p (-> (db/select-one Archive :id id)
+  (let [archive (-> (db/select-one Archive :id id)
                     (hydrate :annotation))]
     (resp/assert-404 archive "Archive not found")
     (resp/entity-response 200 archive)))
-
-;(hydrate (db/select-one Archive :id 1) :user)
-
-;(hydrate (db/select-one Annotation :id 1) :archive)
-;
-;(hydrate (Annotation 1) :user)
-;;; => {:id 1,
-; :user-id 1,
-; :archive-id 1,
-; :color "red",
-; :coordinate "sth",
-; :created-at #inst "2022-02-28T17:29:19.608288000-00:00",
-; :updated-at #inst "2022-02-28T17:29:19.608288000-00:00"}
-
-;
-;
-;(hydrate (db/select-one Annotation :id 1) :archive)
 
 (defn list-archives
   [_req]

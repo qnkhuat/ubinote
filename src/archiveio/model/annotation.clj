@@ -5,4 +5,3 @@
   models/IModel
   (properties [_] {:timestamped? true})
   (hydration-keys [_] [:annotation]))
-
