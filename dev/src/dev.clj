@@ -1,21 +1,11 @@
 (ns dev
-  (:require [archiveio.config :as cfg]
-            [archiveio.core :refer [app]]
-            [archiveio.db :as adb]
-            [archiveio.migration :as am]
-            [taoensso.timbre :as log]
-            [ring.adapter.jetty :refer [run-jetty]]
+  (:require [archiveio.server.core :as server]
             [ring.middleware.reload :refer [wrap-reload]]))
 
 (defonce ^:private instance* (atom nil))
 
 (defn start! []
-  (let [port (cfg/config-int :aio-port)]
-    (log/info "Serving at localhost:" port)
-    (adb/setup-db!)
-    (am/migrate!)
-    (reset! instance* (run-jetty (wrap-reload #'app) {:port  port
-                                                      :join? false}))))
+  (server/start! (wrap-reload #'server/app)))
 
 (defn stop! []
   (when @instance*

@@ -1,4 +1,4 @@
-(ns archiveio.db
+(ns archiveio.server.db
   (:require [archiveio.config :as cfg]
             [clojure.java.jdbc :as jdbc]
             [clojure.java.io :as io]
@@ -84,14 +84,6 @@
                  "MVCC"           "TRUE"
                  "DB_CLOSE_DELAY" "-1"
                  "DEFRAG_ALWAYS"  "TRUE"})))
-
-;(db/set-default-db-connection!
-;  {:classname   "org.postgresql.Driver"
-;   :subprotocol "postgresql"
-;   :subname     "//localhost:5432/archiveio"
-;   })
-
-;(db/select-one archiveio.model.annotation/Annotation)
 
 (defn setup-db!
   []
