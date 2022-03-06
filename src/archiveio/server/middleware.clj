@@ -1,5 +1,6 @@
 (ns archiveio.server.middleware
   (:require [archiveio.api.response :as resp]
+            [archiveio.server.middleware.paging :refer [wrap-paging]]
             [clojure.string :as string]
             [taoensso.timbre :as log]
             [ring.logger :as logger]
@@ -37,6 +38,7 @@
    resp/wrap-error-response
    wrap-request-logger
    wrap-json-response-normalize ; normalize response to json form
+   wrap-paging
    wrap-keyword-params          ; normalizes string keys in :params to keyword keys
    wrap-json-params-normalize   ; extracts json POST body and makes it avaliable on request
    wrap-params                  ; parses GET and POST params as :query-params/:form-params and both as :params
@@ -49,4 +51,3 @@
             (middleware handler))
           handler
           middlewares))
-
