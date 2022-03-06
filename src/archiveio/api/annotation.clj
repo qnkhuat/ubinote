@@ -21,17 +21,11 @@
 (defn get-annotation
   [id _req]
   (let [annotation (-> (db/select-one Annotation :id id)
-                       (hydrate :annotation
-                                [:annotation :comment]))]
+                       (hydrate :user))]
     (resp/assert-404 annotation "Annotation not found")
     (resp/entity-response 200 annotation)))
 
-(defn list-annotations
-  [_req]
-  (resp/entity-response 200 (db/select Annotation)))
-
 (defroutes routes
-  (GET "/" [] list-annotations)
   (POST "/" [] create-annotation)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-annotation id))))

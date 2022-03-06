@@ -13,6 +13,10 @@
 (def validate-add-archive
   (s/validator archive/NewArchive))
 
+(defn hydration
+  [results]
+  (hydrate results :user))
+
 (defn add-archive
   [{:keys [params] :as _req}]
   (validate-add-archive params)
@@ -22,13 +26,20 @@
 (defn get-archive
   [id _req]
   (let [archive (-> (db/select-one Archive :id id)
-                    (hydrate :annotation))]
+                    (hydrate :user :annotations
+                             [:annotations :comments]))]
     (resp/assert-404 archive "Archive not found")
     (resp/entity-response 200 archive)))
 
 (defn list-archives
   [_req]
-  (resp/entity-response 200 (db/select Archive)))
+  (resp/entity-response 200 (-> (db/select Archive)
+                                (hydrate :user))))
+
+(defn get-annotation
+  [id _req]
+  (resp/entity-response 200 (-> (db/select Annotation :archive-id id)
+                                (hydrate :an))))
 
 (defroutes routes
   (POST "/" [] add-archive)
