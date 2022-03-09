@@ -30,6 +30,7 @@
   org.postgresql.util.PGobject
   (result-set-read-column [clob _ _]
     (.getValue clob))
+
   org.h2.jdbc.JdbcClob
   (result-set-read-column [clob _ _]
     (clob->str clob))

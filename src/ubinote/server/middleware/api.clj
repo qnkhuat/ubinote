@@ -1,6 +1,6 @@
 (ns ubinote.server.middleware.api
   (:require [ubinote.api.common :refer [security-header]]
-    [taoensso.timbre :as log]
+            [taoensso.timbre :as log]
             [ring.util.response :refer [response?]]))
 
 (defn wrap-response-if-needed
@@ -11,8 +11,12 @@
     (let [resp (handler request)]
       (if-not (response? resp)
         (if (instance? Object resp)
-          {:status 200 :body resp}
-          {:status 204 :body nil})
+          {:status  200
+           :headers security-header
+           :body    resp}
+          {:status  204
+           :headers security-header
+           :body    nil})
         resp))))
 
 (defn wrap-api-exceptions

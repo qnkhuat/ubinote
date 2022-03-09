@@ -39,6 +39,7 @@
    wrap-response-if-needed      ; if resp is an object, turn it into a response
    wrap-request-logger
    wrap-json-response-normalize ; normalize response to json form
+   wrap-json-response
    wrap-paging
    wrap-keyword-params          ; normalizes string keys in :params to keyword keys
    wrap-json-params-normalize   ; extracts json POST body and makes it avaliable on request

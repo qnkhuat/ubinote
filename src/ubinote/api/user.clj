@@ -24,7 +24,10 @@
 
 (defn list-users
   [_req]
-  (db/select User))
+  (db/select User)
+  {:status 200
+   :body (db/select User)
+   :headers {}})
 
 (defroutes routes
   (GET "/" [] list-users)

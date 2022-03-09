@@ -39,4 +39,4 @@
                             :domain domain
                             :path relative
                             :title title
-                            :status "downloaded"))))
+                            :status "archived"))))
