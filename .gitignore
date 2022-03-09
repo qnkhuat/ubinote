@@ -18,8 +18,6 @@ pom.xml.asc
 .nrepl-port
 .cpcache/
 
-
-
 # frontend
 ## dependencies
 /node_modules
