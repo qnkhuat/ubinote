@@ -1,4 +1,4 @@
-# ArchiveIO
+# ubinote
 Bring Notion's highlight to every websites
 
 Features:
@@ -8,6 +8,7 @@ Features:
 - [ ] Download youtube video with youtube-dl
 - [ ] Upload images,videos ?
 
-TODO next:
-- Better error handing, follow Metabase standard
-- Organize the api a bit more: get archive will return all annotations and stuff
+Reserve url pattern:
+https://domain.com => list archives
+https://domain.com/a/id-title => view the archive
+https://domain.com/archive/id-title => view the archive

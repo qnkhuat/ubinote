@@ -1,5 +1,5 @@
 (ns dev
-  (:require [archiveio.server.core :as server]
+  (:require [ubinote.server.core :as server]
             [ring.middleware.reload :refer [wrap-reload]]))
 
 (defonce ^:private instance* (atom nil))

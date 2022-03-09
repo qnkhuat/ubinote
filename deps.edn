@@ -40,7 +40,7 @@
 
   ; clj -M:run
   :run
-  {:main-opts ["-m" "archiveio.core"]}
+  {:main-opts ["-m" "ubinote.core"]}
 
   ; clj -T:build uber
   :build

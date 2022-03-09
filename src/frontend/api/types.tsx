@@ -1,4 +1,4 @@
-export interface TArchive {
+export interface TPage {
   id: number;
   url: string;
   path: string;

@@ -1,34 +1,31 @@
 import axios from "axios";
-import { TArchive } from "./types";
+import { TPage } from "./types";
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
 })
 
-// ---------------------------- Archive ---------------------------- //
+// ---------------------------- Page ---------------------------- //
 // return the static url for a given path
-const getStaticArchive = (path: string) => `${process.env.REACT_APP_BASE_URL}/static/${path}`
+const getStaticPage = (path: string) => `${process.env.REACT_APP_BASE_URL}/static/${path}`
 
-interface GetArchiveParams {};
-const getArchive = (id: number | string, params: GetArchiveParams = {}) =>
-  api.get<TArchive>(`/api/archive/${id}`, params);
-
-//
-interface ListArchivesParams {};
-const listArchives = (params: ListArchivesParams = {}) =>
-  api.get<TArchive[]>("/api/archive", params);
+interface GetPageParams {};
+const getPage = (id: number | string, params: GetPageParams = {}) => api.get<TPage>(`/api/page/${id}`, params);
 
 //
-interface AddArchiveBody {
+interface ListPagesParams {};
+const listPages = (params: ListPagesParams = {}) => api.get<TPage[]>("/api/page", params);
+
+//
+interface AddPageBody {
   url: string;
 }
-const addArchive = (body: AddArchiveBody) =>
-  api.post<TArchive>("/api/archive", body);
+const addPage = (body: AddPageBody) => api.post<TPage>("/api/page", body);
 
 export {
   api,
-  addArchive,
-  getArchive,
-  listArchives,
-  getStaticArchive
+  addPage,
+  getPage,
+  listPages,
+  getStaticPage
 }
