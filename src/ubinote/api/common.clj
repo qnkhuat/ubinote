@@ -53,7 +53,7 @@
    (check-401 x nil))
   ([x errors]
    (when-not x
-     (throw (ex-info "Unauthorized." (merge {:status 404}
+     (throw (ex-info "Unauthorized." (merge {:status 401}
                                          (when errors
                                            {:errors errors})))))))
 

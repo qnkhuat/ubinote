@@ -16,7 +16,7 @@
 (defn wrap-session-id
   [handler]
   (fn [{:keys [cookies headers] :as req}]
-    (let [session-id (or (get-in cookies [ubinote-session-cookie :value])
+    (let [session-id (or #p (get-in #p cookies #p [ubinote-session-cookie :value])
                          (get headers ubinote-session-header))]
       (handler (assoc req :ubinote-session-id session-id)))))
 
@@ -35,4 +35,4 @@
   "Add `:ubinote-user-id`, `:is-superuser?`, and :user-locale` to the request if a valid session token was passed."
   [handler]
   (fn [{:keys [ubinote-session-id] :as request}]
-    (handler (assoc request :un-user (current-user-info-for-session ubinote-session-id)))))
+    (handler (assoc request :current-user (current-user-info-for-session ubinote-session-id)))))

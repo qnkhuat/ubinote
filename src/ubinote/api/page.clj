@@ -25,8 +25,7 @@
     {:title title}))
 
 (def NewPage
-  {:user-id               s/Int
-   :url                   schemas/URL
+  {:url                   schemas/URL
    (s/optional-key :tags) [s/Str]})
 
 (s/defn create-page
@@ -52,10 +51,9 @@
   (hydrate results :user))
 
 (defn add-page
-  [{:keys [params] :as _req}]
+  [{:keys [params current-user] :as _req}]
   (validate-add-page params)
-  ;; TODO, :user-id should take from session
-  (create-page params))
+  (create-page (assoc params :user-id (:id current-user))))
 
 (defn get-page
   [id _req]

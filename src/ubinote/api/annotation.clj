@@ -8,8 +8,7 @@
             [toucan.hydrate :refer [hydrate]]))
 
 (def NewAnnotation
-  {:user-id    s/Int
-   :page-id    s/Int
+  {:page-id    s/Int
    :color      s/Str
    :coordinate s/Str
    })
@@ -24,10 +23,9 @@
   (s/validator NewAnnotation))
 
 (defn create-annotation
-  [{:keys [params] :as _req}]
-  ;; TODO :user-id should take from req
+  [{:keys [params un-user] :as _req}]
   (validate-create-annotation params)
-  (db/insert! Annotation params))
+  (db/insert! Annotation (assoc params :user-id (:id un-user))))
 
 (defn get-annotation
   [id _req]

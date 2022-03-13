@@ -35,7 +35,7 @@
 
 (defn current-user
   [req]
-  (:un-user req))
+  (:currrent-user req))
 
 (defroutes routes
   (GET "/" [] list-users)

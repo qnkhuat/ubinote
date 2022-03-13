@@ -8,20 +8,17 @@
             [toucan.hydrate :refer [hydrate]]))
 
 (def NewComment
-  {:user-id       s/Int
-   :annotation-id s/Int
-   :content       s/Str
-   })
+  {:annotation-id s/Int
+   :content       s/Str})
 
 (def ^:private validate-create-comment
   "Schema for adding a user"
   (s/validator NewComment))
 
 (defn create-comment
-  [{:keys [params] :as _req}]
-  ;; TODO :user-id shoudl take from req
+  [{:keys [params current-user] :as _req}]
   (validate-create-comment params)
-  (db/insert! Comment params))
+  (db/insert! Comment (assoc params :user-id (:id current-user))))
 
 (defn get-comment
   [id _req]
