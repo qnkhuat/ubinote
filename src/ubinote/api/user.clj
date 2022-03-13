@@ -8,7 +8,7 @@
             [toucan.db :as db]))
 
 (def ^:private validate-create-user
-  "Schema for adding a user"
+  "Schema for creating a user"
   (s/validator user/NewUser))
 
 (defn create-user

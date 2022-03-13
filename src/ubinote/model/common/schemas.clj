@@ -10,10 +10,18 @@
   "generic non blank string schema"
   (s/constrained s/Str (complement str/blank?)))
 
+(def ^:private username-regex
+  "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*")
+
+(def Username
+  "Schema for username and it's require to be at least 3 chars"
+  (s/constrained s/Str (fn [s]
+                         (and (>= (count s) 3)
+                              (re-matches (re-pattern username-regex) s)))))
+
 (def Password
-  "Schema for password and it's require to be atleast 8 chars"
-  ;; TODO - enforce some sort of complexity
-  (s/constrained s/Str #(> (count %) 7)))
+  "Schema for password and it's require to be at least 8 chars"
+  (s/constrained s/Str #(>= (count %) 8)))
 
 (def IsoDateTimeMs
   "time in YYYY-MM-DDTmm:hh:ss.SSSSSSZ format"
@@ -27,9 +35,11 @@
   "time in YYYY-MM-DD format"
   #"^\d{4}-[01]\d-[0-3]\d$")
 
-(def ^:private email-regex-username "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*")
+(def IntegerLargerThanZero
+  (s/constrained s/Int (fn [x] (> x 0))))
+
 (def ^:private email-regex-domain "@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
-(def ^:private email-regex (re-pattern (str email-regex-username email-regex-domain)))
+(def ^:private email-regex (re-pattern (str username-regex email-regex-domain)))
 
 (def EmailAddress
   "schema for email address"

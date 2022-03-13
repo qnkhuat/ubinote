@@ -9,10 +9,15 @@ Features:
 - [ ] Upload images,videos ?
 
 Reserve url pattern:
-https://domain.com => list archives
-https://domain.com/a/id-title => view the archive
-https://domain.com/archive/id-title => view the archive
+https://ubinote.com => list archives
+https://ubinote.com/a/id-title => view the archive
+https://ubinote.com/archive/id-title => view the archive
 
 
-Figure out what does it mean when we do sth like this (let [~bindings ~request] ~@body)
-In let-request function of compojure/core
+TODO for session:
+- [x] create a session table
+- [ ] write a login function to return a session-ID
+- [ ] middleware to bind session-id
+- [ ] middleware to bind user
+- [ ] Write a middleware to bind user using session
+- [ ] Implement a middleware to enforce authentication

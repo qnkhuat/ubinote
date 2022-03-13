@@ -47,6 +47,16 @@
                                                (when errors
                                                  {:errors errors})))))))
 
+(defn check-401
+  "Return Unauthorized if test failed"
+  ([x]
+   (check-401 x nil))
+  ([x errors]
+   (when-not x
+     (throw (ex-info "Unauthorized." (merge {:status 404}
+                                         (when errors
+                                           {:errors errors})))))))
+
 (defn check-404
   "Return Not found if test failed"
   ([x]

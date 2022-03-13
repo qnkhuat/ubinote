@@ -6,7 +6,7 @@
             [schema.core :as s]))
 
 (def NewUser
-  {:email      schemas/EmailAddress
+  {:username   schemas/Username
    :first-name schemas/NonBlankString
    :last-name  schemas/NonBlankString
    :password   schemas/Password})

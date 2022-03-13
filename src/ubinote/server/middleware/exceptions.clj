@@ -27,6 +27,7 @@
     (try
       (handler request)
       (catch Throwable e
+        ;; TODO: for schemas error, this will also log out value that may contain user's password
         (log/error e)
         (let [{:keys [status errors], :as info} (ex-data e)
               other-info                        (dissoc info :status)

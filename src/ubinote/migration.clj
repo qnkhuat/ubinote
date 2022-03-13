@@ -32,7 +32,7 @@
               (jdbc/execute! (db/connection) statement))
             (db/insert! Migration :name migration-name)
             (catch Exception e
-              (throw (ex-info (format "Data migration %s failed: %s" migration-name (.getMessage e)) {}))))))))
+              (throw (ex-info (format "Data migration %s failed: \n%s\n%s" migration-name (string/join "\n" statements) (.getMessage e)) {}))))))))
   (log/info "Migrations finished"))
 
 
@@ -56,6 +56,10 @@
   (defmigration install-citext
     "CREATE EXTENSION IF NOT EXISTS citext;"))
 
+(when postgres?
+  (defmigration install-uuid-ossp
+    "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"))
+
 (defn- postgres?->h2
   "If protgres db, leave it as it, otherwise convert to h2"
   [query]
@@ -64,6 +68,7 @@
     (case (string/upper-case query)
       "TEXT"   "CLOB"
       "CITEXT" "VARCHAR_IGNORECASE(255)"
+      "UUID_GENERATE_V4()" "RANDOM_UUID()"
       ;; intentionally have a space here
       "[]"     " ARRAY")))
 
@@ -73,14 +78,14 @@
   ;; we user core_user instead user because user is a preserved table for most dbs
   (str "CREATE TABLE core_user (
        id SERIAL PRIMARY KEY NOT NULL,
-       email " (postgres?->h2 "CITEXT") " NOT NULL UNIQUE,"
+       username " (postgres?->h2 "CITEXT") " NOT NULL UNIQUE,"
        "first_name VARCHAR(255) NOT NULL,
        last_name VARCHAR(255) NOT NULL,
        password VARCHAR(255) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now()
        );"
-       "CREATE INDEX idx_user_email ON core_user (email);"))
+       (create-index "core_user" "username")))
 
 (defmigration create-page-table
   (str "CREATE TABLE page (
@@ -122,3 +127,10 @@
        updated_at TIMESTAMP NOT NULL DEFAULT now());"
        (create-index "comment" "user_id")
        (create-index "comment" "annotation_id")))
+
+(defmigration create-session-table
+  (str "CREATE TABLE session (
+       id UUID DEFAULT "(postgres?->h2 "uuid_generate_v4()")" PRIMARY KEY NOT NULL,
+       user_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
+       created_at TIMESTAMP NOT NULL DEFAULT now());"
+       (create-index "session" "id")))
