@@ -1,7 +1,7 @@
 (ns ubinote.api.page
   (:require [compojure.core :refer [context defroutes POST GET]]
             [compojure.coercions :refer [as-int]]
-            [ubinote.controller.page :as page]
+            [ubinote.controller.page.core :as c-page]
             [ubinote.api.common :as api]
             [ubinote.model.page :refer [Page]]
             [ubinote.model.annotation :refer [Annotation]]
@@ -10,7 +10,7 @@
             [schema.core :as s]))
 
 (def validate-add-page
-  (s/validator page/NewPage))
+  (s/validator c-page/NewPage))
 
 (defn hydration
   [results]
@@ -20,7 +20,7 @@
   [{:keys [params] :as _req}]
   (validate-add-page params)
   ;; TODO, :user-id should take from session
-  (page/create params))
+  (c-page/create params))
 
 (defn get-page
   [id _req]

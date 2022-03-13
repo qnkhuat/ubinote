@@ -1,7 +1,6 @@
 (ns ubinote.server.middleware.session
   (:require [ubinote.model.user :refer [User]]
             [ubinote.model.session :refer [Session]]
-            [ring.util.response :as resp]
             [toucan.db :as db]))
 
 ;; How do authenticated API requests work? Ubinote first looks for a cookie called `ubinote.SESSION`. This is the
@@ -36,4 +35,4 @@
   "Add `:ubinote-user-id`, `:is-superuser?`, and :user-locale` to the request if a valid session token was passed."
   [handler]
   (fn [{:keys [ubinote-session-id] :as request}]
-    (handler (assoc request :user #p (current-user-info-for-session ubinote-session-id)))))
+    (handler (assoc request :un-user (current-user-info-for-session ubinote-session-id)))))

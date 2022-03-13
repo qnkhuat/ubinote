@@ -4,12 +4,13 @@
             [ubinote.api.annotation :as ant]
             [ubinote.api.comment :as cmt]
             [ubinote.api.user :as user]
-            [ubinote.api.session :as session]))
+            [ubinote.api.session :as session]
+            [ubinote.server.middleware.auth :refer [+auth]]))
 
 (defroutes routes
   (GET "/health" [] "api is fine")
-  (context "/page" [] page/routes)
-  (context "/user" [] user/routes)
-  (context "/annotation" [] ant/routes)
-  (context "/comment" [] cmt/routes)
-  (context "/session" [] session/routes))
+  (context "/page" [] (+auth page/routes))
+  (context "/user" [] (+auth user/routes))
+  (context "/annotation" [] (+auth ant/routes))
+  (context "/comment" [] (+auth cmt/routes))
+  (context "/session" [] (+auth session/routes)))

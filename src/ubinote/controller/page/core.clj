@@ -1,4 +1,4 @@
-(ns ubinote.controller.page
+(ns ubinote.controller.page.core
   (:require [ubinote.controller.page.path :as path]
             [ubinote.api.common :as api]
             [ubinote.cmd :as cmd]
