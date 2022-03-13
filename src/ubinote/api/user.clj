@@ -3,18 +3,25 @@
             [compojure.coercions :refer [as-int]]
             [ubinote.api.common :as api]
             [ubinote.model.user :refer [User]]
-            [ubinote.controller.user :as user]
+            [ubinote.model.common.schemas :as schemas]
+            [cemerick.friend.credentials :as creds]
             [schema.core :as s]
             [toucan.db :as db]))
 
+(def NewUser
+  {:username   schemas/Username
+   :first-name schemas/NonBlankString
+   :last-name  schemas/NonBlankString
+   :password   schemas/Password})
+
 (def ^:private validate-create-user
   "Schema for creating a user"
-  (s/validator user/NewUser))
+  (s/validator NewUser))
 
 (defn create-user
   [{:keys [params] :as _req}]
   (validate-create-user params)
-  (user/create params))
+  (db/insert! User (assoc params :password (creds/hash-bcrypt (:password params)))))
 
 (defn get-user
   [id _req]
@@ -26,8 +33,13 @@
   [_req]
   (db/select User))
 
+(defn current-user
+  [req]
+  (:un-user req))
+
 (defroutes routes
   (GET "/" [] list-users)
   (POST "/" [] create-user)
+  (GET "/current" [] current-user)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-user id))))

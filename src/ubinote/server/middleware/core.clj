@@ -6,6 +6,7 @@
             [taoensso.timbre :as log]
             [ring.logger :as logger]
             [ring.middleware.cors :refer [wrap-cors]]
+            [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-params]]))
@@ -42,6 +43,7 @@
    wrap-current-user-info
    wrap-session-id
    wrap-paging
+   wrap-cookies
    wrap-keyword-params          ; normalizes string keys in :params to keyword keys
    wrap-json-params-normalize   ; extracts json POST body and makes it avaliable on request
    wrap-params                  ; parses GET and POST params as :query-params/:form-params and both as :params

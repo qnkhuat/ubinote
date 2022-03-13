@@ -13,4 +13,4 @@
   (context "/user" [] (+auth user/routes))
   (context "/annotation" [] (+auth ant/routes))
   (context "/comment" [] (+auth cmt/routes))
-  (context "/session" [] (+auth session/routes)))
+  (context "/session" [] session/routes))
