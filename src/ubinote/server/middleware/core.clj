@@ -1,6 +1,7 @@
 (ns ubinote.server.middleware.core
   (:require [ubinote.server.middleware.paging :refer [wrap-paging]]
             [ubinote.server.middleware.exceptions :refer [wrap-api-exceptions]]
+            [ubinote.server.middleware.session :refer [wrap-session-id wrap-current-user-info]]
             [clojure.string :as string]
             [taoensso.timbre :as log]
             [ring.logger :as logger]
@@ -38,6 +39,8 @@
    wrap-api-exceptions
    wrap-request-logger
    wrap-json-response-normalize ; normalize response to json form
+   wrap-current-user-info
+   wrap-session-id
    wrap-paging
    wrap-keyword-params          ; normalizes string keys in :params to keyword keys
    wrap-json-params-normalize   ; extracts json POST body and makes it avaliable on request

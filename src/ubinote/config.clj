@@ -26,11 +26,12 @@
 
 ;; TODO: validate config with spec
 (def default
-  {:un-db-type "postgres" ; #{h2, postgres}
-   :un-db-name "ubinote"
-   :un-db-host "localhost" ; postgres
-   :un-db-port "5432"      ; postgres
-   :un-port    "8000"
+  {:un-db-type          "postgres" ; #{h2, postgres}
+   :un-db-name          "ubinote"
+   :un-db-host          "localhost" ; postgres
+   :un-db-port          "5432"      ; postgres
+   :un-port             "8000"
+   :un-max-session-age "20160" ; session length in minutes (14 days)
    ;; root to store and serve archived files
    :un-root    ".ubinote"})
 
