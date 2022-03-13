@@ -12,3 +12,7 @@ Reserve url pattern:
 https://domain.com => list archives
 https://domain.com/a/id-title => view the archive
 https://domain.com/archive/id-title => view the archive
+
+
+Figure out what does it mean when we do sth like this (let [~bindings ~request] ~@body)
+In let-request function of compojure/core

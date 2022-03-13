@@ -1,23 +1,23 @@
-(ns ubinote.server.middleware.api
+(ns ubinote.server.middleware.exceptions
   (:require [ubinote.api.common :refer [security-header]]
-            [taoensso.timbre :as log]
-            [ring.util.response :refer [response?]]))
+            [taoensso.timbre :as log]))
 
-(defn wrap-response-if-needed
-  "This enable APIs to just return an object and it'll be automatically turned into a response.
-  For error cases, we should return a proper response within the API"
-  [handler]
-  (fn [request]
-    (let [resp (handler request)]
-      (if-not (response? resp)
-        (if (instance? Object resp)
-          {:status  200
-           :headers security-header
-           :body    resp}
-          {:status  204
-           :headers security-header
-           :body    nil})
-        resp))))
+(defn- explain-one-schema-error
+  [[k v]]
+  [k (cond
+       (= v 'missing-required-key) "Missing required key"
+       :else "Invalid value")])
+
+(defn explain-schema-error
+  "Convert schema error to simple key -> message format"
+  [errors]
+  (try
+    (into {} (map explain-one-schema-error errors))
+    (catch Exception _
+      ;; Catch-all for all kinds of other errors we don't currently handle (e.g. not an object)
+      ;; This happens when we hit ^:always-validate deeper in the code triggering a schema error
+      ;; rather than when we explicitly do schema validation at API input layer.
+      {:unknown (pr-str errors)})))
 
 (defn wrap-api-exceptions
   "Run the wrapped code and override with a 400 error response for schema validation error
@@ -42,13 +42,16 @@
                                                   (and status errors)
                                                   other-info
 
+                                                  (= :schema.core/error (:type info))
+                                                  {:errors (explain-schema-error (:error info))}
+
                                                   ;; Otherwise return the full `Throwable->map` representation with Stacktrace
                                                   ;; and ex-data
                                                   :else
-                                                  (merge
-                                                    (Throwable->map e)
-                                                    {:message (.getMessage e)}
-                                                    other-info))]
+                                                  {:errors (merge
+                                                            (Throwable->map e)
+                                                            {:message (.getMessage e)}
+                                                            other-info)})]
           {:status  (or status 500)
            :headers security-header
            :body    body})))))

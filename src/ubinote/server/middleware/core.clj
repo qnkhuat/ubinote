@@ -1,6 +1,6 @@
 (ns ubinote.server.middleware.core
   (:require [ubinote.server.middleware.paging :refer [wrap-paging]]
-            [ubinote.server.middleware.api :refer [wrap-response-if-needed wrap-api-exceptions]]
+            [ubinote.server.middleware.exceptions :refer [wrap-api-exceptions]]
             [clojure.string :as string]
             [taoensso.timbre :as log]
             [ring.logger :as logger]
@@ -36,7 +36,6 @@
   ;; middleware will be applied from bottom->top
   [
    wrap-api-exceptions
-   wrap-response-if-needed      ; if resp is an object, turn it into a response
    wrap-request-logger
    wrap-json-response-normalize ; normalize response to json form
    wrap-paging

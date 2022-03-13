@@ -1,5 +1,5 @@
 (ns ubinote.api.user
-  (:require [compojure.core :refer [context defroutes POST GET]]
+  (:require [compojure.core :refer [context defroutes GET POST]]
             [compojure.coercions :refer [as-int]]
             [ubinote.api.common :as api]
             [ubinote.model.user :refer [User]]
