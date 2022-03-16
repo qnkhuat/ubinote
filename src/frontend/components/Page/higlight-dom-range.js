@@ -70,7 +70,7 @@ const highlightRange = (function () {
     //   if (range.startOffset < range.startContainer.childNodes.length) {
     //     walker.currentNode = range.startContainer.childNodes[range.startOffset];
     //   } else {
-    //     walker.nextSibling(); // TODO verify this is correct.
+    //     walker.nextSibling();
     //   }
     // }
 

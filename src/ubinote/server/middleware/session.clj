@@ -16,7 +16,7 @@
 (defn wrap-session-id
   [handler]
   (fn [{:keys [cookies headers] :as req}]
-    (let [session-id (or #p (get-in #p cookies #p [ubinote-session-cookie :value])
+    (let [session-id (or (get-in cookies [ubinote-session-cookie :value])
                          (get headers ubinote-session-header))]
       (handler (assoc req :ubinote-session-id session-id)))))
 

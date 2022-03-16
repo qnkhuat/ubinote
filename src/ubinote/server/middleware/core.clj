@@ -36,8 +36,8 @@
 
 (def middlewares
   ;; middleware will be applied from bottom->top
+  ;; in the word, the middleware at bottom will be executed last
   [
-   wrap-api-exceptions
    wrap-request-logger
    wrap-json-response-normalize ; normalize response to json form
    wrap-current-user-info
@@ -48,6 +48,7 @@
    wrap-json-params-normalize   ; extracts json POST body and makes it avaliable on request
    wrap-params                  ; parses GET and POST params as :query-params/:form-params and both as :params
    wrap-cors-un
+   wrap-api-exceptions
    ])
 
 (defn apply-middleware
