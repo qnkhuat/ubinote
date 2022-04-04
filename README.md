@@ -14,10 +14,7 @@ https://ubinote.com/a/id-title => view the archive
 https://ubinote.com/archive/id-title => view the archive
 
 
-TODO for session:
-- [x] create a session table
-- [ ] write a login function to return a session-ID
-- [ ] middleware to bind session-id
-- [ ] middleware to bind user
-- [ ] Write a middleware to bind user using session
-- [ ] Implement a middleware to enforce authentication
+TODO:
+- implement basic way to call API with authentication
+- simple page to login
+- Could you display this? ⚠️
