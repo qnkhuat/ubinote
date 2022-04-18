@@ -10,8 +10,7 @@
 (def NewAnnotation
   {:page-id    s/Int
    :color      s/Str
-   :coordinate s/Str
-   })
+   :coordinate s/Str})
 
 (s/defn create
   "Detect file type and page file"
@@ -38,4 +37,3 @@
   (POST "/" [] create-annotation)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-annotation id))))
-

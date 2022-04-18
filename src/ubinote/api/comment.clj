@@ -31,4 +31,3 @@
   (POST "/" [] create-comment)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-comment id))))
-

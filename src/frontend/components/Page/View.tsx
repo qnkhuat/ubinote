@@ -9,7 +9,11 @@ import Button from "@mui/material/Button";
 
 import highlightRange from "./higlight-dom-range";
 
-const PageView = (props) => {
+interface Props {
+  page: TPage;
+}
+
+const PageView = (props: Props) => {
   const { page } = props;
   const [ content, setContent ] = useState<string>("");
   const contentDiv = useRef(null);
@@ -23,12 +27,12 @@ const PageView = (props) => {
         console.log("Range: ", range);
         const removeHighlights = highlightRange(range, 'span', { class: 'text-red-400' });
         // Running removeHighlights() would remove the highlight again.
-}
+      }
     });
     // download the html as raw string and render it
     api.get(getStaticPage(page.path))
       .then(resp => setContent(resp.data))
-      .catch(e => console.error("Failed to get that; ',", e));
+      .catch(e => console.error("Failed to get static page ", e));
   }, [])
 
   return (<div className="">

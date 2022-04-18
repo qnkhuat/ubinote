@@ -25,7 +25,7 @@
 
 (defn wrap-request-logger
   [handler]
-  (logger/wrap-with-logger handler {:log-fn (fn [{:keys [level throwable message]}]
+  (logger/wrap-log-response handler {:log-fn (fn [{:keys [level throwable message]}]
                                               (log/log level throwable message))}))
 
 (defn wrap-cors-un
@@ -36,8 +36,9 @@
 
 (def middlewares
   ;; middleware will be applied from bottom->top
-  ;; in the word, the middleware at bottom will be executed last
+  ;; in the other words, the middleware at bottom will be executed last
   [
+   wrap-cors-un
    wrap-request-logger
    wrap-json-response-normalize ; normalize response to json form
    wrap-current-user-info
@@ -47,7 +48,6 @@
    wrap-keyword-params          ; normalizes string keys in :params to keyword keys
    wrap-json-params-normalize   ; extracts json POST body and makes it avaliable on request
    wrap-params                  ; parses GET and POST params as :query-params/:form-params and both as :params
-   wrap-cors-un
    wrap-api-exceptions
    ])
 

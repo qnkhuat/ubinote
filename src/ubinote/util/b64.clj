@@ -6,6 +6,7 @@
   [s]
   (.encodeToString (Base64/getEncoder) (.getBytes s)))
 
-(defn decode [to-decode]
+(defn decode
   "decode b64 string to a string"
+  [to-decode]
   (String. (.decode (Base64/getDecoder) to-decode)))

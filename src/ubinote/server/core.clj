@@ -7,6 +7,7 @@
             [ubinote.model.page :as page]
             [compojure.route :as route]
             [compojure.core :refer [context defroutes GET]]
+            [taoensso.timbre :as log]
             [ring.adapter.jetty :refer [run-jetty]]))
 
 (defroutes routes
@@ -15,11 +16,11 @@
   (route/files "/static" {:root page/root})
   (route/not-found "<h1>Page not found</h1>"))
 
-(def app
-  (middleware/apply-middleware routes middleware/middlewares))
+(def app (middleware/apply-middleware routes middleware/middlewares))
 
 (defn start!
   [app]
+  (log/info "Starting server at localhost:" (cfg/config-int :un-port))
   (adb/setup-db!)
   (am/migrate!)
   (run-jetty app
