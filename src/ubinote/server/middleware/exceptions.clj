@@ -5,15 +5,15 @@
 (defn- explain-one-schema-error
   [[k v]]
   [k (cond
-      (= v 'missing-required-key) "Missing required key"
-      :else "Invalid value")])
+       (= v 'missing-required-key) "Missing required key"
+       :else "Invalid value")])
 
 (defn explain-schema-error
   "Convert schema error to simple key -> message format"
   [errors]
   (try
    (into {} (map explain-one-schema-error errors))
-   (catch Exception _
+   (catch clojure.lang.ExceptionInfo _
      ;; Catch-all for all kinds of other errors we don't currently handle (e.g. not an object)
      ;; This happens when we hit ^:always-validate deeper in the code triggering a schema error
      ;; rather than when we explicitly do schema validation at API input layer.

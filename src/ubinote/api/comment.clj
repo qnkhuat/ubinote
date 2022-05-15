@@ -18,7 +18,7 @@
 (defn create-comment
   [{:keys [params current-user] :as _req}]
   (validate-create-comment params)
-  (db/insert! Comment (assoc params :user-id (:id current-user))))
+  (db/insert! Comment (assoc params :creator_id (:id current-user))))
 
 (defn get-comment
   [id _req]

@@ -10,7 +10,7 @@ import { PageList } from "components/Page";
 
 import { useState, useEffect } from "react";
 import { TPage } from "api/types";
-import { api, listPages } from "api";
+import { listPages } from "api";
 
 const Home = () => {
   const [pages, setPages] = useState<TPage[]>([]);
@@ -36,9 +36,9 @@ const Home = () => {
       <TableBody>
         {pages.map((page: TPage) => (
           <TableRow key={page.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-            <TableCell component="th" scope="row"><a target="_blank" rel="noreferrer" href={page.url}>{page.title}</a></TableCell>
-            <TableCell component="th" scope="row"><a target="_blank" rel="noreferrer" href={page.url}>{page.domain}</a></TableCell>
-            <TableCell component="th" scope="row"><a target="_blank" rel="noreferrer" href={page.url}>{page.url}</a></TableCell>
+            <TableCell component="th" scope="row"><a rel="noreferrer" href={`/page/${page.id}`}>{page.title}</a></TableCell>
+            <TableCell component="th" scope="row"><a rel="noreferrer" href={`/page/${page.id}`}>{page.domain}</a></TableCell>
+            <TableCell component="th" scope="row"><a rel="noreferrer" href={`/page/${page.id}`}>{page.url}</a></TableCell>
             <TableCell align="right"><a target="_blank" rel="noreferrer" href={`http://localhost:8000/static/${page.path}`}>{page.path}</a></TableCell>
             <TableCell align="right">{page.created_at}</TableCell>
             <TableCell align="right">{page.updated_at}</TableCell>

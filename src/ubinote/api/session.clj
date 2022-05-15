@@ -14,7 +14,7 @@
 
 (defn verify-user
   [username password]
-  (let [user (db/select-one ['User :id :username :first-name :last-name :password :created-at :updated-at] :username username)]
+  (let [user (db/select-one ['User :id :username :first_name :last_name :password :created_at :updated_at] :username username)]
     (api/check-404 user {:message "User not found"})
     (api/check-401 (creds/bcrypt-verify password (:password user)))
     (select-keys user default-user-columns)))

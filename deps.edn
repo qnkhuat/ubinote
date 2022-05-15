@@ -22,9 +22,9 @@
   org.postgresql/postgresql {:mvn/version "42.2.13"} ; Postgres driver
   toucan/toucan             {:mvn/version "1.18.0"}
   com.mchange/c3p0          {:mvn/version "0.9.5.5"}
-  enlive/enlive             {:mvn/version "1.1.6"} ; html parser
+  enlive/enlive             {:mvn/version "1.1.6"}} ; html parser
   ; hickory/hickory           {:mvn/version "0.7.1"} ; seems like a fater parser than enlive, but using enlive for now bc it has DOM selector
-  }
+
 
  :aliases
  {; clj -M:dev
@@ -45,5 +45,5 @@
   ; clj -T:build uber
   :build
   {:deps       {io.github.clojure/tools.build {:git/tag "v0.6.2" :git/sha "226fb52"}}
-   :ns-default build}
-  }}
+   :ns-default build}}}
+

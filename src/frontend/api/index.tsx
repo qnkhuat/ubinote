@@ -22,6 +22,20 @@ interface AddPageBody {
 }
 const addPage = (body: AddPageBody) => api.post<TPage>("/api/page", body);
 
+// ---------------------------- Annotation ---------------------------- //
+// result of dom torange
+type Selection = {
+  start: number;
+  end: number;
+}
+interface AddAnnotationParams {
+  page_id: number;
+  creator_id: number;
+  content: Selection;
+  color?: string;
+};
+
+
 export {
   api,
   addPage,

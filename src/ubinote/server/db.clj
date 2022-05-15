@@ -90,7 +90,7 @@
   []
   (let [db-type (cfg/config-kw :un-db-type)]
     (models/set-root-namespace! 'ubinote.model)
-    (db/set-default-automatically-convert-dashes-and-underscores! true)
+    ;(db/set-default-automatically-convert-dashes-and-underscores! true)
     (db/set-default-quoting-style! (db-type quoting-style))
     (db/set-default-db-connection!
       (db-details db-type))))

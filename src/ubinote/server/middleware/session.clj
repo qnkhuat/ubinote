@@ -27,10 +27,10 @@
   [session-id]
   (when session-id
     (db/select-one User
-                   {:where [:= :id (db/select-one-field :user-id Session
+                   {:where [:= :id (db/select-one-field :user_id Session
                                                         {:where [:= :id [:cast session-id :uuid]]
-                                                         #_[:< :created-at ] ;; TODO: need to add expired time
-                                                         })]})))
+                                                         #_[:< :created_at]})]}))) ;; TODO: need to add expired time
+
 (defn wrap-current-user-info
   "Add `:ubinote-user-id`, `:is-superuser?`, and :user-locale` to the request if a valid session token was passed."
   [handler]

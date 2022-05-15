@@ -9,9 +9,9 @@
             [toucan.db :as db]))
 
 (def NewUser
-  {:username   schemas/Username
-   :first-name schemas/NonBlankString
-   :last-name  schemas/NonBlankString
+  {:email      schemas/EmailAddress
+   :first_name schemas/NonBlankString
+   :last_name  schemas/NonBlankString
    :password   schemas/Password})
 
 (def ^:private validate-create-user

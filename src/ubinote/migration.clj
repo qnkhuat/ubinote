@@ -26,7 +26,7 @@
     (db/transaction
       (doseq [[migration-name statements] @migrations]
         (when-not (the-previous-migrations migration-name)
-          (log/info "Running migration " migration-name)
+          (log/info "Running migration" migration-name)
           (try
             (doseq [statement statements]
               (jdbc/execute! (db/connection) statement))
@@ -78,19 +78,19 @@
   ;; we user core_user instead user because user is a preserved table for most dbs
   (str "CREATE TABLE core_user (
        id SERIAL PRIMARY KEY NOT NULL,
-       username " (postgres?->h2 "CITEXT") " NOT NULL UNIQUE,"
+       email " (postgres?->h2 "CITEXT") " NOT NULL UNIQUE,"
        "first_name VARCHAR(255) NOT NULL,
        last_name VARCHAR(255) NOT NULL,
        password VARCHAR(255) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now()
        );"
-       (create-index "core_user" "username")))
+       (create-index "core_user" "email")))
 
 (defmigration create-page-table
   (str "CREATE TABLE page (
        id SERIAL PRIMARY KEY NOT NULL,
-       user_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
+       creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        url VARCHAR(255) NOT NULL,
        tags VARCHAR(32)" (postgres?->h2 "[]") ","
        "domain VARCHAR(255) NOT NULL,
@@ -100,37 +100,37 @@
        "status VARCHAR(16) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now());"
-       (create-index "page" "user_id")
+       (create-index "page" "creator_id")
        (create-index "page" "url")
        (create-index "page" "path")))
 
 (defmigration create-annotation-table
   (str "CREATE TABLE annotation (
        id SERIAL PRIMARY KEY NOT NULL,
-       user_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
+       creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        page_id INTEGER NOT NULL REFERENCES page (id) ON DELETE CASCADE,
        color VARCHAR(32) NOT NULL,
        coordinate VARCHAR(255) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now());"
-       (create-index "annotation" "user_id")
+       (create-index "annotation" "creator_id")
        (create-index "annotation" "page_id")
        (create-index "annotation" "coordinate")))
 
 (defmigration create-comment-table
   (str "CREATE TABLE comment (
        id SERIAL PRIMARY KEY NOT NULL,
-       user_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
+       creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        annotation_id INTEGER NOT NULL REFERENCES annotation (id) ON DELETE CASCADE,
        content " (postgres?->h2 "TEXT") " NOT NULL,"
        "created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now());"
-       (create-index "comment" "user_id")
+       (create-index "comment" "creator_id")
        (create-index "comment" "annotation_id")))
 
 (defmigration create-session-table
   (str "CREATE TABLE session (
        id UUID DEFAULT "(postgres?->h2 "uuid_generate_v4()")" PRIMARY KEY NOT NULL,
-       user_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
+       creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        created_at TIMESTAMP NOT NULL DEFAULT now());"
        (create-index "session" "id")))

@@ -1,10 +1,14 @@
 (ns ubinote.model.page
-  (:require [ubinote.util.fs :as fs]
+  (:require [ubinote.cmd :as cmd]
+            [ubinote.util.fs :as fs]
             [ubinote.util.b64 :as b64]
             [ubinote.api.common :as api]
             [ubinote.config :as cfg]
+            [net.cgrand.enlive-html :as html]
             [clojure.string :as string]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [toucan.db :as db]
+            [schema.core :as s]))
 
 (models/defmodel Page :page
   models/IModel
@@ -59,3 +63,31 @@
       (throw (ex-info "Failed to out folder" {:url url})))
     {:relative rel-path
      :absolute abs-path}))
+
+(defn extract-html
+  "Extract metadata from a html file
+  Currently return [:title]"
+  [path]
+  ;; TODO: find a way to extract description
+  (let [parsed-doc (html/html-resource (java.io.File. path))
+        ;; Is this the perfect way to get title?
+        title      (-> (html/select parsed-doc [:head :title])
+                       first
+                       :content
+                       first)]
+    {:title title}))
+
+(defn create-page
+  "Detect file type and page file"
+  [{:keys [url] :as new-page}]
+  (let [{:keys [relative absolute]} (out-path url)
+        domain                      (get-domain url)
+        {:keys [err]}               (cmd/single-file url absolute)
+        _                           (api/check-400 (= err "") {:url "Failed to download single-file"})
+        {:keys [title]}             (extract-html absolute)]
+    ;; TODO: move the file after download to name with title
+    (db/insert! Page (assoc new-page
+                            :domain domain
+                            :path relative
+                            :title title
+                            :status "archived"))))

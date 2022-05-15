@@ -5,12 +5,16 @@
 import { useRef, useState, useEffect } from "react";
 import { TPage } from "api/types";
 import { api, getStaticPage } from "api";
-import Button from "@mui/material/Button";
 
-import highlightRange from "./higlight-dom-range";
+import highlightRange from "lib/highlight/higlight-dom-range";
+import { fromRange, toRange } from "dom-anchor-text-position";
 
 interface Props {
   page: TPage;
+}
+
+const async highlight = (selection) => {
+
 }
 
 const PageView = (props: Props) => {
@@ -24,8 +28,12 @@ const PageView = (props: Props) => {
       console.log("User select:", selection);
       if (!selection.isCollapsed) {
         const range = selection.getRangeAt(0);
-        console.log("Range: ", range);
-        const removeHighlights = highlightRange(range, 'span', { class: 'text-red-400' });
+        const textPos = fromRange(document.body, range);
+        const rangeConverted = toRange(document.body, textPos);
+        console.log("textpos: ", textPos);
+        console.log("range from textpos: ", rangeConverted);
+        console.log("Equal?", range == rangeConverted);
+        const removeHighlights = highlightRange(rangeConverted, 'span', { class: 'text-red-400' });
         // Running removeHighlights() would remove the highlight again.
       }
     });
