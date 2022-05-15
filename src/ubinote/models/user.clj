@@ -1,4 +1,4 @@
-(ns ubinote.model.user
+(ns ubinote.models.user
   (:require [toucan.models :as models]
             [clojure.string :as str]))
 

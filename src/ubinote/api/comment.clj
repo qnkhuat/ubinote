@@ -2,7 +2,7 @@
   (:require [compojure.core :refer [context defroutes POST GET]]
             [compojure.coercions :refer [as-int]]
             [ubinote.api.common :as api]
-            [ubinote.model.comment :refer [Comment]]
+            [ubinote.models.comment :refer [Comment]]
             [schema.core :as s]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]))

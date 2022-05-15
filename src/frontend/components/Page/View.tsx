@@ -3,8 +3,8 @@
 // we don't use: iframe for this because mouseup event can't
 // return the dom inside iframe
 import { useRef, useState, useEffect } from "react";
-import { TPage } from "api/types";
-import { api, getStaticPage } from "api";
+import { TPage, TAnnotation } from "api/types";
+import { api, getStaticPage, addAnnotation } from "api";
 
 import highlightRange from "lib/highlight/higlight-dom-range";
 import { fromRange, toRange } from "dom-anchor-text-position";
@@ -13,8 +13,22 @@ interface Props {
   page: TPage;
 }
 
-const async highlight = (selection) => {
+const colorToCSS = {
+  "red": "text-red-400",
+  "green": "text-green-400",
+  "blue": "text-blue-400",
+  "yellow": "text-yellow-400"
+}
 
+const addHighlight = (pageId: number, selection: window.Selection, color = "red") => {
+  const range = selection.getRangeAt(0);
+  const removeHighlights = highlightRange(range, 'span', {class: colorToCSS[color]});
+  const textPos = fromRange(document.body, range);
+  console.log("new text pos", textPos);
+  addAnnotation(pageId, {coordinate: textPos})
+    .then(resp => console.log(resp))
+    .catch(err => console.error("Failed to add annotaiton: ", err));
+  return removeHighlights;
 }
 
 const PageView = (props: Props) => {
@@ -25,22 +39,20 @@ const PageView = (props: Props) => {
   useEffect(() => {
     document.addEventListener("mouseup", () => {
       const selection = window.getSelection();
-      console.log("User select:", selection);
       if (!selection.isCollapsed) {
-        const range = selection.getRangeAt(0);
-        const textPos = fromRange(document.body, range);
-        const rangeConverted = toRange(document.body, textPos);
-        console.log("textpos: ", textPos);
-        console.log("range from textpos: ", rangeConverted);
-        console.log("Equal?", range == rangeConverted);
-        const removeHighlights = highlightRange(rangeConverted, 'span', { class: 'text-red-400' });
-        // Running removeHighlights() would remove the highlight again.
+        addHighlight(page.id, selection);
       }
     });
     // download the html as raw string and render it
     api.get(getStaticPage(page.path))
-      .then(resp => setContent(resp.data))
-      .catch(e => console.error("Failed to get static page ", e));
+      .then(resp => {
+        setContent(resp.data);
+        page.annotations.forEach((annotation: TAnnotation) => {
+          const range = toRange(document.body, annotation.coordinate);
+          highlightRange(range, 'span', {class: colorToCSS[annotation.color]});
+        })
+      })
+      .catch(e => console.error("Failed to get static page: ", e));
   }, [])
 
   return (<div className="">

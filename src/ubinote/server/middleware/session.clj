@@ -1,6 +1,6 @@
 (ns ubinote.server.middleware.session
-  (:require [ubinote.model.user :refer [User]]
-            [ubinote.model.session :refer [Session]]
+  (:require [ubinote.models.user :refer [User]]
+            [ubinote.models.session :refer [Session]]
             [toucan.db :as db]))
 
 ;; How do authenticated API requests work? Ubinote first looks for a cookie called `ubinote.SESSION`. This is the
@@ -32,7 +32,11 @@
                                                          #_[:< :created_at]})]}))) ;; TODO: need to add expired time
 
 (defn wrap-current-user-info
-  "Add `:ubinote-user-id`, `:is-superuser?`, and :user-locale` to the request if a valid session token was passed."
+  "Add `:current-user-id` and `:current-user` to the request if a valid session token was passed."
   [handler]
   (fn [{:keys [ubinote-session-id] :as request}]
-    (handler (assoc request :current-user (current-user-info-for-session ubinote-session-id)))))
+    (let [user (db/select-one User)
+          #_(current-user-info-for-session ubinote-session-id)]
+     (handler (cond-> request
+                user (assoc :current-user user
+                            :current-user-id (:id user)))))))

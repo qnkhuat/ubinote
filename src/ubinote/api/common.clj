@@ -55,7 +55,8 @@
    (when-not x
      (throw (ex-info "Unauthorized." (merge {:status 401}
                                          (when errors
-                                           {:errors errors})))))))
+                                           {:errors errors})))))
+   x))
 
 (defn check-404
   "Return Not found if test failed"
@@ -65,4 +66,5 @@
    (when-not x
      (throw (ex-info "Not found." (merge {:status 404}
                                          (when errors
-                                           {:errors errors})))))))
+                                           {:errors errors})))))
+   x))

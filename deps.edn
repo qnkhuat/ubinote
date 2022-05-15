@@ -4,9 +4,11 @@
  {
   org.clojure/clojure       {:mvn/version "1.10.1"}
   ;; util
-  prismatic/schema          {:mvn/version "1.2.0"} ; schema validator
-  slingshot/slingshot       {:mvn/version "0.12.2"} ; better exception handling
-  com.cemerick/friend       {:mvn/version "0.2.3"} ; auth library
+  prismatic/schema          {:mvn/version "1.2.0"}    ; schema validator
+  slingshot/slingshot       {:mvn/version "0.12.2"}   ; better exception handling
+  com.cemerick/friend       {:mvn/version "0.2.3"}    ; auth library
+  cheshire/cheshire         {:mvn/version "5.10.2"}   ; fast JSON encoding (used by Ring JSON middleware)
+  potemkin/potemkin         {:mvn/version "0.4.5"}    ; utility macros & fns
   ;; webserver+routing
   compojure/compojure       {:mvn/version "1.6.2"}
   ring/ring-core            {:mvn/version "1.9.4"}
@@ -15,16 +17,15 @@
   ring-cors/ring-cors       {:mvn/version "0.1.13"}
   ;; log
   com.taoensso/timbre       {:mvn/version "5.1.2"}
-  ring-logger/ring-logger   {:mvn/version "1.1.1"} ; log middleware
+  ring-logger/ring-logger   {:mvn/version "1.1.1"}    ; log middleware
   ;; database
   org.clojure/java.jdbc     {:mvn/version "0.7.12"}
-  com.h2database/h2         {:mvn/version "2.1.210"} ; H2 driver
-  org.postgresql/postgresql {:mvn/version "42.2.13"} ; Postgres driver
+  com.h2database/h2         {:mvn/version "2.1.210"}  ; H2 driver
+  org.postgresql/postgresql {:mvn/version "42.2.13"}  ; Postgres driver
   toucan/toucan             {:mvn/version "1.18.0"}
+  ;; hickory/hickory           {:mvn/version "0.7.1"} ; seems like a fater parser than enlive, but using enlive for now bc it has DOM selector
   com.mchange/c3p0          {:mvn/version "0.9.5.5"}
-  enlive/enlive             {:mvn/version "1.1.6"}} ; html parser
-  ; hickory/hickory           {:mvn/version "0.7.1"} ; seems like a fater parser than enlive, but using enlive for now bc it has DOM selector
-
+  enlive/enlive             {:mvn/version "1.1.6"}}   ; html parser
 
  :aliases
  {; clj -M:dev

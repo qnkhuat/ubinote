@@ -4,7 +4,7 @@
             [ubinote.migration :as am]
             [ubinote.server.middleware.core :as middleware]
             [ubinote.config :as cfg]
-            [ubinote.model.page :as page]
+            [ubinote.models.page :as page]
             [compojure.route :as route]
             [compojure.core :refer [context defroutes GET]]
             [taoensso.timbre :as log]

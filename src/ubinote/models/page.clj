@@ -1,4 +1,4 @@
-(ns ubinote.model.page
+(ns ubinote.models.page
   (:require [ubinote.cmd :as cmd]
             [ubinote.util.fs :as fs]
             [ubinote.util.b64 :as b64]

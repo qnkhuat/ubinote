@@ -1,4 +1,4 @@
-(ns ubinote.model.session
+(ns ubinote.models.session
   (:require [toucan.models :as models]))
 
 (models/defmodel Session :session

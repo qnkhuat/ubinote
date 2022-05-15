@@ -1,6 +1,6 @@
 (ns ubinote.migration
   "This migration should works for both h2 and postgres"
-  (:require [ubinote.model.migration :refer [Migration]]
+  (:require [ubinote.models.migration :refer [Migration]]
             [ubinote.config :as cfg]
             [clojure.java.jdbc :as jdbc]
             [clojure.string :as string]

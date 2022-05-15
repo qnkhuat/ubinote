@@ -2,8 +2,8 @@
   (:require [compojure.core :refer [context defroutes GET POST]]
             [compojure.coercions :refer [as-int]]
             [ubinote.api.common :as api]
-            [ubinote.model.user :refer [User]]
-            [ubinote.model.common.schemas :as schemas]
+            [ubinote.models.user :refer [User]]
+            [ubinote.models.common.schemas :as schemas]
             [cemerick.friend.credentials :as creds]
             [schema.core :as s]
             [toucan.db :as db]))

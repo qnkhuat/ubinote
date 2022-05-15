@@ -1,4 +1,4 @@
-(ns ubinote.model.comment
+(ns ubinote.models.comment
   (:require [toucan.db :as db]
             [toucan.models :as models]))
 
@@ -8,7 +8,7 @@
   (hydration-keys [_] [:comment]))
 
 (defn hydrate-comments
-  "Hydrate all comments for an annotaiton"
+  "Hydrate all comments for an annotaiton."
   {:hydrate :comments}
   [{annotation-id :id :as _comment}]
-  (db/select Comment :annotation-id annotation-id))
+  (db/select Comment :annotation_id annotation-id))

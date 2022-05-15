@@ -8,7 +8,7 @@
             [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
-            [ring.middleware.json :refer [wrap-json-response wrap-json-params]]))
+            [ring.middleware.json :refer [wrap-json-response wrap-json-body]]))
 
 ;(defn wrap-json-params-normalize
 ;  "wrap-json-parms but with underscores->dashes"
@@ -27,6 +27,10 @@
   (logger/wrap-log-response handler {:log-fn (fn [{:keys [level throwable message]}]
                                               (log/log level throwable message))}))
 
+(defn wrap-json-body-kw
+  [handler]
+  (wrap-json-body handler {:keywords? true}))
+
 (defn wrap-cors-un
   [handler]
   (wrap-cors handler
@@ -43,10 +47,11 @@
    wrap-paging
    wrap-cookies
    wrap-keyword-params      ; normalizes string keys in :params to keyword keys
-   wrap-json-params         ; extracts json POST body and makes it avaliable on request
+   wrap-json-body-kw        ; parse the body of the request as map
    wrap-params              ; parses GET and POST params as :query-params/:form-params and both as :params
    wrap-api-exceptions
    wrap-json-response])     ; normalize response to json form
+
 
 (defn apply-middleware
   [handler middlewares]

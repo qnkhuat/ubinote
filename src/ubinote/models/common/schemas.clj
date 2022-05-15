@@ -1,4 +1,4 @@
-(ns ubinote.model.common.schemas
+(ns ubinote.models.common.schemas
   (:require [clojure.string :as str]
             [schema.core :as s]))
 

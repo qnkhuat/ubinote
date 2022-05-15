@@ -2,9 +2,9 @@
   (:require [compojure.core :refer [defroutes POST]]
             [cemerick.friend.credentials :as creds]
             [ubinote.api.common :as api]
-            [ubinote.model.common.schemas :as schemas]
-            [ubinote.model.session :refer [Session]]
-            [ubinote.model.user :refer [default-user-columns]]
+            [ubinote.models.common.schemas :as schemas]
+            [ubinote.models.session :refer [Session]]
+            [ubinote.models.user :refer [default-user-columns]]
             [toucan.db :as db]
             [schema.core :as s]))
 
