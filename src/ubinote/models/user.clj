@@ -10,15 +10,14 @@
   (merge user
          {:email (str/lower-case email)}))
 
-(models/defmodel User :core_user
-  )
-
+(models/defmodel User :core_user)
 
 (extend (class User)
   models/IModel
   (merge models/IModelDefaults
          {:properties     (constantly {:timestamped? true})
           :default-fields (constantly default-user-columns)
+          ;; any table that has creator_id column can hydrate user
           :hydration-keys (constantly [:creator])
           :pre-insert     pre-insert
           :types          (constantly {:coordinate :json})}))

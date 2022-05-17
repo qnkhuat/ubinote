@@ -1,19 +1,31 @@
 (ns ubinote.models.page
-  (:require [ubinote.cmd :as cmd]
+  (:require [clojure.string :as string]
+            [ubinote.cmd :as cmd]
             [ubinote.util.fs :as fs]
             [ubinote.util.b64 :as b64]
             [ubinote.api.common :as api]
             [ubinote.config :as cfg]
+            [ubinote.models.annotation :refer [Annotation]]
             [net.cgrand.enlive-html :as html]
-            [clojure.string :as string]
             [toucan.models :as models]
-            [toucan.db :as db]
-            [schema.core :as s]))
+            [toucan.db :as db]))
 
-(models/defmodel Page :page
+;; ------------------------------- Toucan helpers -------------------------------
+
+(models/defmodel Page :page)
+
+(extend (class Page)
   models/IModel
-  (properties [_] {:timestamped? true})
-  (hydration-keys [_] [:page]))
+  (merge models/IModelDefaults
+         {:properties (constantly {:timestamped? true})}))
+
+(defn with-annotations
+  "Hydrate all annotaitons for a page."
+  {:hydrate :annotations}
+  [{page_id :id :as _page}]
+  (db/select Annotation :page_id page_id))
+
+;; ------------------------------- Create page fns -------------------------------
 
 ;; root to store page
 ;; TODO: make sure it's exists, is a folder and writable

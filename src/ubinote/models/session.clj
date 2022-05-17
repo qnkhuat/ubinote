@@ -1,7 +1,9 @@
 (ns ubinote.models.session
   (:require [toucan.models :as models]))
 
-(models/defmodel Session :session
+(models/defmodel Session :session)
+
+(extend (class Session)
   models/IModel
-  (properties [_] {:created-at-timestamped? true})
-  (hydration-keys [_] [:session]))
+  (merge models/IModelDefaults
+         {:properties (constantly {:created-at-timestamped? true})}))
