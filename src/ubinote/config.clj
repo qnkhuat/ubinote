@@ -22,30 +22,28 @@
          (read-system-props)
          (read-system-env)))
 
-(def env (read-env))
 
 ;; TODO: validate config with spec
 (def default
-  {:un-db-type          "postgres" ; #{h2, postgres}
-   :un-db-name          "ubinote"
-   :un-db-host          "localhost" ; postgres
-   :un-db-port          "5432"      ; postgres
-   :un-port             "8000"
-   :un-max-session-age "20160" ; session length in minutes (14 days)
-   ;; root to store and serve archived files
-   :un-root    ".ubinote"})
+ {:un-db-type          "postgres" ; #{h2, postgres}
+  :un-db-name          "ubinote"
+  :un-db-host          "localhost" ; postgres
+  :un-db-port          "5432"      ; postgres
+  :un-port             "8000"
+  :un-max-session-age  "20160" ; session length in minutes (14 days)
+  ;; root to store and serve archived files
+  :un-root             ".ubinote"})
+
+(def env (merge default (read-env)))
 
 (defn config-str
   "Retrieve value for a single configuration key
   These values could be configured from:
-  1.  environment variables (ex: un_DB_TYPE -> :un-db-type)
-  2.  jvm options (ex: -Dun.db.type -> :un-db-type)
-  3.  hard coded `app-defaults`"
+  1. environment variables (ex: un_DB_TYPE -> :un-db-type)
+  2. jvm options (ex: -Dun.db.type -> :un-db-type)
+  3. hard coded [[defaults]]"
   [k]
-  (let [k       (keyword k)
-        env-val (k env)]
-    (or (when-not (string/blank? env-val) env-val)
-        (k default))))
+  ((keyword k) env))
 
 (defn config-kw [k]
   (some-> k

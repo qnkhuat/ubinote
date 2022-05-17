@@ -22,9 +22,11 @@ const colorToCSS = {
 
 const addHighlight = (pageId: number, selection: window.Selection, color = "red") => {
   const range = selection.getRangeAt(0);
-  const removeHighlights = highlightRange(range, 'span', {class: colorToCSS[color]});
+  // need to calculate textpos before highlight, otherwise the position will be messed up
+  // when try to highlight on re-load
   const textPos = fromRange(document.body, range);
-  console.log("new text pos", textPos);
+  const removeHighlights = highlightRange(range, 'span', {class: colorToCSS[color]});
+  // save it
   addAnnotation(pageId, {coordinate: textPos})
     .then(resp => console.log(resp))
     .catch(err => console.error("Failed to add annotaiton: ", err));

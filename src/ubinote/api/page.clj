@@ -23,9 +23,9 @@
 
 (defn- get-page
   [id _req]
-  (api/check-404 (-> (db/select-one Page :id id)
-                     (hydrate :user :annotations
-                              [:annotations :comments]))))
+  (-> (api/check-404 (db/select-one Page :id id))
+      (hydrate :user :annotations
+               [:annotations :comments])))
 
 (defn- list-pages
   [_req]

@@ -3,6 +3,7 @@
             [clojure.java.jdbc :as jdbc]
             [clojure.java.io :as io]
             [clojure.string :as string]
+            [taoensso.timbre :as log]
             [toucan.models :as models]
             [toucan.db :as db])
   (:import java.util.Properties
@@ -42,7 +43,7 @@
 ;; ------------------------------------------- DB connections -------------------------------------------
 (defn- connection-pool
   [{:keys [subprotocol subname classname] :as spec}]
-  ; https://github.com/metabase/toucan/blob/29a921750f3051dce350255cfbd33512428bc3f8/docs/connection-pools.md#creating-the-connection-pool
+  ;; https://github.com/metabase/toucan/blob/29a921750f3051dce350255cfbd33512428bc3f8/docs/connection-pools.md#creating-the-connection-pool
   {:datasource (doto (ComboPooledDataSource.)
                  (.setDriverClass                  classname)
                  (.setJdbcUrl                      (str "jdbc:" subprotocol ":" subname))
@@ -69,22 +70,22 @@
 (defn- db-details
   [db-type]
   (connection-pool
-    (case db-type
-      :h2       {:classname       "org.h2.Driver"
-                 :subprotocol     "h2:file"
-                 :subname         (.getAbsolutePath (io/file (cfg/config-str :un-db-name)))
-                 "MVCC"           "TRUE"
-                 "DB_CLOSE_DELAY" "-1"
-                 "DEFRAG_ALWAYS"  "TRUE"}
-      :postgres {:classname       "org.postgresql.Driver"
-                 :subprotocol     "postgresql"
-                 :subname         (format "//%s:%s/%s"
-                                          (cfg/config-str :un-db-host)
-                                          (cfg/config-str :un-db-port)
-                                          (cfg/config-str :un-db-name))
-                 "MVCC"           "TRUE"
-                 "DB_CLOSE_DELAY" "-1"
-                 "DEFRAG_ALWAYS"  "TRUE"})))
+   (case db-type
+     :h2       {:classname       "org.h2.Driver"
+                :subprotocol     "h2:file"
+                :subname         (.getAbsolutePath (io/file (cfg/config-str :un-db-name)))
+                "MVCC"           "TRUE"
+                "DB_CLOSE_DELAY" "-1"
+                "DEFRAG_ALWAYS"  "TRUE"}
+     :postgres {:classname       "org.postgresql.Driver"
+                :subprotocol     "postgresql"
+                :subname         (format "//%s:%s/%s"
+                                         (cfg/config-str :un-db-host)
+                                         (cfg/config-str :un-db-port)
+                                         (cfg/config-str :un-db-name))
+                "MVCC"           "TRUE"
+                "DB_CLOSE_DELAY" "-1"
+                "DEFRAG_ALWAYS"  "TRUE"})))
 
 (defn setup-db!
   []
@@ -92,5 +93,4 @@
     (models/set-root-namespace! 'ubinote.model)
     ;(db/set-default-automatically-convert-dashes-and-underscores! true)
     (db/set-default-quoting-style! (db-type quoting-style))
-    (db/set-default-db-connection!
-      (db-details db-type))))
+    (db/set-default-db-connection! (db-details db-type))))
