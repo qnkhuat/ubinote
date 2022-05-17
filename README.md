@@ -15,6 +15,6 @@ https://ubinote.com/archive/id-title => view the archive
 
 
 TODO:
-- implement basic way to call API with authentication
-- simple page to login
-- Could you display this? ⚠️
+- Adds a header for every view page
+- Login page + Authentication
+- Listing page
