@@ -8,7 +8,8 @@
             [toucan.hydrate :refer [hydrate]]))
 
 (def NewComment
-  {:annotation-id s/Int
+  {:annotation_id s/Int
+   :creator_id    s/Int
    :content       s/Str})
 
 (def ^:private validate-create-comment
@@ -17,15 +18,15 @@
 
 (defn create-comment
   [{:keys [params current-user] :as _req}]
-  (validate-create-comment params)
-  (db/insert! Comment (assoc params :creator_id (:id current-user))))
+  (let [cmt (assoc params :creator_id (:id current-user))]
+   (validate-create-comment cmt)
+   (db/insert! Comment cmt)))
 
 (defn get-comment
   [id _req]
-  (let [comment (-> (db/select-one Comment :id id)
-                    (hydrate :annotation :user))]
-    (api/check-404 comment)
-    comment))
+  (-> (db/select-one Comment :id id)
+      (hydrate :annotation :user)
+      api/check-404))
 
 (defroutes routes
   (POST "/" [] create-comment)

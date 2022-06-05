@@ -28,11 +28,12 @@ type Coordinate = {
 }
 
 interface AddAnnotationParams {
+  page_id: number;
   coordinate: Coordinate;
   color?: string;
 };
 
-const addAnnotation = (page_id: number, params: AddAnnotationParams) => api.post<TAnnotation>(`/api/page/${page_id}/annotation`, params);
+const addAnnotation = (params: AddAnnotationParams) => api.post<TAnnotation>(`/api/annotation`, params);
 
 export {
   api,

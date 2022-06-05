@@ -1,5 +1,6 @@
 (ns ubinote.models.annotation
-  (:require [toucan.models :as models]))
+  (:require [toucan.db :as db]
+            [toucan.models :as models]))
 
 (defn- pre-insert
   [annotation]

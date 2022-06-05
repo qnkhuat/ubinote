@@ -11,5 +11,8 @@ export interface TPage {
 }
 
 export interface TAnnotation {
-
+  creator_id: number;
+  page_id: number;
+  color: string;
+  coordinate: string;
 }

@@ -13,7 +13,7 @@ const PageList = (props: Props)=> {
   // - Title
   // - Paged date at
   return <div>
-    {pages.map((page, i) =>
+    {pages.map((_page, i) =>
     <div key={i}>
     </div>
     )}

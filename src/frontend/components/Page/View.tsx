@@ -1,6 +1,5 @@
 // @ts-nocheck
-
-// we don't use: iframe for this because mouseup event can't
+// we don't use iframe to show
 // return the dom inside iframe
 import { useRef, useState, useEffect } from "react";
 import { TPage, TAnnotation } from "api/types";
@@ -25,12 +24,14 @@ const addHighlight = (pageId: number, selection: window.Selection, color = "red"
   // need to calculate textpos before highlight, otherwise the position will be messed up
   // when try to highlight on re-load
   const textPos = fromRange(document.body, range);
-  const removeHighlights = highlightRange(range, 'span', {class: colorToCSS[color]});
+  const highlightElements = highlightRange(range, 'span', {class: colorToCSS[color]});
+  console.log("Elements: ", highlightElements);
   // save it
-  addAnnotation(pageId, {coordinate: textPos})
-    .then(resp => console.log(resp))
+  addAnnotation(
+    {coordinate: textPos,
+      page_id: pageId})
     .catch(err => console.error("Failed to add annotaiton: ", err));
-  return removeHighlights;
+  return highlightElements;
 }
 
 const PageView = (props: Props) => {

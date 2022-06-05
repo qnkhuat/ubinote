@@ -2,7 +2,7 @@
 const highlightRange = (function () {
   // Wrap each text node in a given DOM Range with a <mark> or other element.
   // Breaks start and/or end node if needed.
-  // Returns a function that cleans up the created highlight (not a perfect undo: split text nodes are
+  // Returns a list of highlighted elements and a function that cleans up the created highlight (not a perfect undo: split text nodes are
   // not merged again).
   //
   // Parameters:
@@ -30,7 +30,7 @@ const highlightRange = (function () {
         removeHighlight(highlightElements[highlightIdx]);
       }
     }
-    return removeHighlights;
+    return highlightElements;
   }
 
   // Return an array of the text nodes in the range. Split the start and end nodes if required.

@@ -32,25 +32,8 @@
   (-> (db/select Page)
       (hydrate :user)))
 
-(def NewAnnotation
-  {:coordinate             {:start s/Num
-                            :end   s/Num}
-   (s/optional-key :color) (s/maybe s/Str)})
-
-(def ^:private validate-create-annotation
-  (s/validator NewAnnotation))
-
-(defn- add-annotation
-  [id {:keys [body current-user-id] :as _req}]
-  (validate-create-annotation body)
-  (db/insert! Annotation
-              (assoc body
-                     :page_id id
-                     :creator_id current-user-id)))
-
 (defn- get-annotation
-  [id {:keys [params] :as _req}]
-  (validate-create-annotation params)
+  [id _req]
   (db/select Annotation :page_id id))
 
 (defroutes routes
@@ -59,6 +42,4 @@
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-page id))
            ;; Get all annotations for a page
-           (GET "/annotation" [] (partial get-annotation id))
-           ;; Create annotation for a page
-           (POST "/annotation" [] (partial add-annotation id))))
+           (GET "/annotation" [] (partial get-annotation id))))
