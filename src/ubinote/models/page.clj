@@ -5,7 +5,6 @@
             [ubinote.util.b64 :as b64]
             [ubinote.api.common :as api]
             [ubinote.config :as cfg]
-            [ubinote.models.annotation :refer [Annotation]]
             [net.cgrand.enlive-html :as html]
             [toucan.models :as models]
             [toucan.db :as db]))
@@ -18,12 +17,6 @@
   models/IModel
   (merge models/IModelDefaults
          {:properties (constantly {:timestamped? true})}))
-
-(defn with-annotations
-  "Hydrate all annotaitons for a page."
-  {:hydrate :annotations}
-  [{page_id :id :as _page}]
-  (db/select Annotation :page_id page_id))
 
 ;; ------------------------------- Create page fns -------------------------------
 

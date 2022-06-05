@@ -10,18 +10,6 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]))
 
-;(defn wrap-json-params-normalize
-;  "wrap-json-parms but with underscores->dashes"
-;  [handler]
-;  (wrap-json-params handler {:key-fn (fn [k]
-;                                       (string/replace k "_" "-"))}))
-;
-;(defn wrap-json-response-normalize
-;  "wrap-json-response but with normalize dashes->underscores"
-;  [handler]
-;  (wrap-json-response handler {:key-fn (fn [k]
-;                                         (string/replace (name k) "-" "_"))}))
-
 (defn wrap-request-logger
   [handler]
   (logger/wrap-log-response handler {:log-fn (fn [{:keys [level throwable message]}]
