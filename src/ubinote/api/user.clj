@@ -16,6 +16,7 @@
 
 (def ^:private validate-create-user
   "Schema for creating a user"
+  ;; TODO: are we logging user password out if it's invalid?
   (s/validator NewUser))
 
 (defn create-user
@@ -25,9 +26,8 @@
 
 (defn get-user
   [id _req]
-  (let [user (db/select-one User :id id)]
-    (api/check-404 user)
-    user))
+  (-> (db/select-one User :id id)
+      api/check-404))
 
 (defn list-users
   [_req]

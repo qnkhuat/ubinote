@@ -1,4 +1,9 @@
-export interface TPage {
+interface WithDate {
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface TPage extends WithDate {
   id: number;
   url: string;
   path: string;
@@ -6,13 +11,25 @@ export interface TPage {
   description: string | null;
   domain: string;
   status: string;
-  created_at: string;
-  updated_at: string;
+
 }
 
-export interface TAnnotation {
+export interface TAnnotation extends WithDate {
   creator_id: number;
   page_id: number;
   color: string;
   coordinate: string;
+}
+
+export interface TUser extends WithDate {
+  email: string;
+  first_name: string;
+  last_name: string;
+  password?: string
+}
+
+export interface TSession {
+  id: string;
+  creator_id: number;
+  created_at: string;
 }

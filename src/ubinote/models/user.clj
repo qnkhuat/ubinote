@@ -2,6 +2,8 @@
   (:require [toucan.models :as models]
             [clojure.string :as str]))
 
+(models/defmodel User :core_user)
+
 (def default-user-columns
   [:id :email :first_name :last_name :created_at :updated_at])
 
@@ -9,8 +11,6 @@
   [{:keys [email] :as user}]
   (merge user
          {:email (str/lower-case email)}))
-
-(models/defmodel User :core_user)
 
 (extend (class User)
   models/IModel

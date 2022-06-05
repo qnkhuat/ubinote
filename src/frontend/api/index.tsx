@@ -1,9 +1,27 @@
 import axios from "axios";
-import { TPage, TAnnotation } from "./types";
+import { TPage, TAnnotation, TUser, TSession } from "./types";
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
 })
+
+
+// ---------------------------- User ---------------------------- //
+interface createUserBody {
+  email: string;
+  first_name: string;
+  last_name: string;
+  password: string
+
+}
+const createUser = (body: createUserBody) => api.post<TUser>("api/user", body);
+
+// ---------------------------- Session ---------------------------- //
+interface createSessionBody {
+  email: string;
+  password: string;
+}
+const createSession = (body: createSessionBody) => api.post<TSession>("api/session", body);
 
 // ---------------------------- Page ---------------------------- //
 // return the static url for a given path
@@ -15,10 +33,10 @@ const getPage = (id: number | string) => api.get<TPage>(`/api/page/${id}`);
 const listPages = () => api.get<TPage[]>("/api/page");
 
 //
-interface AddPageBody {
+interface createPageBody {
   url: string;
 }
-const addPage = (body: AddPageBody) => api.post<TPage>("/api/page", body);
+const createPage = (body: createPageBody) => api.post<TPage>("/api/page", body);
 
 // ---------------------------- Annotation ---------------------------- //
 // result of dom torange
@@ -27,19 +45,19 @@ type Coordinate = {
   end: number;
 }
 
-interface AddAnnotationParams {
+interface createAnnotationBody {
   page_id: number;
   coordinate: Coordinate;
   color?: string;
 };
 
-const addAnnotation = (params: AddAnnotationParams) => api.post<TAnnotation>(`/api/annotation`, params);
+const createAnnotation = (body: createAnnotationBody) => api.post<TAnnotation>(`/api/annotation`, body);
 
 export {
   api,
-  addPage,
+  createPage,
   getPage,
   listPages,
   getStaticPage,
-  addAnnotation
+  createAnnotation
 }

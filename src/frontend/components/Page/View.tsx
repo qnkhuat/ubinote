@@ -3,7 +3,7 @@
 // return the dom inside iframe
 import { useRef, useState, useEffect } from "react";
 import { TPage, TAnnotation } from "api/types";
-import { api, getStaticPage, addAnnotation } from "api";
+import { api, getStaticPage, createAnnotation } from "api";
 
 import highlightRange from "lib/highlight/higlight-dom-range";
 import { fromRange, toRange } from "dom-anchor-text-position";
@@ -27,7 +27,7 @@ const addHighlight = (pageId: number, selection: window.Selection, color = "red"
   const highlightElements = highlightRange(range, 'span', {class: colorToCSS[color]});
   console.log("Elements: ", highlightElements);
   // save it
-  addAnnotation(
+  createAnnotation(
     {coordinate: textPos,
       page_id: pageId})
     .catch(err => console.error("Failed to add annotaiton: ", err));

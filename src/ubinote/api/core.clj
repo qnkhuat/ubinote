@@ -8,9 +8,9 @@
             [ubinote.server.middleware.auth :refer [+auth]]))
 
 (defroutes routes
-  (GET "/health" [] "api is fine")
-  (context "/page" [] (+auth page/routes))
-  (context "/user" [] (+auth user/routes))
+  (GET "/health" []         "Doing great!")
+  (context "/page" []       (+auth page/routes))
+  (context "/user" []       (+auth user/routes))
   (context "/annotation" [] (+auth ant/routes))
-  (context "/comment" [] (+auth cmt/routes))
-  (context "/session" [] session/routes))
+  (context "/comment" []    (+auth cmt/routes))
+  (context "/session" []    session/routes))
