@@ -16,7 +16,6 @@
 
 (def ^:private validate-create-user
   "Schema for creating a user"
-  ;; TODO: are we logging user password out if it's invalid?
   (s/validator NewUser))
 
 (defn create-user

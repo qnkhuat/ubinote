@@ -1,6 +1,5 @@
 (ns ubinote.server.middleware.exceptions
-  (:require [ubinote.api.common :refer [security-header]]
-            [taoensso.timbre :as log]))
+  (:require [taoensso.timbre :as log]))
 
 (defn- explain-one-schema-error
   [[k v]]
@@ -54,5 +53,4 @@
                                                           {:message (.getMessage e)}
                                                           other-info)})]
          {:status  (or status 500)
-          :headers security-header
           :body    body})))))

@@ -5,11 +5,12 @@
             [ubinote.models.common.schemas :as schemas]
             [ubinote.models.session :refer [Session]]
             [ubinote.models.user :refer [default-user-columns]]
+            [ubinote.server.middleware.session :as mw.session]
             [toucan.db :as db]
             [schema.core :as s]))
 
 (def NewSession
-  {:email schemas/EmailAddress
+  {:email    schemas/EmailAddress
    :password schemas/Password})
 
 (defn verify-user
@@ -24,11 +25,13 @@
   (s/validator NewSession))
 
 (defn create-session
-  [{:keys [body] :as _req}]
+  [{:keys [body] :as req}]
   (validate-create-session body)
-  (if-let [user (verify-user (:email body) (:password body))]
-    (select-keys (db/insert! Session {:creator_id (:id user)}) [:id])
-    (api/check-401 false)))
+  (let [user    (api/check-401 (verify-user (:email body) (:password body)))
+        session (select-keys (db/insert! Session {:creator_id (:id user)}) [:id])]
+    (mw.session/set-session-cookie req {:body   session
+                                        :status 200}
+                                   session)))
 
 (defroutes routes
   (POST "/" [] create-session))
