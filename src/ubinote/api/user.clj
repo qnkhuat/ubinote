@@ -20,9 +20,10 @@
   (s/validator NewUser))
 
 (defn create-user
-  [{:keys [params] :as _req}]
-  (validate-create-user params)
-  (db/insert! User (assoc params :password (creds/hash-bcrypt (:password params)))))
+  [{:keys [body] :as _req}]
+  (validate-create-user body)
+  ;; TODO: catch exception when create duplicate users
+  (db/insert! User (assoc body :password (creds/hash-bcrypt (:password body)))))
 
 (defn get-user
   [id _req]

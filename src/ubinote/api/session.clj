@@ -9,12 +9,12 @@
             [schema.core :as s]))
 
 (def NewSession
-  {:username schemas/Username
-   s/Keyword s/Str})
+  {:email schemas/EmailAddress
+   :password schemas/Password})
 
 (defn verify-user
-  [username password]
-  (let [user (db/select-one ['User :id :username :first_name :last_name :password :created_at :updated_at] :username username)]
+  [email password]
+  (let [user (db/select-one ['User :id :email :password] :email email)]
     (api/check-404 user {:message "User not found"})
     (api/check-401 (creds/bcrypt-verify password (:password user)))
     (select-keys user default-user-columns)))
@@ -24,10 +24,10 @@
   (s/validator NewSession))
 
 (defn create-session
-  [{:keys [params] :as _req}]
-  (validate-create-session params)
-  (if-let [user (verify-user (:username params) (:password params))]
-    (select-keys (db/insert! Session {:user-id user}) [:id])
+  [{:keys [body] :as _req}]
+  (validate-create-session body)
+  (if-let [user (verify-user (:email body) (:password body))]
+    (select-keys (db/insert! Session {:creator_id (:id user)}) [:id])
     (api/check-401 false)))
 
 (defroutes routes
