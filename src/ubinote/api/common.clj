@@ -7,7 +7,7 @@
    (check-400 x nil))
   ([x errors]
    (when-not x
-     (throw (ex-info "Invalid request." (merge {:status 400}
+     (throw (ex-info "Invalid request." (merge {:status-code 400}
                                                (when errors
                                                  {:errors errors})))))))
 
@@ -17,9 +17,9 @@
    (check-401 x nil))
   ([x errors]
    (when-not x
-     (throw (ex-info "Unauthorized." (merge {:status 401}
-                                         (when errors
-                                           {:errors errors})))))
+     (throw (ex-info "Unauthorized." (merge {:status-code 401}
+                                            (when errors
+                                              {:errors errors})))))
    x))
 
 (defn check-404
@@ -28,7 +28,7 @@
    (check-404 x nil))
   ([x errors]
    (when-not x
-     (throw (ex-info "Not found." (merge {:status 404}
+     (throw (ex-info "Not found." (merge {:status-code 404}
                                          (when errors
                                            {:errors errors})))))
    x))
