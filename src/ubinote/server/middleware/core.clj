@@ -4,8 +4,7 @@
             [ubinote.server.middleware.exceptions :refer [wrap-api-exceptions]]
             [ubinote.server.middleware.session :refer [wrap-session-id wrap-current-user-info]]
             [ubinote.server.middleware.security :refer [add-security-header]]
-            [taoensso.timbre :as log]
-            [ring.logger :as logger]
+            [ubinote.server.middleware.log :refer [wrap-request-logger]]
             [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
@@ -17,9 +16,9 @@
 (defn- wrap-resp-if-needed
   [resp]
   (if (and (:status resp) (contains? resp :body))
-      resp
-      {:status 200
-       :body   resp}))
+    resp
+    {:status 200
+     :body   resp}))
 
 (extend-protocol Renderable
   nil
@@ -39,11 +38,6 @@
     ;; realize the seq and return it
     (wrap-resp-if-needed (doall x))))
 
-(defn wrap-request-logger
-  [handler]
-  (logger/wrap-log-response handler {:log-fn (fn [{:keys [level throwable message]}]
-                                              (log/log level throwable message))}))
-
 (defn wrap-json-body-kw
   [handler]
   (wrap-json-body handler {:keywords? true}))
@@ -58,7 +52,6 @@
   ;; middleware will be applied from bottom->top
   ;; in the other words, the middleware at bottom will be executed last
   [wrap-cors-un             ;; TODO: this is temporarly, in production we don't need to enable CORS because our FE and BE are served from the the port
-   wrap-request-logger
    wrap-current-user-info
    wrap-session-id          ;; find the request session and assoc it to request with :ubinote-session-id key
    wrap-paging
@@ -68,7 +61,8 @@
    wrap-params              ;; parses GET and POST params as :query-params/:form-params and both as :params
    wrap-api-exceptions
    add-security-header      ;; add a set of security headers for all responses
-   wrap-json-response])     ;; normalize response to json
+   wrap-json-response       ;; normalize response to json
+   wrap-request-logger])
 
 (defn apply-middleware
   [handler middlewares]

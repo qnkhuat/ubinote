@@ -55,9 +55,16 @@ const createAnnotation = (body: createAnnotationBody) => api.post<TAnnotation>(`
 
 export {
   api,
+  // page
   createPage,
   getPage,
   listPages,
   getStaticPage,
-  createAnnotation
+
+  // annotation
+  createAnnotation,
+
+
+  // session
+  createSession,
 }

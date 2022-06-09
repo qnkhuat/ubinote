@@ -27,7 +27,6 @@
       (handler request)
       (catch Throwable e
         ;; TODO: mask the value for schemas error, because it mays contain user's password
-        (log/error e)
         (let [{:keys [status-code errors], :as info} (ex-data e)
               body                                   (cond
                                                        ;; If status code was specified but other data wasn't, it's something like a
@@ -37,7 +36,7 @@
 
                                                        ;; sometimes we throw like {:status-code 400 :errors "Failed to fetch"}
                                                        (and status-code errors)
-                                                       {:errors errors}
+                                                       errors
 
                                                        (= :schema.core/error (:type info))
                                                        {:errors (explain-schema-error (:error info))}
@@ -45,9 +44,11 @@
                                                        ;; Otherwise return the full `Throwable->map` representation with Stacktrace
                                                        ;; and ex-data
                                                        :else
-                                                       {:errors (merge
-                                                                  (Throwable->map e)
-                                                                  {:message (.getMessage e)}
-                                                                  info)})]
+                                                       (do
+                                                         (log/error e)
+                                                         {:errors (merge
+                                                                    (Throwable->map e)
+                                                                    {:message (.getMessage e)}
+                                                                    info)}))]
           {:status  (or status-code 500)
            :body    body})))))

@@ -2,7 +2,7 @@
 
 ;; ---------------------------------------- check fns ----------------------------------------
 (defn check-400
-  "Return Invalid Request if test failed"
+  "Return Invalid Request if test failed."
   ([x]
    (check-400 x nil))
   ([x errors]
@@ -12,7 +12,7 @@
                                                  {:errors errors})))))))
 
 (defn check-401
-  "Return Unauthorized if test failed"
+  "Return Unauthorized if test failed."
   ([x]
    (check-401 x nil))
   ([x errors]
@@ -23,7 +23,7 @@
    x))
 
 (defn check-404
-  "Return Not found if test failed"
+  "Return Not found if test failed."
   ([x]
    (check-404 x nil))
   ([x errors]
