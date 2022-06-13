@@ -52,10 +52,10 @@
   ;; middleware will be applied from bottom->top
   ;; in the other words, the middleware at bottom will be executed last
   [wrap-cors-un             ;; TODO: this is temporarly, in production we don't need to enable CORS because our FE and BE are served from the the port
+   wrap-cookies             ;; parses the cookies and assoc it to the request with :cookies key
    wrap-current-user-info
    wrap-session-id          ;; find the request session and assoc it to request with :ubinote-session-id key
    wrap-paging
-   wrap-cookies             ;; parses the cookies and assocs it to the request with :cookies key
    wrap-keyword-params      ;; normalizes string keys in :params to keyword keys
    wrap-json-body-kw        ;; parse the body of the request as map
    wrap-params              ;; parses GET and POST params as :query-params/:form-params and both as :params

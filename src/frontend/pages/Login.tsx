@@ -1,4 +1,6 @@
 import { useState, MouseEvent} from "react";
+import { Link } from "react-router-dom";
+
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
@@ -16,10 +18,20 @@ const Login = () => {
   return (
     <div>
       <form>
-        <TextField id="email" label="Email" value={email} onChange={e => setEmail(e.target.value)}/>
-        <TextField id="password" label="Password" value={password} onChange={e => setPassword(e.target.value)}/>
+        <TextField
+          id="email"
+          label="Email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}/>
+        <TextField
+          id="password"
+          label="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          type="password"/>
         <Button id="submit" onClick={handleLogin}>Login</Button>
       </form>
+      <Link to="/">GO</Link>
     </div>
   )
 }

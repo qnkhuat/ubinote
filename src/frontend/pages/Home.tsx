@@ -20,7 +20,8 @@ const Home = () => {
       .catch(e => console.error("Failed to get Pages: ", e));
   }, [])
 
-  return (<TableContainer component={Paper}>
+  return (
+  <TableContainer component={Paper}>
     <PageList pages={pages} />
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>

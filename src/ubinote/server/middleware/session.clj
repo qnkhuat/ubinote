@@ -62,15 +62,16 @@
                            {:secure true}))]
     (response/set-cookie response ubinote-session-cookie (str (:id session)) cookie-options)))
 
-;; TODO optimize this using raw sql because we run this on every request
 (defn- current-user-info-for-session
   "Return User ID and superuser status for Session with `session-id` if it is valid and not expired."
   [session-id]
   (when session-id
-    (db/select-one User
-                   {:where [:= :id (db/select-one-field :creator_id Session
-                                                        {:where [:= :id [:cast session-id :uuid]]
-                                                         #_[:< :created_at]})]}))) ;; TODO: need to add expired time
+    (db/query {:select [:*]
+               :from   [User]
+               :where  [:= :id {:select [:creator_id]
+                                :from   [Session]
+                                ;; TODO: add expired time here
+                                :where  [:= :id [:cast session-id :uuid]]}]})))
 
 (defn wrap-current-user-info
   "Add `:current-user-id` and `:current-user` to the request if a valid session token was passed."
