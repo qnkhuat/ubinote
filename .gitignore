@@ -17,7 +17,6 @@ pom.xml.asc
 
 # build
 resources/frontend/ # during development, app will be built into this folder
-!resources/frontend/index.html # this is the template file, so we keep it
 
 # frontend
 ## dependencies
