@@ -16,7 +16,7 @@ pom.xml.asc
 .cpcache/
 
 # build
-resources/frontend/ # during development, app will be built into this folder
+/resources/frontend # during development, app will be built into this folder
 
 # frontend
 ## dependencies
