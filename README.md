@@ -17,7 +17,7 @@ https://ubinote.com/archive/id-title => view the archive
 
 
 TODO:
-- Learn redux and do it the rigth way alright
+- view page is broken
 - make authorization works for both FE and BE
 - Make adding comment works
 - polishing the highlight classes
