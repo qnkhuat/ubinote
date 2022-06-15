@@ -11,15 +11,17 @@
 
 (s/def NewPage
   {:url                   schemas/URL
+   :creator_id            s/Int
    (s/optional-key :tags) [s/Str]})
 
 (def validate-add-page
   (s/validator NewPage))
 
 (defn- add-page
-  [{:keys [params current-user] :as _req}]
-  (validate-add-page params)
-  (page/create-page (assoc params :creator_id (:id current-user))))
+  [{:keys [body current-user] :as _req}]
+  (-> (assoc body :creator_id (:id current-user))
+      validate-add-page
+      page/create-page))
 
 (defn- get-page
   [id _req]

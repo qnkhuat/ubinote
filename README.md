@@ -15,9 +15,7 @@ https://ubinote.com => list archives
 https://ubinote.com/a/id-title => view the archive
 https://ubinote.com/archive/id-title => view the archive
 
-
 TODO:
-- make authorization works for both FE and BE
 - Make adding comment works
 - polishing the highlight classes
 - Adds a header for every view page
