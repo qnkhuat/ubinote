@@ -45,9 +45,9 @@
   ;; middleware will be applied from bottom->top
   ;; in the other words, the middleware at bottom will be executed last
   [wrap-request-logger
-   wrap-cookies             ;; parses the cookies and assoc it to the request with :cookies key
    wrap-current-user-info
    wrap-session-id          ;; find the request session and assoc it to request with :ubinote-session-id key
+   wrap-cookies             ;; parses the cookies and assoc it to the request with :cookies key
    wrap-paging
    wrap-keyword-params      ;; normalizes string keys in :params to keyword keys
    wrap-json-body-kw        ;; parse the body of the request as map
