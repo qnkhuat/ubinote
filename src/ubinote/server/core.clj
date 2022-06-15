@@ -4,21 +4,23 @@
             [ubinote.migration :as am]
             [ubinote.config :as cfg]
             [ubinote.models.page :as page]
+            [ubinote.server.middleware.core :as middleware]
             [compojure.route :as route]
             [compojure.core :refer [context defroutes GET]]
             [ring.util.response :refer [resource-response]]
             [taoensso.timbre :as log]
             [ring.adapter.jetty :refer [run-jetty]]))
 
-
-(defroutes app
-  (GET "/" [_req] (resource-response "frontend/index.html")) ;; inside the resources folder
+(defroutes routes
   ;; serving bundle.js this seems hacky?
   (GET "/static/js/bundle.js" [_req] (resource-response "frontend/static/js/bundle.js")) ;; inside the resources folder
   (GET "/health" [_req] "fine 😁")
   (context "/api" [] api/routes)
   (route/files "/static" {:root page/root})
-  (route/not-found "<h1>Page not found</h1>"))
+  ;; let's React handle it from here
+  (GET "*" [_req] (resource-response "frontend/index.html"))) ;; inside the resources folder
+
+(def app (middleware/apply-middleware routes middleware/middlewares))
 
 (defn start!
   [app]

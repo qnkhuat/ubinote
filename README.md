@@ -17,7 +17,6 @@ https://ubinote.com/archive/id-title => view the archive
 
 
 TODO:
-- view page is broken
 - make authorization works for both FE and BE
 - Make adding comment works
 - polishing the highlight classes

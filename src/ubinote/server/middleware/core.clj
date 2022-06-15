@@ -5,7 +5,6 @@
             [ubinote.server.middleware.session :refer [wrap-session-id wrap-current-user-info]]
             [ubinote.server.middleware.security :refer [add-security-header]]
             [ubinote.server.middleware.log :refer [wrap-request-logger]]
-            [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
@@ -42,16 +41,10 @@
   [handler]
   (wrap-json-body handler {:keywords? true}))
 
-(defn wrap-cors-un
-  [handler]
-  (wrap-cors handler
-             :access-control-allow-origin #"http://localhost:8888/*"
-             :access-control-allow-methods [:get :put :post :delete]))
-
 (def middlewares
   ;; middleware will be applied from bottom->top
   ;; in the other words, the middleware at bottom will be executed last
-  [wrap-cors-un             ;; TODO: this is temporarly, in production we don't need to enable CORS because our FE and BE are served from the the port
+  [wrap-request-logger
    wrap-cookies             ;; parses the cookies and assoc it to the request with :cookies key
    wrap-current-user-info
    wrap-session-id          ;; find the request session and assoc it to request with :ubinote-session-id key
@@ -61,8 +54,7 @@
    wrap-params              ;; parses GET and POST params as :query-params/:form-params and both as :params
    wrap-api-exceptions
    add-security-header      ;; add a set of security headers for all responses
-   wrap-json-response       ;; normalize response to json
-   wrap-request-logger])
+   wrap-json-response])      ;; normalize response to json
 
 (defn apply-middleware
   [handler middlewares]

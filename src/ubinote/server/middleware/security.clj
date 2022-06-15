@@ -5,9 +5,7 @@
    "X-XSS-Protection" "1; mode=block",
    "Strict-Transport-Security" "max-age=31536000",
    "X-Permitted-Cross-Domain-Policies" "none",
-   "Cache-Control" "max-age=0, no-cache, must-revalidate, proxy-revalidate",
-   "X-Content-Type-Options" "nosniff"
-   "Access-Control-Allow-Origin" "*"})
+   "Cache-Control" "max-age=0, no-cache, must-revalidate, proxy-revalidate",})
 
 (defn add-security-header
   [handler]
