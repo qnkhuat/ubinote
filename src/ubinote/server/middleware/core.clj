@@ -44,7 +44,8 @@
 (def middlewares
   ;; middleware will be applied from bottom->top
   ;; in the other words, the middleware at bottom will be executed last
-  [wrap-request-logger
+  [wrap-api-exceptions
+   wrap-request-logger
    wrap-current-user-info
    wrap-session-id          ;; find the request session and assoc it to request with :ubinote-session-id key
    wrap-cookies             ;; parses the cookies and assoc it to the request with :cookies key
@@ -52,7 +53,6 @@
    wrap-keyword-params      ;; normalizes string keys in :params to keyword keys
    wrap-json-body-kw        ;; parse the body of the request as map
    wrap-params              ;; parses GET and POST params as :query-params/:form-params and both as :params
-   wrap-api-exceptions
    add-security-header      ;; add a set of security headers for all responses
    wrap-json-response])      ;; normalize response to json
 

@@ -17,8 +17,8 @@
   (s/validator NewComment))
 
 (defn create-comment
-  [{:keys [params current-user] :as _req}]
-  (let [cmt (assoc params :creator_id (:id current-user))]
+  [{:keys [body current-user-id] :as _req}]
+  (let [cmt (assoc body :creator_id current-user-id)]
    (validate-create-comment cmt)
    (db/insert! Comment cmt)))
 

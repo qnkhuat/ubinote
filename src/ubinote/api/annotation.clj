@@ -24,10 +24,10 @@
   (s/validator NewAnnotation))
 
 (defn create
-  [{:keys [body current-user] :as _req}]
-  (let [annotation (assoc body :creator_id (:id current-user))]
-    (validate-create-annotation annotation)
-    (db/insert! Annotation annotation)))
+  [{:keys [body current-user-id] :as _req}]
+  (->> (assoc body :creator_id current-user-id)
+       validate-create-annotation
+       (db/insert! Annotation)))
 
 (defn get-annotation
   [id _req]

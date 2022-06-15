@@ -66,12 +66,12 @@
   "Return User ID and superuser status for Session with `session-id` if it is valid and not expired."
   [session-id]
   (when session-id
-    (db/query {:select [:*]
-               :from   [User]
-               :where  [:= :id {:select [:creator_id]
-                                :from   [Session]
-                                ;; TODO: add expired time here
-                                :where  [:= :id [:cast session-id :uuid]]}]})))
+    (first (db/query {:select [:*]
+                       :from   [User]
+                       :where  [:= :id {:select [:creator_id]
+                                        :from   [Session]
+                                        ;; TODO: add expired time here
+                                        :where  [:= :id [:cast session-id :uuid]]}]}))))
 
 (defn wrap-current-user-info
   "Add `:current-user-id` and `:current-user` to the request if a valid session token was passed."

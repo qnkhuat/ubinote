@@ -49,6 +49,10 @@
                                                          {:errors (merge
                                                                     (Throwable->map e)
                                                                     {:message (.getMessage e)}
-                                                                    info)}))]
-          {:status  (or status-code 500)
-           :body    body})))))
+                                                                    info)}))
+              status-code (or status-code
+                              (when (= :schema.core/error (:type info))
+                                400)
+                              500)]
+          {:status status-code
+           :body   body})))))
