@@ -67,11 +67,11 @@
   [session-id]
   (when session-id
     (first (db/query {:select [:*]
-                       :from   [User]
-                       :where  [:= :id {:select [:creator_id]
-                                        :from   [Session]
-                                        ;; TODO: add expired time here
-                                        :where  [:= :id [:cast session-id :uuid]]}]}))))
+                       :from  [User]
+                       :where [:= :id {:select [:creator_id]
+                                       :from   [Session]
+                                       ;; TODO: add expired time here
+                                       :where  [:= :id session-id]}]}))))
 
 (defn wrap-current-user-info
   "Add `:current-user-id` and `:current-user` to the request if a valid session token was passed."

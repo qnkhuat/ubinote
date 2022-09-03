@@ -54,7 +54,7 @@
    wrap-json-body-kw        ;; parse the body of the request as map
    wrap-params              ;; parses GET and POST params as :query-params/:form-params and both as :params
    add-security-header      ;; add a set of security headers for all responses
-   wrap-json-response])      ;; normalize response to json
+   wrap-json-response])     ;; normalize response to json
 
 (defn apply-middleware
   [handler middlewares]

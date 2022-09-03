@@ -22,7 +22,7 @@
   [{:keys [body] :as _req}]
   (validate-create-user body)
   ;; TODO: catch exception when create duplicate users
-  (db/insert! User (assoc body :password (creds/hash-bcrypt (:password body)))))
+  (db/insert! User body))
 
 (defn get-user
   [id _req]

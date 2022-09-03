@@ -12,7 +12,7 @@
   [errors]
   (try
     (into {} (map explain-one-schema-error errors))
-    (catch clojure.lang.ExceptionInfo _
+    (catch Exception _
       ;; Catch-all for all kinds of other errors we don't currently handle (e.g. not an object)
       ;; This happens when we hit ^:always-validate deeper in the code triggering a schema error
       ;; rather than when we explicitly do schema validation at API input layer.
@@ -25,7 +25,7 @@
   (fn [request]
     (try
       (handler request)
-      (catch Throwable e
+      (catch Exception e
         ;; TODO: mask the value for schemas error, because it mays contain user's password
         (let [{:keys [status-code errors], :as info} (ex-data e)
               body                                   (cond
