@@ -21,3 +21,7 @@ TODO:
 - Adds a header for every view page
 - Login page + Authentication
 - Listing page
+
+### Install
+
+`npm install -g "gildas-lormeau/single-file-cli"`

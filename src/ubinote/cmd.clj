@@ -33,12 +33,14 @@
   "download an url as a single fs with name is the page {title}-{time-locale}.html"
   ([url]
    (single-file url nil))
+
   ([url out-path]
    {:pre [(fs/absolute? out-path)]}
    ;; TODO maybe call an OPTIONs to the endpoint to check if it's reachable
    (let [chrome-bin      (find-chrome-binary)
          single-file-bin (which "single-file")
          ;; https://github.com/gildas-lormeau/SingleFile/tree/master/cli
+         ;; to install npm install -g "gildas-lormeau/single-file-cli"
          args (filter some? [single-file-bin (format "--browser-executable-path=%s" chrome-bin)
                              (format "--filename-template={page-title}-{time-locale}.html")
                              url out-path])

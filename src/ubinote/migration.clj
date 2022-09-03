@@ -14,9 +14,8 @@
 (defn- create-migrations-table-if-needed! []
   (jdbc/execute! (db/connection)
                  ["CREATE TABLE IF NOT EXISTS migration (
-                  name VARCHAR PRIMARY KEY NOT NULL,
-                  created_at TIMESTAMP NOT NULL DEFAULT now(),
-                  updated_at TIMESTAMP NOT NULL DEFAULT now());"]))
+                   name VARCHAR PRIMARY KEY NOT NULL,
+                   created_at TIMESTAMP NOT NULL DEFAULT now());"]))
 
 (defn- previous-migrations []
   (set (db/select-field :name Migration)))
@@ -56,25 +55,15 @@
 (defn- create-index [table field]
   (format "CREATE INDEX idx_%s_%s ON %s (%s);" table field table field))
 
-(when postgres?
-  (defmigration install-citext
-    "CREATE EXTENSION IF NOT EXISTS citext;"))
-
-(when postgres?
-  (defmigration install-uuid-ossp
-    "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"))
-
 (defn- postgres?->h2
-  "If protgres db, leave it as it, otherwise convert to h2"
+  "If protgres db, leave it as it, otherwise convert to h2."
   [query]
   (if postgres?
     query
     (case (string/upper-case query)
       "TEXT"   "CLOB"
-      "CITEXT" "VARCHAR_IGNORECASE(255)"
-      "UUID_GENERATE_V4()" "RANDOM_UUID()"
       ;; intentionally have a space here
-      "[]"     " ARRAY")))
+      "[]"     "ARRAY")))
 
 
 ;; --------------------------- Migrations ---------------------------
@@ -82,10 +71,10 @@
   ;; we user core_user instead user because user is a preserved table for most dbs
   (str "CREATE TABLE core_user (
        id SERIAL PRIMARY KEY NOT NULL,
-       email " (postgres?->h2 "CITEXT") " NOT NULL UNIQUE,"
-       "first_name VARCHAR(255) NOT NULL,
-       last_name VARCHAR(255) NOT NULL,
-       password VARCHAR(255) NOT NULL,
+       email " (postgres?->h2 "TEXT") " NOT NULL UNIQUE,"
+       "first_name VARCHAR(254) NOT NULL,
+       last_name VARCHAR(254) NOT NULL,
+       password VARCHAR(254) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now()
        );"
@@ -95,11 +84,11 @@
   (str "CREATE TABLE page (
        id SERIAL PRIMARY KEY NOT NULL,
        creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
-       url VARCHAR(255) NOT NULL,
-       tags VARCHAR(32)" (postgres?->h2 "[]") ","
-       "domain VARCHAR(255) NOT NULL,
-       path VARCHAR(255) NOT NULL,
-       title VARCHAR(255),
+       url VARCHAR(254) NOT NULL,
+       tags VARCHAR(32),
+       domain VARCHAR(254) NOT NULL,
+       path VARCHAR(254) NOT NULL,
+       title VARCHAR(254),
        description " (postgres?->h2 "TEXT") ","
        "status VARCHAR(16) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
@@ -114,7 +103,7 @@
        creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        page_id INTEGER NOT NULL REFERENCES page (id) ON DELETE CASCADE,
        color VARCHAR(32) NOT NULL,
-       coordinate VARCHAR(255) NOT NULL,
+       coordinate VARCHAR(254) NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now());"
        (create-index "annotation" "creator_id")
@@ -134,7 +123,7 @@
 
 (defmigration create-session-table
   (str "CREATE TABLE session (
-       id UUID DEFAULT "(postgres?->h2 "uuid_generate_v4()")" PRIMARY KEY NOT NULL,
+       id VARCHAR(254) PRIMARY KEY NOT NULL,
        creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        created_at TIMESTAMP NOT NULL DEFAULT now());"
        (create-index "session" "id")))
