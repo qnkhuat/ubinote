@@ -12,7 +12,11 @@
 (def postgres? (= :postgres (cfg/config-kw :un-db-type)))
 
 (defn- create-migrations-table-if-needed! []
-  (jdbc/execute! (db/connection) ["CREATE TABLE IF NOT EXISTS migration (name VARCHAR PRIMARY KEY NOT NULL);"]))
+  (jdbc/execute! (db/connection)
+                 ["CREATE TABLE IF NOT EXISTS migration (
+                  name VARCHAR PRIMARY KEY NOT NULL,
+                  created_at TIMESTAMP NOT NULL DEFAULT now(),
+                  updated_at TIMESTAMP NOT NULL DEFAULT now());"]))
 
 (defn- previous-migrations []
   (set (db/select-field :name Migration)))
