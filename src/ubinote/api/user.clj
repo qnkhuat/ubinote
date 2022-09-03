@@ -4,7 +4,6 @@
             [ubinote.api.common :as api]
             [ubinote.models.user :refer [User]]
             [ubinote.models.common.schemas :as schemas]
-            [cemerick.friend.credentials :as creds]
             [schema.core :as s]
             [toucan.db :as db]))
 
