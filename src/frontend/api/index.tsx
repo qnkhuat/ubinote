@@ -3,6 +3,10 @@ import { TPage, TAnnotation, TUser, TSession } from "./types";
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
+  // this should be in dev mode only
+  // we do this because we want to use the hot-loading endpoint for dev
+  // instead of visiting the actual host
+  withCredentials: true,
 })
 
 

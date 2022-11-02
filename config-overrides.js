@@ -1,3 +1,4 @@
+// react-app-wired  override
 const path = require('path');
 
 module.exports = {

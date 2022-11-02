@@ -9,7 +9,7 @@
 
 (def migrations (atom []))
 
-(def postgres? (= :postgres (cfg/config-kw :un-db-type)))
+(def postgres? (= :postgres (cfg/config-kw :db-type)))
 
 (defn- create-migrations-table-if-needed! []
   (jdbc/execute! (db/connection)

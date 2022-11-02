@@ -34,9 +34,9 @@
 
 (defn start!
   [app]
-  (log/info "Starting server at localhost:" (cfg/config-int :un-port))
+  (log/info "Starting server at localhost:" (cfg/config-int :port))
   (adb/setup-db!)
   (am/migrate!)
   (run-jetty app
-             {:port  (cfg/config-int :un-port)
+             {:port  (cfg/config-int :port)
               :join? false}))

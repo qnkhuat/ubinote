@@ -72,23 +72,23 @@
    (case db-type
      :h2       {:classname       "org.h2.Driver"
                 :subprotocol     "h2:file"
-                :subname         (.getAbsolutePath (io/file (cfg/config-str :un-db-name)))
+                :subname         (.getAbsolutePath (io/file (cfg/config-str :db-name)))
                 "MVCC"           "TRUE"
                 "DB_CLOSE_DELAY" "-1"
                 "DEFRAG_ALWAYS"  "TRUE"}
      :postgres {:classname       "org.postgresql.Driver"
                 :subprotocol     "postgresql"
                 :subname         (format "//%s:%s/%s"
-                                         (cfg/config-str :un-db-host)
-                                         (cfg/config-str :un-db-port)
-                                         (cfg/config-str :un-db-name))
+                                         (cfg/config-str :db-host)
+                                         (cfg/config-str :db-port)
+                                         (cfg/config-str :db-name))
                 "MVCC"           "TRUE"
                 "DB_CLOSE_DELAY" "-1"
                 "DEFRAG_ALWAYS"  "TRUE"})))
 
 (defn setup-db!
   []
-  (let [db-type (cfg/config-kw :un-db-type)]
+  (let [db-type (cfg/config-kw :db-type)]
     (models/set-root-namespace! 'ubinote.model)
     (db/set-default-quoting-style! (db-type quoting-style))
     (db/set-default-db-connection! (db-details db-type))))

@@ -1,18 +1,20 @@
 (ns ubinote.server.middleware.core
   (:require [compojure.response :refer [Renderable]]
+            [ubinote.config :as cfg]
             [ubinote.server.middleware.paging :refer [wrap-paging]]
             [ubinote.server.middleware.exceptions :refer [wrap-api-exceptions]]
             [ubinote.server.middleware.session :refer [wrap-session-id wrap-current-user-info]]
             [ubinote.server.middleware.security :refer [add-security-header]]
             [ubinote.server.middleware.log :refer [wrap-request-logger]]
             [ring.middleware.cookies :refer [wrap-cookies]]
+            [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]))
 
-;; Enable endpoint to be able to just return an object or nil
-;; it'll wrap the response in a proper ring's response
 (defn- wrap-resp-if-needed
+  " Enable endpoint to be able to just return an object or nil
+  it'll wrap the response in a proper ring's response"
   [resp]
   (if (and (:status resp) (contains? resp :body))
     resp
@@ -37,14 +39,26 @@
     ;; realize the seq and return it
     (wrap-resp-if-needed (doall x))))
 
-(defn wrap-json-body-kw
+(defn- wrap-json-body-kw
   [handler]
   (wrap-json-body handler {:keywords? true}))
+
+(defn- ubinote-wrap-cors
+  [handler]
+  ;; this is for dev mode only and it allows We make call from hot-reloading
+  ;; host on FE
+  (if (= :dev cfg/run-mode)
+    (wrap-cors handler
+               :access-control-allow-credentials "true"
+               :access-control-allow-origin [#"http://localhost:8888"]
+               :access-control-allow-methods [:options :get :put :post :delete])
+    handler))
 
 (def middlewares
   ;; middleware will be applied from bottom->top
   ;; in the other words, the middleware at bottom will be executed last
-  [wrap-api-exceptions
+  [ubinote-wrap-cors
+   wrap-api-exceptions
    wrap-request-logger
    wrap-current-user-info
    wrap-session-id          ;; find the request session and assoc it to request with :ubinote-session-id key

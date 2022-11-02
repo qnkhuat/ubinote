@@ -25,7 +25,8 @@
 
 ;; TODO: validate config with spec
 (def default
- {:un-db-type          "postgres" ; #{h2, postgres}
+ {:un-run-mode         "prod"
+  :un-db-type          "postgres" ; #{h2, postgres}
   :un-db-name          "ubinote"
   :un-db-host          "localhost" ; postgres
   :un-db-port          "5432"      ; postgres
@@ -43,19 +44,33 @@
   2. jvm options (ex: -Dun.db.type -> :un-db-type)
   3. hard coded [[defaults]]"
   [k]
-  ((keyword k) env))
+  ((keyword (format "un-%s" (name k))) env))
 
-(defn config-kw [k]
+(defn config-kw
+  "Retrieve a config and returns the value as a keyword.
+  (config-kw :run-mode)
+  ;; => :prod"
+  [k]
   (some-> k
           config-str
           keyword))
 
-(defn config-int [k]
+(defn config-int
+  "Retrieve a config and returns the value as a integer.
+  (config-kw :db-port)
+  ;; => 5432"
+  [k]
   (some-> k
           config-str
           Integer/parseInt))
 
-(defn config-bool [k]
+(defn config-bool
+ "Retrieve a config and returns the value as a boolean."
+  [k]
   (some-> k
           config-str
           Boolean/parseBoolean))
+
+;; ------------------------------- Default config ----------------------------- ;;
+(def run-mode
+  (config-kw :run-mode))

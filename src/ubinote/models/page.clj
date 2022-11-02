@@ -22,7 +22,7 @@
 
 ;; root to store page
 ;; TODO: make sure it's exists, is a folder and writable
-(def root (fs/absolute (cfg/config-str :un-root)))
+(def root (fs/absolute (cfg/config-str :root)))
 
 ;; https://stackoverflow.com/a/25703406
 (def url-regex #"^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)")

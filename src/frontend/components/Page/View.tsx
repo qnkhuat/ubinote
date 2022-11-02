@@ -2,8 +2,10 @@
 // we don't use iframe to show
 // return the dom inside iframe
 import { useRef, useState, useEffect } from "react";
-import { TPage, TAnnotation } from "api/types";
 import { api, getStaticPage, createAnnotation } from "api";
+import { TPage, TAnnotation } from "api/types";
+
+import Tooltip from "components/Page/Tooltip";
 
 import highlightRange from "lib/highlight/higlight-dom-range";
 import { fromRange, toRange } from "dom-anchor-text-position";
@@ -24,9 +26,7 @@ const addHighlight = (pageId: number, selection: window.Selection, color = "red"
   // need to calculate textpos before highlight, otherwise the position will be messed up
   // when try to highlight on re-load
   const textPos = fromRange(document.body, range);
-  console.log("range:", range);
-  console.log("textpos:", textPos);
-  console.log("bounding: ", range.getBoundingClientRect());
+  console.log("TEXTPOS:", textPos);
   // from this bounding => display a dom at the middle end
   //const highlightElements = highlightRange(range, 'span', {class: colorToCSS[color]});
   // save it
@@ -37,19 +37,34 @@ const addHighlight = (pageId: number, selection: window.Selection, color = "red"
   //return highlightElements;
 }
 
+
 const PageView = (props: Props) => {
   const { page } = props;
   const [ content, setContent ] = useState<string>("");
+  const [ showToolTip, setShowToolTip ] = useState<boolean>(false);
+  const [ position, setPosition ] = useState({x: 0, y:0});
   const contentDiv = useRef(null);
 
   useEffect(() => {
     document.addEventListener("mouseup", () => {
       const selection = window.getSelection();
       if (!selection.isCollapsed) {
+        const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
+        console.log("boundingrect:", boundingRect);
+        setShowToolTip(true);
+        setPosition({
+          x: boundingRect.left + window.scrollX,
+          y: boundingRect.top + window.scrollY
+        });
         // open up a popover
         addHighlight(page.id, selection);
       }
     });
+
+    document.addEventListener("mousedown", () => {
+      setShowToolTip(false);
+    });
+
     // download the html as raw string and render it
     api.get(getStaticPage(page.path))
       .then(resp => {
@@ -63,10 +78,16 @@ const PageView = (props: Props) => {
   }, [])
 
   return (<div className="">
-    <div>
+    <div id ="ubinote-header">
       <h3 className="text-red-400">sup sup sup</h3>
     </div>
-    <div className="w-full relative" ref={contentDiv} dangerouslySetInnerHTML={{__html: content}}></div>
+    <div id="ubinote-page-content"
+    className="w-full relative" ref={contentDiv} dangerouslySetInnerHTML={{__html: content}}></div>
+    {showToolTip ?
+      <Tooltip
+        {...position}
+        toolTipComponent={null}
+      /> : null}
   </div>)
 }
 

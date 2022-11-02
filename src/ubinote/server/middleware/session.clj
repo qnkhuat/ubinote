@@ -55,8 +55,8 @@
   [req response session]
   (let [is-https?      (https? req)
         cookie-options (merge
-                         {:http-only  true
-                          :same-site :lax}
+                         {:http-only true}
+                         ;:same-site :lax
                          ;; TODO: we will want to set a max age here
                          (when is-https?
                            {:secure true}))]
@@ -67,11 +67,11 @@
   [session-id]
   (when session-id
     (first (db/query {:select [:*]
-                       :from  [User]
-                       :where [:= :id {:select [:creator_id]
-                                       :from   [Session]
-                                       ;; TODO: add expired time here
-                                       :where  [:= :id session-id]}]}))))
+                      :from  [User]
+                      :where [:= :id {:select [:creator_id]
+                                      :from   [Session]
+                                      ;; TODO: add expired time here
+                                      :where  [:= :id session-id]}]}))))
 
 (defn wrap-current-user-info
   "Add `:current-user-id` and `:current-user` to the request if a valid session token was passed."

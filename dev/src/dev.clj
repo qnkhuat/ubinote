@@ -14,7 +14,8 @@
 
 (defn restart! []
   (stop!)
-  (start!))
+  (start!)
+  nil)
 
 (defn -main []
   (start!))

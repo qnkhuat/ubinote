@@ -1,11 +1,11 @@
 (ns ubinote.server.middleware.log
   (:require [clojure.tools.logging :as log]))
 
-(defn resp->log-level
+(defn- resp->log-level
   [{:keys [status]}]
   (cond
-    (< 400 status) :info
-    :else :info))
+    (< status 400) :info
+    :else :error))
 
 (defn format-nanoseconds
   "Format a time interval in nanoseconds to something more readable. (¬µs/ms/etc.)"
