@@ -5,7 +5,7 @@ import { useRef, useState, useEffect } from "react";
 import { api, getStaticPage, createAnnotation } from "api";
 import { TPage, TAnnotation } from "api/types";
 
-import Tooltip from "components/Page/Tooltip";
+import { TooltipNew, ToolTipModify } from "components/Page/Tooltip";
 
 import highlightRange from "lib/highlight/higlight-dom-range";
 import { fromRange, toRange } from "dom-anchor-text-position";
@@ -37,12 +37,11 @@ const addHighlight = (pageId: number, selection: window.Selection, color = "red"
   //return highlightElements;
 }
 
-
 const PageView = (props: Props) => {
   const { page } = props;
   const [ content, setContent ] = useState<string>("");
   const [ showToolTip, setShowToolTip ] = useState<boolean>(false);
-  const [ position, setPosition ] = useState({x: 0, y:0});
+  const [ position, setPosition ] = useState({x: 0, y: 0});
   const contentDiv = useRef(null);
 
   useEffect(() => {
@@ -50,7 +49,6 @@ const PageView = (props: Props) => {
       const selection = window.getSelection();
       if (!selection.isCollapsed) {
         const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
-        console.log("boundingrect:", boundingRect);
         setShowToolTip(true);
         setPosition({
           x: boundingRect.left + window.scrollX,
@@ -79,14 +77,13 @@ const PageView = (props: Props) => {
 
   return (<div className="">
     <div id ="ubinote-header">
-      <h3 className="text-red-400">sup sup sup</h3>
+      <h3 className="text-red-400">sup sup sup sup? okay that's </h3>
     </div>
     <div id="ubinote-page-content"
     className="w-full relative" ref={contentDiv} dangerouslySetInnerHTML={{__html: content}}></div>
     {showToolTip ?
-      <Tooltip
+      <TooltipNew
         {...position}
-        toolTipComponent={null}
       /> : null}
   </div>)
 }
