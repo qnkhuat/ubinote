@@ -1,5 +1,5 @@
 (ns ubinote.server.middleware.api
-  (:require [taoensso.timbre :as log]))
+  (:require [clojure.tools.logging :as log]))
 
 (defn resp->log-level
   [{:keys [status]}]

@@ -2,29 +2,35 @@
 
  :deps
  {
-  org.clojure/clojure       {:mvn/version "1.11.0"}
+  org.clojure/clojure                       {:mvn/version "1.11.0"}
   ;; util
-  prismatic/schema          {:mvn/version "1.2.0"}    ; schema validator
-  slingshot/slingshot       {:mvn/version "0.12.2"}   ; better exception handling
-  com.cemerick/friend       {:mvn/version "0.2.3"}    ; auth library
-  cheshire/cheshire         {:mvn/version "5.10.2"}   ; fast JSON encoding (used by Ring JSON middleware)
-  potemkin/potemkin         {:mvn/version "0.4.5"}    ; utility macros & fns
+  prismatic/schema                          {:mvn/version "1.2.0"}    ; schema validator
+  slingshot/slingshot                       {:mvn/version "0.12.2"}   ; better exception handling
+  com.cemerick/friend                       {:mvn/version "0.2.3"}    ; auth library
+  cheshire/cheshire                         {:mvn/version "5.10.2"}   ; fast JSON encoding (used by Ring JSON middleware)
+  potemkin/potemkin                         {:mvn/version "0.4.5"}    ; utility macros & fns
   ;; webserver+routing
-  compojure/compojure       {:mvn/version "1.6.2"}
-  ring/ring-core            {:mvn/version "1.9.4"}
-  ring/ring-jetty-adapter   {:mvn/version "1.9.5"}
-  ring/ring-json            {:mvn/version "0.5.1"}
-  ring-cors/ring-cors       {:mvn/version "0.1.13"}
+  compojure/compojure                       {:mvn/version "1.6.2"}
+  ring/ring-core                            {:mvn/version "1.9.4"}
+  ring/ring-jetty-adapter                   {:mvn/version "1.9.5"}
+  ring/ring-json                            {:mvn/version "0.5.1"}
+  ring-cors/ring-cors                       {:mvn/version "0.1.13"}
   ;; log
-  com.taoensso/timbre       {:mvn/version "5.1.2"}
+  org.clojure/tools.logging                 {:mvn/version "1.2.4"}
+  org.apache.logging.log4j/log4j-1.2-api    {:mvn/version "2.18.0"}             ; apache logging framework
+  org.apache.logging.log4j/log4j-api        {:mvn/version "2.18.0"}             ; add compatibility with log4j 1.2
+  org.apache.logging.log4j/log4j-core       {:mvn/version "2.18.0"}             ; apache logging framework
+  org.apache.logging.log4j/log4j-jcl        {:mvn/version "2.18.0"}             ; allows the commons-logging API to work with log4j 2
+  org.apache.logging.log4j/log4j-jul        {:mvn/version "2.18.0"}             ; java.util.logging (JUL) -> Log4j2 adapter
+  org.apache.logging.log4j/log4j-slf4j-impl {:mvn/version "2.18.0"}             ; allows the slf4j API to work with log4j 2
   ;; database
-  org.clojure/java.jdbc     {:mvn/version "0.7.12"}
-  com.h2database/h2         {:mvn/version "2.1.210"}  ; H2 driver
-  org.postgresql/postgresql {:mvn/version "42.2.13"}  ; Postgres driver
-  com.mchange/c3p0          {:mvn/version "0.9.5.5"}
-  toucan/toucan             {:mvn/version "1.18.0"}
-  ;; hickory/hickory           {:mvn/version "0.7.1"} ; seems like a fater parser than enlive, but using enlive for now bc it has DOM selector
-  enlive/enlive             {:mvn/version "1.1.6"}}   ; html parser
+  org.clojure/java.jdbc                     {:mvn/version "0.7.12"}
+  com.h2database/h2                         {:mvn/version "2.1.210"}  ; H2 driver
+  org.postgresql/postgresql                 {:mvn/version "42.2.13"}  ; Postgres driver
+  com.mchange/c3p0                          {:mvn/version "0.9.5.5"}
+  toucan/toucan                             {:mvn/version "1.18.0"}
+  ;; hickory/hickory                           {:mvn/version "0.7.1"} ; seems like a fater parser than enlive, but using enlive for now bc it has DOM selector
+  enlive/enlive                             {:mvn/version "1.1.6"}}   ; html parser
 
  :aliases
  {; clj -M:dev

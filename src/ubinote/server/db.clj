@@ -3,7 +3,6 @@
             [clojure.java.jdbc :as jdbc]
             [clojure.java.io :as io]
             [clojure.string :as string]
-            [taoensso.timbre :as log]
             [toucan.models :as models]
             [toucan.db :as db])
   (:import java.util.Properties
@@ -91,6 +90,5 @@
   []
   (let [db-type (cfg/config-kw :un-db-type)]
     (models/set-root-namespace! 'ubinote.model)
-    ;(db/set-default-automatically-convert-dashes-and-underscores! true)
     (db/set-default-quoting-style! (db-type quoting-style))
     (db/set-default-db-connection! (db-details db-type))))

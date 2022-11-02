@@ -4,7 +4,7 @@
             [ubinote.config :as cfg]
             [clojure.java.jdbc :as jdbc]
             [clojure.string :as string]
-            [taoensso.timbre :as log]
+            [clojure.tools.logging :as log]
             [toucan.db :as db]))
 
 (def migrations (atom []))

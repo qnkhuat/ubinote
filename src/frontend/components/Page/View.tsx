@@ -24,14 +24,17 @@ const addHighlight = (pageId: number, selection: window.Selection, color = "red"
   // need to calculate textpos before highlight, otherwise the position will be messed up
   // when try to highlight on re-load
   const textPos = fromRange(document.body, range);
-  const highlightElements = highlightRange(range, 'span', {class: colorToCSS[color]});
-  console.log("Elements: ", highlightElements);
+  console.log("range:", range);
+  console.log("textpos:", textPos);
+  console.log("bounding: ", range.getBoundingClientRect());
+  // from this bounding => display a dom at the middle end
+  //const highlightElements = highlightRange(range, 'span', {class: colorToCSS[color]});
   // save it
-  createAnnotation(
-    {coordinate: textPos,
-      page_id: pageId})
-    .catch(err => console.error("Failed to add annotaiton: ", err));
-  return highlightElements;
+  //createAnnotation(
+  //  {coordinate: textPos,
+  //    page_id: pageId})
+  //  .catch(err => console.error("Failed to add annotaiton: ", err));
+  //return highlightElements;
 }
 
 const PageView = (props: Props) => {
@@ -43,6 +46,7 @@ const PageView = (props: Props) => {
     document.addEventListener("mouseup", () => {
       const selection = window.getSelection();
       if (!selection.isCollapsed) {
+        // open up a popover
         addHighlight(page.id, selection);
       }
     });

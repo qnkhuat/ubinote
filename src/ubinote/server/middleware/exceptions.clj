@@ -1,5 +1,5 @@
 (ns ubinote.server.middleware.exceptions
-  (:require [taoensso.timbre :as log]))
+  (:require [clojure.tools.logging :as log]))
 
 (defn- explain-one-schema-error
   [[k v]]

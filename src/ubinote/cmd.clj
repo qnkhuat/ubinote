@@ -2,7 +2,7 @@
   (:require [ubinote.util.fs :as fs]
             [clojure.string :as string]
             [clojure.java.shell :refer [sh]]
-            [taoensso.timbre :as log]))
+            [clojure.tools.logging :as log]))
 
 (defn which
   "like `which` command"
