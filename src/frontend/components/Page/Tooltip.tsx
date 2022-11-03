@@ -1,4 +1,4 @@
-import  React  from "react";
+import React from "react";
 import IconButton from '@mui/material/IconButton';
 import CreateIcon from '@mui/icons-material/Create';
 
@@ -9,12 +9,12 @@ interface PropsWrapper {
 }
 
 const ToolTipWrapper = (props: PropsWrapper) => {
-  const {x, y, children} = props;
+  const { x, y, children } = props;
   return <div id="ubinote-tooltip"
     className="absolute flex bg-white z-[100000]
     shadow-lg
     translate-x-1/2 -translate-y-full mb-6"
-    style={{left : x, top: y}}>
+    style={{ left: x, top: y }}>
     {children}
   </div>
 }
@@ -22,12 +22,19 @@ const ToolTipWrapper = (props: PropsWrapper) => {
 interface PropsNew {
   x: number;
   y: number;
+  onAddAnnotation: any;
 }
 
-const TooltipNew: React.FC<PropsNew>= (props) => {
+const TooltipNew: React.FC<PropsNew> = (props) => {
+  // an onclick event that call onAddAnnotation
+  const onClick = (e) => {
+    console.log("ON CLICK?");
+    props.onAddAnnotation(e);
+  }
   return <ToolTipWrapper
     {...props}>
-    <IconButton aria-label="delete">
+    <IconButton aria-label="delete"
+      onClick={onClick}>
       <CreateIcon />
     </IconButton>
   </ToolTipWrapper>
@@ -42,7 +49,9 @@ const ToolTipModify = (props: PropsModify) => {
   return <ToolTipWrapper
     {...props}>
     <IconButton aria-label="delete">
-      <CreateIcon />
+      <CreateIcon
+
+      />
     </IconButton>
   </ToolTipWrapper>
 }

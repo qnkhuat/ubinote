@@ -14,15 +14,15 @@
   ring/ring-core                            {:mvn/version "1.9.4"}
   ring/ring-jetty-adapter                   {:mvn/version "1.9.5"}
   ring/ring-json                            {:mvn/version "0.5.1"}
-  ring-cors/ring-cors                       {:mvn/version "0.1.13"}
+
   ;; log
-  org.clojure/tools.logging                 {:mvn/version "1.2.4"}
-  org.apache.logging.log4j/log4j-1.2-api    {:mvn/version "2.18.0"}             ; apache logging framework
-  org.apache.logging.log4j/log4j-api        {:mvn/version "2.18.0"}             ; add compatibility with log4j 1.2
-  org.apache.logging.log4j/log4j-core       {:mvn/version "2.18.0"}             ; apache logging framework
-  org.apache.logging.log4j/log4j-jcl        {:mvn/version "2.18.0"}             ; allows the commons-logging API to work with log4j 2
-  org.apache.logging.log4j/log4j-jul        {:mvn/version "2.18.0"}             ; java.util.logging (JUL) -> Log4j2 adapter
-  org.apache.logging.log4j/log4j-slf4j-impl {:mvn/version "2.18.0"}             ; allows the slf4j API to work with log4j 2
+  org.clojure/tools.logging                 {:mvn/version "1.2.4"}    ; logging lib
+  org.apache.logging.log4j/log4j-1.2-api    {:mvn/version "2.18.0"}   ; apache logging framework
+  org.apache.logging.log4j/log4j-api        {:mvn/version "2.18.0"}   ; add compatibility with log4j 1.2
+  org.apache.logging.log4j/log4j-core       {:mvn/version "2.18.0"}   ; apache logging framework
+  org.apache.logging.log4j/log4j-jcl        {:mvn/version "2.18.0"}   ; allows the commons-logging API to work with log4j 2
+  org.apache.logging.log4j/log4j-jul        {:mvn/version "2.18.0"}   ; java.util.logging (JUL) -> Log4j2 adapter
+  org.apache.logging.log4j/log4j-slf4j-impl {:mvn/version "2.18.0"}   ; allows the slf4j API to work with log4j 2
   ;; database
   org.clojure/java.jdbc                     {:mvn/version "0.7.12"}
   com.h2database/h2                         {:mvn/version "2.1.210"}  ; H2 driver
@@ -36,9 +36,10 @@
  {; clj -M:dev
   :dev
   {:extra-paths ["dev/src"]
-   :extra-deps  {ring/ring-devel   {:mvn/version "1.9.4"}
-                 cider/cider-nrepl {:mvn/version "0.27.1"}
-                 hashp/hashp       {:mvn/version "0.2.1"}}
+   :extra-deps  {ring-cors/ring-cors {:mvn/version "0.1.13"}
+                 ring/ring-devel     {:mvn/version "1.9.4"}
+                 cider/cider-nrepl   {:mvn/version "0.27.1"}
+                 hashp/hashp         {:mvn/version "0.2.1"}}
    :jvm-opts  ["-Dun.run.mode=dev"
                "-XX:-OmitStackTraceInFastThrow"]
    :main-opts ["-e" "(use '[hashp.core] '[dev])(dev/start!)"

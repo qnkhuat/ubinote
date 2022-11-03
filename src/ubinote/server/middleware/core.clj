@@ -47,15 +47,11 @@
   [handler]
   ;; this is for dev mode only and it allows We make call from hot-reloading
   ;; host on FE
-  #_(wrap-cors handler
-               :access-control-allow-credentials "true"
-               :access-control-allow-origin  #"http://localhost:8888/*"
-               :access-control-allow-methods [:options :get :put :post :delete])
   (if (= :dev cfg/run-mode)
     (wrap-cors handler
                :access-control-allow-credentials "true"
-               :access-control-allow-origin  #"http://localhost:8888/*"
-               :access-control-allow-methods [:options :get :put :post :delete])
+               :access-control-allow-origin      #"http://localhost:8888/*"
+               :access-control-allow-methods     [:options :get :put :post :delete])
     handler))
 
 (def middlewares

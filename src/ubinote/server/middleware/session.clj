@@ -47,7 +47,6 @@
 (defn wrap-session-id
   [handler]
   (fn [{:keys [cookies headers] :as req}]
-    #p cookies
     (let [session-id (or (get-in cookies [ubinote-session-cookie :value])
                          (get headers ubinote-session-header))]
       (handler (assoc req :ubinote-session-id session-id)))))
@@ -56,8 +55,8 @@
   [req response session]
   (let [is-https?      (https? req)
         cookie-options (merge
-                         {:http-only true}
-                         ;:same-site :lax
+                         {:http-only true
+                          :same-site :lax}
                          ;; TODO: we will want to set a max age here
                          (when is-https?
                            {:secure true}))]

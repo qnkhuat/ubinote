@@ -15,6 +15,7 @@ export interface TPage extends WithDate {
 }
 
 export interface TAnnotation extends WithDate {
+  id: number;
   creator_id: number;
   page_id: number;
   color: string;
@@ -22,6 +23,7 @@ export interface TAnnotation extends WithDate {
 }
 
 export interface TUser extends WithDate {
+  id: number;
   email: string;
   first_name: string;
   last_name: string;
