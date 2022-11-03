@@ -110,16 +110,16 @@
        (create-index "annotation" "page_id")
        (create-index "annotation" "coordinate")))
 
-(defmigration create-comment-table
-  (str "CREATE TABLE comment (
+(defmigration create-note-table
+  (str "CREATE TABLE note (
        id SERIAL PRIMARY KEY NOT NULL,
        creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        annotation_id INTEGER NOT NULL REFERENCES annotation (id) ON DELETE CASCADE,
        content " (postgres?->h2 "TEXT") " NOT NULL,"
        "created_at TIMESTAMP NOT NULL DEFAULT now(),
        updated_at TIMESTAMP NOT NULL DEFAULT now());"
-       (create-index "comment" "creator_id")
-       (create-index "comment" "annotation_id")))
+       (create-index "note" "creator_id")
+       (create-index "note" "annotation_id")))
 
 (defmigration create-session-table
   (str "CREATE TABLE session (
