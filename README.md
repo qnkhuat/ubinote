@@ -24,14 +24,5 @@ TODO:
 
 ### Install
 
-`npm install -g "gildas-lormeau/single-file-cli"`
-
-
-```sh
-https://github.com/gildas-lormeau/single-file-cli
-
-cd single-file-cli
-chmod +x single-file
-
-npm i -g
-```
+First you need to install single-cli
+`npm install -g "single-file-cli"`

@@ -1,5 +1,6 @@
 (ns ubinote.config
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [toucan.db :as db]))
 
 (defn- keywordize [s]
   (-> (string/lower-case s)
@@ -25,15 +26,15 @@
 
 ;; TODO: validate config with spec
 (def default
- {:un-run-mode         "prod"
-  :un-db-type          "postgres" ; #{h2, postgres}
-  :un-db-name          "ubinote"
-  :un-db-host          "localhost" ; postgres
-  :un-db-port          "5432"      ; postgres
-  :un-port             "8000"
-  :un-max-session-age  "20160" ; session length in minutes (14 days)
-  ;; root to store and serve archived files
-  :un-root             ".ubinote"})
+  {:un-run-mode         "prod"
+   :un-db-type          "postgres" ; #{h2, postgres}
+   :un-db-name          "ubinote"
+   :un-db-host          "localhost" ; postgres
+   :un-db-port          "5432"      ; postgres
+   :un-port             "8000"
+   :un-max-session-age  "20160" ; session length in minutes (14 days)
+   ;; root to store and serve archived files
+   :un-root             ".ubinote"})
 
 (def env (merge default (read-env)))
 
@@ -65,7 +66,7 @@
           Integer/parseInt))
 
 (defn config-bool
- "Retrieve a config and returns the value as a boolean."
+  "Retrieve a config and returns the value as a boolean."
   [k]
   (some-> k
           config-str
@@ -74,3 +75,10 @@
 ;; ------------------------------- Default config ----------------------------- ;;
 (def run-mode
   (config-kw :run-mode))
+
+;; Probably need to cache this?
+(defn setup?
+  "Did the app set up successfully?
+  Meaning we created an user."
+  []
+  (some? (db/select-one 'User)))

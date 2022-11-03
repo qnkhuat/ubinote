@@ -1,6 +1,6 @@
 ### Create session
 
-http POST localhost:8000/api/session email=admin@ubinote.com password=Ubinote@123
+http POST localhost:8000/api/setup email=admin@ubinote.com password=Ubinote@123
 
 ### Call with session
 export SESSION='ubinote.SESSION={the_id}'

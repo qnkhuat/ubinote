@@ -6,7 +6,7 @@ const api = axios.create({
   // this should be in dev mode only
   // we do this because we want to use the hot-loading endpoint for dev
   // instead of visiting the actual host
-  withCredentials: true,
+  withCredentials: process.env.NODE_ENV=="development",
 })
 
 
