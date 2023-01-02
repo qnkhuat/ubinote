@@ -22,6 +22,7 @@ pom.xml.asc
 # frontend
 ## dependencies
 /node_modules
+.routify
 
 ## testing
 /coverage

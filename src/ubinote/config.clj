@@ -76,6 +76,12 @@
 (def run-mode
   (config-kw :run-mode))
 
+(def is-dev?
+  (= run-mode :dev))
+
+(def is-prod?
+  (= run-mode :prod))
+
 ;; Probably need to cache this?
 (defn setup?
   "Did the app set up successfully?

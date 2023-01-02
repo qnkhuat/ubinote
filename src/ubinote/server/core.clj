@@ -23,12 +23,18 @@
 
 (defroutes routes
   ;; serving bundle.js this seems hacky?
-  (GET "/build/bundle.js" [_req] (resource-response "frontend/build/bundle.js")) ;; inside the resources folder
+  (GET "/build/bundle.js" [_req] (resource-response "frontend/build/bundle.js"))
+  (GET "/build/bundle.css" [_req] (resource-response "frontend/build/bundle.css"))
+  (when cfg/is-dev?
+    (GET "/build/bundle.js.map" [_req] (resource-response "frontend/build/bundle.js.map"))
+   (GET "/build/bundle.css.map" [_req] (resource-response "frontend/build/bundle.css.map")))
   (GET "/health" [_req] "fine 😁")
   (context "/api" [] api/routes)
   (route/files "/static" {:root page/root})
-  ;; let's React handle it from here
-  (GET "*" [_req] (resource-response "frontend/index.html"))) ;; inside the resources folder
+  ;; let svelte handles it from here
+  (GET "*" [req] (do
+                   (println req)
+                   (resource-response "frontend/index.html"))))
 
 (def app (middleware/apply-middleware routes middleware/middlewares))
 
