@@ -23,7 +23,7 @@
 
 (defroutes routes
   ;; serving bundle.js this seems hacky?
-  (GET "/static/js/bundle.js" [_req] (resource-response "frontend/static/js/bundle.js")) ;; inside the resources folder
+  (GET "/build/bundle.js" [_req] (resource-response "frontend/build/bundle.js")) ;; inside the resources folder
   (GET "/health" [_req] "fine 😁")
   (context "/api" [] api/routes)
   (route/files "/static" {:root page/root})
