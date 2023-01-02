@@ -1,3 +1,16 @@
+<script>
+	import { onMount } from 'svelte';
+
+	import "carbon-components-svelte/css/white.css";
+	import { Button } from "carbon-components-svelte";
+	import { listPages } from "../api/index.js";
+	onMount(async () => {
+		console.log("pages:", listPages().then(resp => console.log(resp)));
+
+	});
+</script>
+
+<Button/>
 <h1>Hello world!</h1>
 <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
 <p>

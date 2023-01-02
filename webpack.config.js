@@ -1,4 +1,5 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 const path = require('path');
 
 const mode = process.env.NODE_ENV || 'development';
@@ -31,7 +32,7 @@ module.exports = {
 							dev: !prod
 						},
 						emitCss: true,
-						hotReload: !prod
+						hotReload: !prod,
 					}
 				}
 			},
@@ -55,14 +56,23 @@ module.exports = {
 	plugins: [
 		new MiniCssExtractPlugin({
 			filename: '[name].css'
+		}),
+		new webpack.DefinePlugin({
+			// parse all the env vars and replace them with their values
+			// so you can use things like process.env.NODE_ENV in the code
+			'process.env': Object.keys(process.env).reduce((acc, key) => {
+				acc[key] = JSON.stringify(process.env[key]);
+				return acc;
+			}, {})
 		})
+
 	],
 	devtool: prod ? false : 'source-map',
 	devServer: {
 		static: "resources/frontend",
 		hot: true,
 		devMiddleware: {
-      writeToDisk: true,
-    },
+			writeToDisk: true,
+		},
 	},
 };

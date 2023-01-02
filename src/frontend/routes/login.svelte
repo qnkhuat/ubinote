@@ -1,30 +1,29 @@
 <script>
-    export let params = {};
-    let repeat = 1;
-    $: {
-        repeat = 1
-        if (params && params.repeat) {
-            repeat = parseInt(params.repeat, 10)
-            if (repeat < 1) {
-                repeat = 1
-            }
-        }
-    }
+	console.log("SUP", process.env.UN_API_URL);
+	import { createSession } from "../api/index.js";
+	import {
+		Form,
+		TextInput,
+		Button,
+		PasswordInput,
+	} from "carbon-components-svelte";
+
+	let email = null;
+	let password = null;
+
+	function submit() {
+		console.log("Username: ", email);
+		console.log("Password: ", password);
+		createSession({email, password});
+	}
+
 </script>
 
-<h1>Lorem ipsumsup</h1>
-<p>Tip: try changing the number in the URL's fragment, e.g. <code>#/lorem/4</code></p>
-{#each Array(repeat) as _}
-    <p>
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sed consequatur dicta, explicabo delectus, cupiditate, rem illo repellat aperiam saepe id minus ipsa. Illum libero consectetur fuga neque officia, adipisci commodi.Porro eius harum sed architecto maxime, molestiae cum ad dignissimos eum, nihil eligendi? Non quo, modi officia doloribus distinctio pariatur sed? Veniam facere beatae ipsam reprehenderit suscipit! Sequi, distinctio debitis.
-    </p>
-{/each}
-
-<style>
-	h1 {
-		color: #008cff;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-</style>
+<Form>
+	<TextInput labelText= "Email" placehodler="Your email please" bind:value={email}/>
+	<PasswordInput labelText="Password" placeholder="Enter password..." bind:value={password}/>
+	<Button type="submit" on:click={(e) => {
+		e.preventDefault();
+		submit();
+	}}>Submit</Button>
+</Form>
