@@ -12,7 +12,7 @@
     }
 </script>
 
-<h1>Lorem ipsum</h1>
+<h1>Lorem ipsumsup</h1>
 <p>Tip: try changing the number in the URL's fragment, e.g. <code>#/lorem/4</code></p>
 {#each Array(repeat) as _}
     <p>

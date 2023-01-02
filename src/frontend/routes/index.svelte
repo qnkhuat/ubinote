@@ -5,14 +5,14 @@
 	Visit the <a href="https://github.com/ItalyPaleAle/svelte-spa-router">documentation for the router</a> to learn more.
 </p>
 <p>
-	<a href="/login">Login</a>
+	<a href="/login">Login now</a>
 </p>
 
 <style>
 	h1 {
-	color: #ff3e00;
-	text-transform: uppercase;
-	font-size: 4em;
-	font-weight: 100;
+		color: #ff3e00;
+		text-transform: uppercase;
+		font-size: 4em;
+		font-weight: 100;
 	}
 </style>

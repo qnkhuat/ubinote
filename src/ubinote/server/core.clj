@@ -27,14 +27,12 @@
   (GET "/build/bundle.css" [_req] (resource-response "frontend/build/bundle.css"))
   (when cfg/is-dev?
     (GET "/build/bundle.js.map" [_req] (resource-response "frontend/build/bundle.js.map"))
-   (GET "/build/bundle.css.map" [_req] (resource-response "frontend/build/bundle.css.map")))
+    (GET "/build/bundle.css.map" [_req] (resource-response "frontend/build/bundle.css.map")))
   (GET "/health" [_req] "fine 😁")
   (context "/api" [] api/routes)
   (route/files "/static" {:root page/root})
   ;; let svelte handles it from here
-  (GET "*" [req] (do
-                   (println req)
-                   (resource-response "frontend/index.html"))))
+  (GET "*" [] (resource-response "frontend/index.html")))
 
 (def app (middleware/apply-middleware routes middleware/middlewares))
 
