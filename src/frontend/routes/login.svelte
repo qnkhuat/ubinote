@@ -1,6 +1,5 @@
 <script>
-	console.log("SUP", process.env.UN_API_URL);
-	import { createSession } from "../api/index.js";
+	import { createSession } from "frontend/api/index.js";
 	import {
 		Form,
 		TextInput,
@@ -12,9 +11,10 @@
 	let password = null;
 
 	function submit() {
-		console.log("Username: ", email);
-		console.log("Password: ", password);
-		createSession({email, password});
+		createSession({email, password}).then(resp => {
+			document.cookie.set
+		});
+		console.log("COOKIE after loggedin ", document.cookie);
 	}
 
 </script>
@@ -26,4 +26,10 @@
 		e.preventDefault();
 		submit();
 	}}>Submit</Button>
+
 </Form>
+	<Button on:click={(e) => {
+		console.log(document.cookie);
+	}}>
+	check cookie
+	</Button>

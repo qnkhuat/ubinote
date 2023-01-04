@@ -14,14 +14,13 @@
     "svelte-router-spa": "^6.0.3",
     "webpack": "^5.16.0",
     "webpack-cli": "^4.4.0",
-    "webpack-dev-server": "^4.11.1"
+    "webpack-dev-server": "^4.11.1",
+    "axios": "^1.2.2",
+    "js-cookie": "^3.0.1"
   },
   "scripts": {
     "dev": "run-p dev:*",
     "dev:webpack": "cross-env NODE_ENV=development UN_API_URL=http://localhost:8000 webpack server",
     "build": "cross-env NODE_ENV=production UN_API_URL=http://localhost:8000 webpack"
-  },
-  "dependencies": {
-    "axios": "^1.2.2"
   }
 }
