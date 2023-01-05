@@ -56,11 +56,20 @@
   (let [is-https?      (https? req)
         cookie-options (merge
                          {:http-only true
-                          :same-site :lax}
+                          :same-site :lax
+                          :path      "/"}
                          ;; TODO: we will want to set a max age here
                          (when is-https?
                            {:secure true}))]
     (response/set-cookie response ubinote-session-cookie (str (:id session)) cookie-options)))
+
+(defn- clear-cookie [response cookie-name]
+  (response/set-cookie response cookie-name nil {:expires "Thu, 1 Jan 1970 00:00:00 GMT" :path "/"}))
+
+(defn clear-session-cookie
+  "Add a header to `response` to clear the current Ubinote session cookie."
+  [response]
+  (reduce clear-cookie response [ubinote-session-cookie]))
 
 (defn- current-user-info-for-session
   "Return User ID and superuser status for Session with `session-id` if it is valid and not expired."

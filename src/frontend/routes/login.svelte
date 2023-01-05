@@ -1,5 +1,6 @@
 <script>
 	import { createSession } from "frontend/api/index.js";
+	import { isLogedIn, logout } from "frontend/stores/auth.js";
 	import {
 		Form,
 		TextInput,
@@ -9,12 +10,17 @@
 
 	let email = null;
 	let password = null;
+	let logedInValue;
+	isLogedIn.subscribe((value) => {
+		logedInValue = value;
+	});
+	console.log("islogedin", logedInValue);
 
 	function submit() {
 		createSession({email, password}).then(resp => {
-			document.cookie.set
+			if (resp.status_code == 200)
+				isLogedIn.set(true);
 		});
-		console.log("COOKIE after loggedin ", document.cookie);
 	}
 
 </script>
@@ -25,7 +31,12 @@
 	<Button type="submit" on:click={(e) => {
 		e.preventDefault();
 		submit();
-	}}>Submit</Button>
+	}}>Login</Button>
+
+	<Button type="submit" on:click={(e) => {
+		e.preventDefault();
+		logout();
+	}}>Logout</Button>
 
 </Form>
 	<Button on:click={(e) => {

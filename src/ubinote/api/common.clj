@@ -32,3 +32,6 @@
                                          (when errors
                                            {:errors errors})))))
    x))
+
+(def generic-204-response
+  {:status 204 :body nil})

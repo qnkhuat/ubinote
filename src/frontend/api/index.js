@@ -12,41 +12,26 @@ const api = axios.create({
 
 // ---------------------------- User ---------------------------- //
 
-const createUser = (body) => api.post("api/user", body);
+export const createUser = (body) => api.post("api/user", body);
 
 // ---------------------------- Session ---------------------------- //
 
-const createSession = (body) => api.post("api/session", body);
+export const createSession = (body) => api.post("api/session", body);
+export const deleteSession = () => api.delete("api/session/");
 
 // ---------------------------- Page ---------------------------- //
 // return the static url for a given path
-const getStaticPage = (path) => `${process.env.UN_API_URL}/static/${path}`
+export const getStaticPage = (path) => `${process.env.UN_API_URL}/static/${path}`
 
-const getPage = (id) => api.get(`/api/page/${id}`);
-
-//
-const listPages = () => api.get("/api/page");
+export const getPage = (id) => api.get(`/api/page/${id}`);
 
 //
+export const listPages = () => api.get("/api/page");
 
-const createPage = (body) => api.post("/api/page", body);
+//
+
+export const createPage = (body) => api.post("/api/page", body);
 
 // ---------------------------- Annotation ---------------------------- //
 
-const createAnnotation = (body) => api.post(`/api/annotation`, body);
-
-export {
-  api,
-  // page
-  createPage,
-  getPage,
-  listPages,
-  getStaticPage,
-
-  // annotation
-  createAnnotation,
-
-
-  // session
-  createSession,
-}
+export const createAnnotation = (body) => api.post(`/api/annotation`, body);

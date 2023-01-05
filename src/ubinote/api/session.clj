@@ -1,5 +1,5 @@
 (ns ubinote.api.session
-  (:require [compojure.core :refer [defroutes POST]]
+  (:require [compojure.core :refer [defroutes POST DELETE]]
             [cemerick.friend.credentials :as creds]
             [ubinote.api.common :as api]
             [ubinote.models.common.schemas :as schemas]
@@ -33,5 +33,13 @@
                                         :status 200}
                                    session)))
 
+(defn delete-session
+  [req]
+  (let [session-id (:ubinote-session-id req)]
+    (api/check-404 (db/select-one Session :id session-id))
+    (db/delete! Session :id session-id)
+    (mw.session/clear-session-cookie api/generic-204-response)))
+
 (defroutes routes
-  (POST "/" [] create-session))
+  (POST "/" [] create-session)
+  (DELETE "/" [] delete-session))
