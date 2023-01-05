@@ -33,8 +33,8 @@
   (db/select User))
 
 (defn current-user
-  [req]
-  (:currrent-user req))
+  [_req]
+  (api/check-404 @api/*current-user*))
 
 (defroutes routes
   (GET "/" [] list-users)

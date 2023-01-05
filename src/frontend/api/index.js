@@ -1,6 +1,4 @@
 import axios from "axios";
-console.log("FORM API", process.env.NODE_ENV);
-console.log("FORM API", process.env.UN_API_URL);
 
 const api = axios.create({
   baseURL: process.env.UN_API_URL,
@@ -13,6 +11,7 @@ const api = axios.create({
 // ---------------------------- User ---------------------------- //
 
 export const createUser = (body) => api.post("api/user", body);
+export const getCurrentUser = () => api.get("api/user/current");
 
 // ---------------------------- Session ---------------------------- //
 

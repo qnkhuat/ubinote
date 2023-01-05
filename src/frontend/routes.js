@@ -1,24 +1,37 @@
-import Home from "./routes/index.svelte";
-import Login from "./routes/login.svelte"
+import Home from "frontend/routes/index.svelte";
+import Login from "frontend/routes/login.svelte"
+import { currentUser } from "frontend/stores/user.js";
 
-const SESSION_KEY = "ubinote.SESSION";
+let currentUserValue;
+currentUser.subscribe(value => {currentUserValue = value});
 
-function isLogedin() {
-	// if a session exists, it means users is logedin
-	// if not, redirect to login page
-	//return typeof Cookies.get(SESSION_KEY) !== "undefined";
+function logedIn() {
+	return currentUserValue !== null;
 }
-isLogedin()
 
-const routes = [
+function requireAuth(route) {
+	return {
+		...route,
+		...{onlyIf: { guard: logedIn, redirect: '/login' }}}
+}
+
+const authRoutes = [
 	{
 		name: "/",
 		component: Home,
 	},
+]
+
+const nonAuthRutes = [
 	{
 		name: "/login",
 		component: Login,
 	}
 ]
 
-export { routes }
+const routes = [
+	...authRoutes.map((route) => requireAuth(route)),
+	...nonAuthRutes
+]
+
+export default routes;

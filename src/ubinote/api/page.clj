@@ -18,8 +18,8 @@
   (s/validator NewPage))
 
 (defn- add-page
-  [{:keys [body current-user-id] :as _req}]
-  (-> (assoc body :creator_id current-user-id)
+  [{:keys [body] :as _req}]
+  (-> (assoc body :creator_id api/*current-user-id*)
       validate-add-page
       page/create-page))
 

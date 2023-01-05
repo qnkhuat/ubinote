@@ -17,8 +17,8 @@
   (s/validator NewNote))
 
 (defn create-note
-  [{:keys [body current-user-id] :as _req}]
-  (let [cmt (assoc body :creator_id current-user-id)]
+  [{:keys [body] :as _req}]
+  (let [cmt (assoc body :creator_id api/*current-user-id*)]
    (validate-create-note cmt)
    (db/insert! Note cmt)))
 

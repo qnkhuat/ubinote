@@ -1,6 +1,6 @@
 <script>
-	import { createSession } from "frontend/api/index.js";
-	import { isLogedIn, logout } from "frontend/stores/auth.js";
+	import * as api from "frontend/api/index.js";
+	import { getCurrentUser } from "frontend/stores/user.js";
 	import {
 		Form,
 		TextInput,
@@ -11,15 +11,12 @@
 	let email = null;
 	let password = null;
 	let logedInValue;
-	isLogedIn.subscribe((value) => {
-		logedInValue = value;
-	});
-	console.log("islogedin", logedInValue);
 
 	function submit() {
-		createSession({email, password}).then(resp => {
-			if (resp.status_code == 200)
-				isLogedIn.set(true);
+		api.createSession({email, password}).then(resp => {
+			if (resp.status_code == 200) {
+				getCurrentUser();
+			}
 		});
 	}
 
@@ -35,12 +32,7 @@
 
 	<Button type="submit" on:click={(e) => {
 		e.preventDefault();
-		logout();
+		api.deleteSession()
 	}}>Logout</Button>
 
 </Form>
-	<Button on:click={(e) => {
-		console.log(document.cookie);
-	}}>
-	check cookie
-	</Button>

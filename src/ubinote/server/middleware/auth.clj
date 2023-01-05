@@ -5,5 +5,5 @@
   "Enforce a route to be authenticated"
   [handler]
   (fn [req]
-    (api/check-401 (:current-user req))
+    (api/check-401 api/*current-user-id*)
     (handler req)))

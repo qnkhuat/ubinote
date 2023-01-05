@@ -1,5 +1,6 @@
 (ns ubinote.server.middleware.session
   (:require [clojure.string :as str]
+            [ubinote.api.common :as api]
             [ubinote.models.user :refer [User]]
             [ubinote.models.session :refer [Session]]
             [ring.util.response :as response]
@@ -71,22 +72,28 @@
   [response]
   (reduce clear-cookie response [ubinote-session-cookie]))
 
-(defn- current-user-info-for-session
+(defn- current-user-id-for-session
   "Return User ID and superuser status for Session with `session-id` if it is valid and not expired."
   [session-id]
   (when session-id
-    (first (db/query {:select [:*]
+    (first (db/query {:select [:id]
                       :from  [User]
                       :where [:= :id {:select [:creator_id]
                                       :from   [Session]
                                       ;; TODO: add expired time here
                                       :where  [:= :id session-id]}]}))))
 
+(defn- find-user
+  [id]
+  (db/query {:select [:*]
+             :from   [User]
+             :where  [:= :id id]}))
+
 (defn wrap-current-user-info
   "Add `:current-user-id` and `:current-user` to the request if a valid session token was passed."
   [handler]
   (fn [{:keys [ubinote-session-id] :as request}]
-    (let [user (current-user-info-for-session ubinote-session-id)]
-      (handler (cond-> request
-                 user (assoc :current-user user
-                             :current-user-id (:id user)))))))
+    (let [user-id (:id (current-user-id-for-session ubinote-session-id))]
+      (binding [api/*current-user-id* user-id
+                api/*current-user*    (delay (find-user user-id))]
+       (handler request)))))

@@ -1,6 +1,5 @@
 <script>
 	import { onMount } from 'svelte';
-	import Cookies from "js-cookie";
 
 	import "carbon-components-svelte/css/white.css";
 	import { Button } from "carbon-components-svelte";
@@ -8,9 +7,7 @@
 	import { listPages } from "../api/index.js";
 
 	onMount(async () => {
-		console.log(document);
-		console.log("pages:", listPages().then(resp => console.log(resp)));
-		console.log("COOKIES from svelte", Cookies.get("ubinote.SESSION"))
+		//console.log("pages:", listPages().then(resp => console.log(resp)));
 	});
 
 </script>

@@ -1,5 +1,12 @@
 (ns ubinote.api.common)
 
+;; the value of these dynamics var will be bind by [[ubinote.server.middleware.session/wrap-current-user-info]]
+(def ^:dynamic *current-user-id* nil)
+(def ^:dynamic *current-user*
+  "Delay that returns the `User` (or nil) associated with the current API call.
+   ex. `@*current-user*`"
+  (atom nil))
+
 ;; ---------------------------------------- check fns ----------------------------------------
 (defn check-400
   "Return Invalid Request if test failed."
