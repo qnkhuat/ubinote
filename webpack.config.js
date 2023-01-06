@@ -34,8 +34,15 @@ module.exports = {
 						},
 						emitCss: true,
 						hotReload: !prod,
+						onwarn: (warning, _handler) => {
+							const { code } = warning;
+							//const skip_lint = ["css-unused-selector"]
+							const skip_lint = [];
+							if (skip_lint.includes(code))
+								return;
+						}
 					}
-				}
+				},
 			},
 			{
 				test: /\.css$/,
@@ -68,8 +75,7 @@ module.exports = {
 		})
 
 	],
-	//devtool: prod ? false : 'source-map',
-	devtool: 'source-map',
+	devtool: prod ? false : 'source-map',
 	devServer: {
 		static: "resources/frontend",
 		hot: true,

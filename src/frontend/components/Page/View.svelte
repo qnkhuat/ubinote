@@ -1,13 +1,50 @@
 <script>
 	import { onMount } from "svelte";
 	import * as api from "frontend/api.js";
+	import { highlightRange } from "frontend/lib/highlight/higlight-dom-range";
+	import { fromRange, toRange } from "dom-anchor-text-position";
 
 	// props
 	export let pageId;
 
+	// constants
+
+	const colorToCSS = {
+		"red": "highlight-red",
+		"green": "highlight-green",
+		"blue": "highlight-blue",
+		"yellow": "highlight-yellow"
+	}
+
 	// state
 	let pageDetail;
 	let pageContent;
+
+	const addAnnotation = async (pageId, selection, color = "red") => {
+		if (selection == null) {
+			console.error("Attempted to add annotation when selection is null");
+			return
+		}
+
+		const range = selection.getRangeAt(0);
+		// need to calculate textpos before highlight, otherwise the position will be messed up
+		// when try to highlight on re-load
+		const textPos = fromRange(document.body, range);
+		const [highlightElements, removeHighlights] = highlightRange(range, 'span', {class: colorToCSS[color]});
+		// save it
+		const resp = await api.createAnnotation(
+			{coordinate: textPos,
+				page_id: pageId})
+			.catch(err => console.error("Failed to add annotaiton: ", err));
+		return highlightElements;
+	}
+
+	$ : if (pageDetail) {
+		pageDetail.annotations.forEach(annotation => {
+			const range = toRange(document.body, annotation.coordinate);
+			const [highlightNodes, removeHighlights] = highlightRange(range, 'span', {class: colorToCSS[annotation.color]});
+		});
+	}
 
 	onMount(() => {
 		api.getPage(pageId)
@@ -15,6 +52,16 @@
 
 		api.getPageContent(pageId)
 			.then(resp => pageContent = resp.data);
+
+		document.addEventListener("mouseup", () => {
+			const selection = window.getSelection();
+			if (!selection.isCollapse) {
+				const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
+				addAnnotation(pageId, selection);
+			}
+			else {
+			}
+		});
 	});
 
 </script>
@@ -31,5 +78,22 @@
 	#page-content {
 		width: 100%;
 		positiion: relative;
+	}
+
+	/* highlight colors */
+	:global(.highlight-red) {
+		color: red;
+	}
+
+	:global(.highlight-green) {
+		color: green;
+	}
+
+	:global(.highlight-blue) {
+		color: blue;
+	}
+
+	:global(.highlight-yellow) {
+		color: yellow;
 	}
 </style>

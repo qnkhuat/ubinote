@@ -4,10 +4,9 @@
 	import PageView from "frontend/components/Page/View.svelte";
 
 	export let currentRoute;
-	const pageId = currentRoute.namedParams.id;
+	const pageId = parseInt(currentRoute.namedParams.id);
 </script>
 
 <div id="page-view">
 	<PageView {pageId} />
 </div>
-
