@@ -5,27 +5,33 @@
 	let pageDetail;
 	let pageContent;
 	const pageId = currentRoute.namedParams.id;
-	console.log("PAGEID", pageId);
+	console.log(pageDetail);
 
 	onMount(() => {
-		api.getPage(pageId).then(resp => {
-			pageDetail = resp.data;
-		}).then(() => {
-		});
-		api.getPageContent(pageId).then(resp => {
-			console.log("GOT PAGE CONTENT", resp);
-			pageContent = resp.data;
-		});
+		api.getPage(pageId)
+			.then(resp =>pageDetail = resp.data);
+
+		api.getPageContent(pageId)
+			.then(resp => pageContent = resp.data);
+
 	});
 
 </script>
 
 <div id="page-view">
 	{#if pageContent}
-		<div id="ubinote-page-content"
-			dangerouslySetInnerHTML={{__html: pageContent}}>
+		<div id="page-content">
+			{@html pageContent}
 		</div>
 	{:else}
 		<div>Loading...</div>
 	{/if}
 </div>
+
+<style>
+	#page-content {
+		width: 100%;
+		positiion: relative;
+	}
+
+</style>
