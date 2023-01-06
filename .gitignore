@@ -15,6 +15,9 @@ pom.xml.asc
 .nrepl-port
 .cpcache/
 
+## lint
+.clj-kondo/.cache
+
 # build
 # during development, app will be built into this folder
 /resources/frontend

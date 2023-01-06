@@ -1,5 +1,6 @@
 import Home from "frontend/routes/index.svelte";
 import Login from "frontend/routes/login.svelte"
+import PageId from "frontend/routes/page/[id].svelte";
 import { currentUser } from "frontend/stores/user.js";
 
 let currentUserValue;
@@ -15,23 +16,33 @@ function requireAuth(route) {
 		...{onlyIf: { guard: logedIn, redirect: '/login' }}}
 }
 
-const authRoutes = [
+const privateRoutes = [
 	{
 		name: "/",
 		component: Home,
 	},
 ]
 
-const nonAuthRutes = [
+const publicRoutes = [
 	{
 		name: "/login",
 		component: Login,
+	},
+	{
+		name: "/page",
+		component: "",
+		nestedRoutes: [
+			{
+				name: ":id",
+				component: PageId
+			}
+		]
 	}
 ]
 
 const routes = [
-	...authRoutes.map((route) => requireAuth(route)),
-	...nonAuthRutes
+	...privateRoutes.map((route) => requireAuth(route)),
+	...publicRoutes
 ]
 
 export default routes;

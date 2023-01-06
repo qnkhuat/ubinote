@@ -7,7 +7,7 @@
 		DataTable,
 	} from "carbon-components-svelte";
 
-	import { listPages } from "../api/index.js";
+	import { listPages } from "frontend/api.js";
 
 	let pages = [];
 

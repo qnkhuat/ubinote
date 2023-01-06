@@ -1,6 +1,6 @@
 <script>
 	import { navigateTo } from 'svelte-router-spa';
-	import * as api from "frontend/api/index.js";
+	import * as api from "frontend/api.js";
 	import { getCurrentUser } from "frontend/stores/user.js";
 	import {
 		Form,

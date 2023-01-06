@@ -5,6 +5,7 @@
             [ubinote.models :refer [Page Annotation]]
             [ubinote.models.page :as page]
             [ubinote.models.common.schemas :as schemas]
+            [ring.util.response :as response]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
             [schema.core :as s]))
@@ -38,10 +39,18 @@
   [id _req]
   (db/select Annotation :page_id id))
 
+(defn- get-page-content
+  "Returns the static file of the page"
+  [id _req]
+  (-> (api/check-404 (db/select-one-field :path Page :id id))
+      (response/file-response {:root page/root})
+      (response/content-type "text/html")))
+
 (defroutes routes
   (POST "/" [] add-page)
   (GET "/" [] list-pages)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-page id))
            ;; Get all annotations for a page
-           (GET "/annotation" [] (partial get-annotation id))))
+           (GET "/annotation" [] (partial get-annotation id))
+           (GET "/content" [] (partial get-page-content id))))

@@ -1,4 +1,4 @@
-import * as api from "frontend/api/index.js";
+import * as api from "frontend/api.js";
 import { writable } from 'svelte/store';
 
 export const currentUser = writable(null);

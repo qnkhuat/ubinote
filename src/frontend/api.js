@@ -23,6 +23,7 @@ export const deleteSession = () => api.delete("api/session/");
 export const getStaticPage = (path) => `${process.env.UN_API_URL}/static/${path}`
 
 export const getPage = (id) => api.get(`/api/page/${id}`);
+export const getPageContent = (id) => api.get(`/api/page/${id}/content`)
 
 //
 export const listPages = () => api.get("/api/page");

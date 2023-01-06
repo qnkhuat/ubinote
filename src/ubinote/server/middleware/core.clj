@@ -9,6 +9,7 @@
             [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+            [ring.middleware.content-type :refer [wrap-content-type]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]))
 
@@ -57,6 +58,7 @@
 (def middlewares
   ;; middleware will be applied from bottom->top
   ;; in the other words, the middleware at bottom will be executed last
+  ;; ▼▼▼ POST-PROCESSING ▼▼▼ happens from TOP-TO-BOTTOM
   [ubinote-wrap-cors
    wrap-api-exceptions
    wrap-request-logger
@@ -69,6 +71,8 @@
    wrap-params              ;; parses GET and POST params as :query-params/:form-params and both as :params
    add-security-header      ;; add a set of security headers for all responses
    wrap-json-response])     ;; normalize response to json
+;; ▲▲▲ PRE-PROCESSING ▲▲▲ happens from BOTTOM-TO-TOP
+
 
 (defn apply-middleware
   [handler middlewares]
