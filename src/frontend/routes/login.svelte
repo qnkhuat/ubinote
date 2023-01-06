@@ -1,4 +1,5 @@
 <script>
+	import { navigateTo } from 'svelte-router-spa';
 	import * as api from "frontend/api/index.js";
 	import { getCurrentUser } from "frontend/stores/user.js";
 	import {
@@ -16,10 +17,11 @@
 		api.createSession({email, password}).then(resp => {
 			if (resp.status_code == 200) {
 				getCurrentUser();
+				// is there a way to refer to the last page the user was on?
+				navigateTo("/");
 			}
 		});
 	}
-
 </script>
 
 <Form>
@@ -34,5 +36,4 @@
 		e.preventDefault();
 		api.deleteSession()
 	}}>Logout</Button>
-
 </Form>

@@ -2,32 +2,40 @@
 	import { onMount } from 'svelte';
 
 	import "carbon-components-svelte/css/white.css";
-	import { Button } from "carbon-components-svelte";
+	import {
+		Button,
+		DataTable,
+	} from "carbon-components-svelte";
 
 	import { listPages } from "../api/index.js";
 
-	onMount(async () => {
-		//console.log("pages:", listPages().then(resp => console.log(resp)));
+	let pages = [];
+
+	onMount(() => {
+		listPages().then(resp => {
+			pages = resp.data;
+		});
 	});
+
+	// when click on a row, open the page in a new tab
+	function openPage(row) {
+		window.open(`/page/${row.detail.id}`, "_blank");
+	}
+
 
 </script>
 
-<Button/>
-<h1>Hello world!</h1>
-<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-<p>
-	This template is pre-configured with svlete-spa-router for routing.<br/>
-	Visit the <a href="https://github.com/ItalyPaleAle/svelte-spa-router">documentation for the router</a> to learn more.
-</p>
-<p>
-	<a href="/login">Login now</a>
-</p>
-
-<style>
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
+<DataTable
+	sortable
+	on:click:row={openPage}
+	headers={
+		[
+			{key: "domain", value: "Domain"},
+			{key: "title", value: "Title"},
+			{key: "url", value: "URL"},
+			{key: "created_at", value: "Created At"},
+			{key: "updated_at", value: "Updated At"},
+		]
 	}
-</style>
+	rows={pages}
+/>
