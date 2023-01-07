@@ -14,11 +14,10 @@
 
 	function submit() {
 		api.createSession({email, password}).then(resp => {
-			if (resp.status_code == 200) {
-				getCurrentUser();
+			getCurrentUser().then(() => {
 				// is there a way to refer to the last page the user was on?
 				navigateTo("/");
-			}
+			});
 		});
 	}
 </script>
@@ -27,12 +26,12 @@
 	<TextInput labelText= "Email" placehodler="Your email please" bind:value={email}/>
 	<PasswordInput labelText="Password" placeholder="Enter password..." bind:value={password}/>
 	<Button type="submit" on:click={(e) => {
-		e.preventDefault();
-		submit();
-	}}>Login</Button>
+				 e.preventDefault();
+				 submit();
+				 }}>Login</Button>
 
-<Button type="submit" on:click={(e) => {
-	e.preventDefault();
-	api.deleteSession()
-}}>Logout</Button>
+	<Button type="submit" on:click={(e) => {
+				 e.preventDefault();
+				 api.deleteSession()
+				 }}>Logout</Button>
 </Form>

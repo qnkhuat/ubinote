@@ -21,13 +21,6 @@ const privateRoutes = [
 		name: "/",
 		component: Home,
 	},
-]
-
-const publicRoutes = [
-	{
-		name: "/login",
-		component: Login,
-	},
 	{
 		name: "/page",
 		component: "",
@@ -38,6 +31,14 @@ const publicRoutes = [
 			}
 		]
 	}
+]
+
+const publicRoutes = [
+	{
+		name: "/login",
+		component: Login,
+	},
+
 ]
 
 const routes = [

@@ -1,11 +1,20 @@
 <script>
 	import { onMount } from "svelte";
+	import { fromRange, toRange } from "dom-anchor-text-position";
+
+
 	import * as api from "frontend/api.js";
 	import { highlightRange } from "frontend/lib/highlight/higlight-dom-range";
-	import { fromRange, toRange } from "dom-anchor-text-position";
+	import CreateAnnotation from "frontend/components/Page/CreateAnnotation.svelte";
 
 	//------------------------ props  ------------------------//
 	export let pageId;
+
+	//------------------------ states  ------------------------//
+	let pageDetail;
+	let pageContent;
+	let showCreateAnnotation;
+	let createAnnotationPosition = {x: 0, y: 0};
 
 	//------------------------ constants  ------------------------//
 
@@ -16,9 +25,6 @@
 		"yellow": "highlight-yellow"
 	}
 
-	//------------------------ states  ------------------------//
-	let pageDetail;
-	let pageContent;
 
 	//------------------------ utils  ------------------------//
 	// from range wrt body
@@ -73,10 +79,20 @@
 
 		document.addEventListener("mouseup", () => {
 			const selection = window.getSelection();
+			console.log("is collapsed", selection.isCollapsed);
 			if (!selection.isCollapse) {
-				addAnnotation(pageId, selection);
+				//addAnnotation(pageId, selection);
+				const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
+				// show the annotation at the middle of the bottom left of the selection
+				createAnnotationPosition = {
+					x: boundingRect.left + window.scrollX + boundingRect.width / 2,
+					y: boundingRect.bottom + window.scrollY
+				}
+				showCreateAnnotation = true;
+				console.log(createAnnotationPosition, showCreateAnnotation);
 			}
 			else {
+				showCreateAnnotation = false;
 			}
 		});
 	});
@@ -89,6 +105,13 @@
 	</div>
 {:else}
 	<div>Loading...</div>
+{/if}
+
+{#if showCreateAnnotation}
+	<CreateAnnotation
+	 {...createAnnotationPosition}
+	 onClose={() => showCreateAnnotation = false}
+	 />
 {/if}
 
 <style>
