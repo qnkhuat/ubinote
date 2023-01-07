@@ -37,22 +37,30 @@
 		// need to calculate textpos before highlight, otherwise the position will be messed up
 		// when try to highlight on re-load
 		const textPos = fromRangeBody(range);
-		const [highlightElements, removeHighlights] = highlightRange(range, 'span', {class: colorToCSS[color]});
+
 		// save it
-		const resp = await api.createAnnotation(
-			{coordinate: textPos,
-				page_id: pageId})
-			.catch(err => console.error("Failed to add annotaiton: ", err));
+		const resp = await api.createAnnotation({
+			coordinate: textPos,
+			page_id: pageId
+		}).catch(err => {
+			console.error("Failed to add annotaiton: ", err);
+			return null;
+		});
+
+		let highlightElements;
+		// if save successful, draw it
+		if (resp)
+			[highlightElements] = highlightRange(range, 'span', {class: colorToCSS[color]});
 		return highlightElements;
 	}
 
 	//------------------------ reactive functions  ------------------------//
 
 	// draw annotations once pageDetail is ready
-	$ : if (pageDetail) {
+	$ : if (pageDetail && pageContent) {
 		pageDetail.annotations.forEach(annotation => {
 			const range = toRangeBody(annotation.coordinate);
-			const [highlightNodes, removeHighlights] = highlightRange(range, 'span', {class: colorToCSS[annotation.color]});
+			highlightRange(range, 'span', {class: colorToCSS[annotation.color]});
 		});
 	}
 
@@ -66,7 +74,6 @@
 		document.addEventListener("mouseup", () => {
 			const selection = window.getSelection();
 			if (!selection.isCollapse) {
-				const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
 				addAnnotation(pageId, selection);
 			}
 			else {
@@ -77,17 +84,17 @@
 </script>
 
 {#if pageContent}
-<div id="page-content">
-	{@html pageContent}
-</div>
+	<div id="page-content">
+		{@html pageContent}
+	</div>
 {:else}
-<div>Loading...</div>
+	<div>Loading...</div>
 {/if}
 
 <style>
 	#page-content {
 		width: 100%;
-		positiion: relative;
+		position: relative;
 	}
 
 	/* highlight colors */

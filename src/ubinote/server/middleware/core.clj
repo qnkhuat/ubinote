@@ -1,17 +1,17 @@
 (ns ubinote.server.middleware.core
-  (:require [compojure.response :refer [Renderable]]
-            [ubinote.config :as cfg]
-            [ubinote.server.middleware.paging :refer [wrap-paging]]
-            [ubinote.server.middleware.exceptions :refer [wrap-api-exceptions]]
-            [ubinote.server.middleware.session :refer [wrap-session-id wrap-current-user-info]]
-            [ubinote.server.middleware.security :refer [add-security-header]]
-            [ubinote.server.middleware.log :refer [wrap-request-logger]]
-            [ring.middleware.cookies :refer [wrap-cookies]]
-            [ring.middleware.cors :refer [wrap-cors]]
-            [ring.middleware.keyword-params :refer [wrap-keyword-params]]
-            [ring.middleware.content-type :refer [wrap-content-type]]
-            [ring.middleware.params :refer [wrap-params]]
-            [ring.middleware.json :refer [wrap-json-response wrap-json-body]]))
+  (:require
+    [compojure.response :refer [Renderable]]
+    [ring.middleware.cookies :refer [wrap-cookies]]
+    [ring.middleware.cors :refer [wrap-cors]]
+    [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
+    [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+    [ring.middleware.params :refer [wrap-params]]
+    [ubinote.config :as cfg]
+    [ubinote.server.middleware.exceptions :refer [wrap-api-exceptions]]
+    [ubinote.server.middleware.log :refer [wrap-request-logger]]
+    [ubinote.server.middleware.paging :refer [wrap-paging]]
+    [ubinote.server.middleware.security :refer [add-security-header]]
+    [ubinote.server.middleware.session :refer [wrap-session-id wrap-current-user-info]]))
 
 (defn- wrap-resp-if-needed
   " Enable endpoint to be able to just return an object or nil
@@ -44,14 +44,14 @@
   [handler]
   (wrap-json-body handler {:keywords? true}))
 
-(defn- ubinote-wrap-cors
+(defn- ubinote-wrap-cors-in-dev
   [handler]
   ;; this is for dev mode only and it allows We make call from hot-reloading
   ;; host on FE
   (if (= :dev cfg/run-mode)
     (wrap-cors handler
                :access-control-allow-credentials "true"
-               :access-control-allow-origin      #"http://localhost:8888/*"
+               :access-control-allow-origin      #"http://localhost:8080/*"
                :access-control-allow-methods     [:options :get :put :post :delete])
     handler))
 
@@ -59,7 +59,7 @@
   ;; middleware will be applied from bottom->top
   ;; in the other words, the middleware at bottom will be executed last
   ;; ▼▼▼ POST-PROCESSING ▼▼▼ happens from TOP-TO-BOTTOM
-  [ubinote-wrap-cors
+  [ubinote-wrap-cors-in-dev
    wrap-api-exceptions
    wrap-request-logger
    wrap-current-user-info

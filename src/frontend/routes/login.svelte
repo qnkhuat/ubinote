@@ -11,7 +11,6 @@
 
 	let email = null;
 	let password = null;
-	let logedInValue;
 
 	function submit() {
 		api.createSession({email, password}).then(resp => {
@@ -32,8 +31,8 @@
 		submit();
 	}}>Login</Button>
 
-	<Button type="submit" on:click={(e) => {
-		e.preventDefault();
-		api.deleteSession()
-	}}>Logout</Button>
+<Button type="submit" on:click={(e) => {
+	e.preventDefault();
+	api.deleteSession()
+}}>Logout</Button>
 </Form>
