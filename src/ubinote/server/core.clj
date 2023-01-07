@@ -22,7 +22,7 @@
 
 (defn start!
   [app]
-  (log/info "Starting server at localhost:" (cfg/config-int :port))
+  (log/infof "Starting server at http://localhost:%d" (cfg/config-int :port))
   (adb/setup-db!)
   (am/migrate!)
   (run-jetty app

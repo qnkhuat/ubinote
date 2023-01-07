@@ -4,10 +4,10 @@
 	import { highlightRange } from "frontend/lib/highlight/higlight-dom-range";
 	import { fromRange, toRange } from "dom-anchor-text-position";
 
-	// props
+	//------------------------ props  ------------------------//
 	export let pageId;
 
-	// constants
+	//------------------------ constants  ------------------------//
 
 	const colorToCSS = {
 		"red": "highlight-red",
@@ -16,10 +16,17 @@
 		"yellow": "highlight-yellow"
 	}
 
-	// state
+	//------------------------ states  ------------------------//
 	let pageDetail;
 	let pageContent;
 
+	//------------------------ utils  ------------------------//
+	// from range wrt body
+	const fromRangeBody = (range) => fromRange(document.body, range);
+	// to range wrt body
+	const toRangeBody = (range) => toRange(document.body, range);
+
+	//------------------------ functions ------------------------//
 	const addAnnotation = async (pageId, selection, color = "red") => {
 		if (selection == null) {
 			console.error("Attempted to add annotation when selection is null");
@@ -29,7 +36,7 @@
 		const range = selection.getRangeAt(0);
 		// need to calculate textpos before highlight, otherwise the position will be messed up
 		// when try to highlight on re-load
-		const textPos = fromRange(document.body, range);
+		const textPos = fromRangeBody(range);
 		const [highlightElements, removeHighlights] = highlightRange(range, 'span', {class: colorToCSS[color]});
 		// save it
 		const resp = await api.createAnnotation(
@@ -39,9 +46,12 @@
 		return highlightElements;
 	}
 
+	//------------------------ reactive functions  ------------------------//
+
+	// draw annotations once pageDetail is ready
 	$ : if (pageDetail) {
 		pageDetail.annotations.forEach(annotation => {
-			const range = toRange(document.body, annotation.coordinate);
+			const range = toRangeBody(annotation.coordinate);
 			const [highlightNodes, removeHighlights] = highlightRange(range, 'span', {class: colorToCSS[annotation.color]});
 		});
 	}

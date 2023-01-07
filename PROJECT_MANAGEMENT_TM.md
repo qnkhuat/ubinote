@@ -1,3 +1,16 @@
+The so called "Project Management" of Ubinote
+
+
+# Phase 1
+- can create page, add highlight, and comments on HTML page
+- simple login, setup flow
+
+# Phase 2
+- PDF
+
+# Phase 3
+- maybe follow links
+
 Some note on design
 - when users select text, automatically display a popup to whether highlight or add note
 - Note display

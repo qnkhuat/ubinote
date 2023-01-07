@@ -26,3 +26,18 @@ TODO:
 
 First you need to install single-cli
 `npm install -g "single-file-cli"`
+
+
+### Development
+
+Backend
+
+```
+clj -M:dev
+```
+
+Frontend
+
+```
+npm run dev
+```
