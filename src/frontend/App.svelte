@@ -1,5 +1,8 @@
 <script>
   import { Router } from 'svelte-router-spa'
+
+  import { Loading } from "carbon-components-svelte";
+
   import routes  from 'frontend/routes'
   import { getCurrentUser } from "frontend/stores/user.js";
   let loaded = false;
@@ -13,10 +16,11 @@
 
 
 {#if loaded}
-<Router {routes}/>
+  <Router {routes}/>
 {:else}
-<div>Loading...</div>
+  <Loading/>
 {/if}
 
 <style>
+
 </style>

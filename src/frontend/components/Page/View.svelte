@@ -2,6 +2,8 @@
 	import { onMount } from "svelte";
 	import { fromRange, toRange } from "dom-anchor-text-position";
 
+	import { Loading } from "carbon-components-svelte";
+
 
 	import * as api from "frontend/api.js";
 	import { highlightRange } from "frontend/lib/highlight/higlight-dom-range";
@@ -79,12 +81,21 @@
 		});
 	}
 
-	onMount(function loadContent() {
-		api.getPage(pageId)
-			.then(resp =>pageDetail = resp.data);
-
+	onMount(async function loadContent() {
 		api.getPageContent(pageId)
-			.then(resp => pageContent = resp.data);
+			.then(resp => {
+				pageContent = resp.data;
+			}).catch(err => {
+				console.error("Failed to load page content: ", err);
+			}).then(() => {
+				// load page detail after page content is loaded
+				api.getPage(pageId)
+					.then(resp => {
+						pageDetail = resp.data;
+					}).catch(err => {
+						console.error("Failed to load page detail: ", err);
+					});
+			});
 
 		document.addEventListener("mouseup", () => {
 			const selection = window.getSelection();
@@ -111,7 +122,7 @@
 		{@html pageContent}
 	</div>
 {:else}
-	<div>Loading...</div>
+	<Loading />
 {/if}
 
 {#if showCreateAnnotation}

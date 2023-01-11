@@ -30,11 +30,13 @@
 <DataTable
 	sortable
 	on:click:cell={openPage}
-	headers={[{key: "domain", value: "Domain"},
+	headers={[
+	{key: "open", value: "Open", display: (_) => "Open"},
 	{key: "title", value: "Title"},
+	{key: "domain", value: "Domain"},
 	{key: "url", value: "URL"},
 	{key: "created_at", value: "Created At"},
 	{key: "updated_at", value: "Updated At"},
-	{key: "open", value: "Open", display: (_) => "Open"}]}
+	]}
 	rows={pages}
 	/>
