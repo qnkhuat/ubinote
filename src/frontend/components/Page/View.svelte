@@ -28,9 +28,18 @@
 
 	//------------------------ utils  ------------------------//
 	// from range wrt body
-	function fromRangeBody (range) { fromRange(document.body, range) };
+	function fromRangeBody (range) {
+		return fromRange(document.body, range)
+	};
 	// to range wrt body
-	function toRangeBody (range) { toRange(document.body, range) };
+	function toRangeBody (range) {
+		return toRange(document.body, range)
+	};
+
+	function isSelecting(selection) {
+		const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
+		return !selection.isCollapsed && boundingRect.width > 2;
+	}
 
 	//------------------------ functions ------------------------//
 	async function addAnnotation (pageId, selection, color = "red") {
@@ -79,8 +88,7 @@
 
 		document.addEventListener("mouseup", () => {
 			const selection = window.getSelection();
-			console.log("is collapsed", selection.isCollapsed);
-			if (!selection.isCollapse) {
+			if (isSelecting(selection)) {
 				//addAnnotation(pageId, selection);
 				const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
 				// show the annotation at the middle of the bottom left of the selection
@@ -89,7 +97,6 @@
 					y: boundingRect.bottom + window.scrollY
 				}
 				showCreateAnnotation = true;
-				console.log(createAnnotationPosition, showCreateAnnotation);
 			}
 			else {
 				showCreateAnnotation = false;
