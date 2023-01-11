@@ -8,7 +8,6 @@
     [ubinote.api.common :as api]
     [ubinote.models.annotation :refer [Annotation]]))
 
-
 (def NewAnnotation
   {:page_id                s/Int
    :creator_id             s/Int

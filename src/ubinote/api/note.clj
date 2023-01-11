@@ -1,11 +1,11 @@
 (ns ubinote.api.note
-  (:require [compojure.core :refer [context defroutes POST GET]]
-            [compojure.coercions :refer [as-int]]
-            [ubinote.api.common :as api]
-            [ubinote.models.note :refer [Note]]
+  (:require [compojure.coercions :refer [as-int]]
+            [compojure.core :refer [context defroutes POST GET]]
             [schema.core :as s]
             [toucan.db :as db]
-            [toucan.hydrate :refer [hydrate]]))
+            [toucan.hydrate :refer [hydrate]]
+            [ubinote.api.common :as api]
+            [ubinote.models.note :refer [Note]]))
 
 (def NewNote
   {:annotation_id s/Int
@@ -19,8 +19,8 @@
 (defn create-note
   [{:keys [body] :as _req}]
   (let [cmt (assoc body :creator_id api/*current-user-id*)]
-   (validate-create-note cmt)
-   (db/insert! Note cmt)))
+    (validate-create-note cmt)
+    (db/insert! Note cmt)))
 
 (defn get-note
   [id _req]

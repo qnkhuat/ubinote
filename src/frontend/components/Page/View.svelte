@@ -28,12 +28,12 @@
 
 	//------------------------ utils  ------------------------//
 	// from range wrt body
-	const fromRangeBody = (range) => fromRange(document.body, range);
+	function fromRangeBody (range) { fromRange(document.body, range) };
 	// to range wrt body
-	const toRangeBody = (range) => toRange(document.body, range);
+	function toRangeBody (range) { toRange(document.body, range) };
 
 	//------------------------ functions ------------------------//
-	const addAnnotation = async (pageId, selection, color = "red") => {
+	async function addAnnotation (pageId, selection, color = "red") {
 		if (selection == null) {
 			console.error("Attempted to add annotation when selection is null");
 			return
@@ -70,7 +70,7 @@
 		});
 	}
 
-	onMount(() => {
+	onMount(function loadContent() {
 		api.getPage(pageId)
 			.then(resp =>pageDetail = resp.data);
 

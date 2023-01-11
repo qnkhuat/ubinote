@@ -1,11 +1,11 @@
 (ns ubinote.api.core
   (:require [compojure.core :refer [defroutes GET context]]
-            [ubinote.api.page :as page]
             [ubinote.api.annotation :as ant]
             [ubinote.api.note :as note]
-            [ubinote.api.user :as user]
+            [ubinote.api.page :as page]
             [ubinote.api.session :as session]
             [ubinote.api.setup :as setup]
+            [ubinote.api.user :as user]
             [ubinote.server.middleware.auth :refer [+auth]]))
 
 (defroutes routes
