@@ -73,15 +73,14 @@
 
 	//------------------------ reactive functions  ------------------------//
 
-	// draw annotations once pageDetail is ready
-	$ : if (pageDetail && pageContent) {
+	$ : if (pageContent && pageDetail) {
 		pageDetail.annotations.forEach(annotation => {
 			const range = toRangeBody(annotation.coordinate);
 			highlightRange(range, 'span', {class: colorToCSS[annotation.color]});
 		});
 	}
 
-	onMount(async function loadContent() {
+	onMount(function loadContent() {
 		api.getPageContent(pageId)
 			.then(resp => {
 				pageContent = resp.data;
@@ -89,6 +88,7 @@
 				console.error("Failed to load page content: ", err);
 			}).then(() => {
 				// load page detail after page content is loaded
+				// so that we could render page content before render annotations
 				api.getPage(pageId)
 					.then(resp => {
 						pageDetail = resp.data;
@@ -129,6 +129,7 @@
 	<CreateAnnotation
 	 {...createAnnotationPosition}
 	 onClose={() => showCreateAnnotation = false}
+	 onHighlight={() => addAnnotation(pageId, window.getSelection())}
 	 />
 {/if}
 
