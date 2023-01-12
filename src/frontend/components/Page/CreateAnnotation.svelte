@@ -5,17 +5,17 @@
 	//------------------------ props  ------------------------//
 	// position of the bottom left of user's selection
 	export let x, y;
-	export let onClose, onHighlight;
+	export let onClose, onAnnotate;
 
 	function handleClick() {
-		onHighlight();
+		onAnnotate("red");
 		onClose();
 	}
 
 </script>
 
 <div id = "create-annotation-tooltip"
-		 style="left: {x}px; top: {y}px;">
+	style="left: {x}px; top: {y}px;">
 	<div class="content">
 		<Button on:click={handleClick} size="small" icon={PaintBrushAlt} iconDescription="Highlight"></Button>
 	</div>
@@ -30,19 +30,9 @@
 		transform: translate(-50%);
 		margin-top: 10px;
 
-			.content {
-				position: relative;
-
-					.close-button {
-						cursor: pointer;
-						position: absolute;
-						top: 0;
-						right: 0;
-						width: 2rem;
-						height: 2rem;
-					}
-
-			}
+		.content {
+			position: relative;
+		}
 	}
 
 </style>

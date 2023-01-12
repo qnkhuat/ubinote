@@ -17,6 +17,7 @@
 	let pageContent;
 	let showCreateAnnotation;
 	let createAnnotationPosition = {x: 0, y: 0};
+	let annotations = {};
 
 	//------------------------ constants  ------------------------//
 
@@ -37,14 +38,26 @@
 	function toRangeBody (range) {
 		return toRange(document.body, range)
 	};
-
 	function isSelecting(selection) {
 		const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
 		return !selection.isCollapsed && boundingRect.width > 2;
 	}
 
 	//------------------------ functions ------------------------//
-	async function addAnnotation (pageId, selection, color = "red") {
+
+	// highlight on DOM
+	function annotateOnDOM(range, color, annotationId) {
+		const result =  highlightRange(range, 'span',
+			{
+				class: colorToCSS[color],
+				onclick: `onClickAnnotation(${annotationId})`
+			})
+		const [_, removeHighlight] = result;
+		annotations[annotationId] = removeHighlight;
+	}
+
+	// call API to add the annotation
+	function addAnnotation(pageId, selection, color) {
 		if (selection == null) {
 			console.error("Attempted to add annotation when selection is null");
 			return
@@ -56,27 +69,45 @@
 		const textPos = fromRangeBody(range);
 
 		// save it
-		const resp = await api.createAnnotation({
+		return api.createAnnotation({
 			coordinate: textPos,
-			page_id: pageId
-		}).catch(err => {
-			console.error("Failed to add annotaiton: ", err);
-			return null;
+			page_id: pageId,
+			color: color,
+		}).then((resp) => {
+			return [range, resp.data.id]
 		});
-
-		let highlightElements;
-		// if save successful, draw it
-		if (resp)
-			[highlightElements] = highlightRange(range, 'span', {class: colorToCSS[color]});
-		return highlightElements;
 	}
+
+	function deleteAnnotation(annotationId) {
+		api.deleteAnnotation(annotationId).
+			then((_err) => {
+				// remove annotation on DOm
+				annotations[annotationId]()
+			}).
+			catch((err) => {
+				console.error("Failed to delete annotation", annotationId, err)
+			})
+	}
+
+	function onAnnotate(color) {
+		return addAnnotation(pageId, window.getSelection(), color).
+			then((resp) => {
+				const [range, annotationId] = resp;
+				annotateOnDOM(range, annotationId);
+			})
+	}
+
 
 	//------------------------ reactive functions  ------------------------//
 
 	$ : if (pageContent && pageDetail) {
 		pageDetail.annotations.forEach(annotation => {
 			const range = toRangeBody(annotation.coordinate);
-			highlightRange(range, 'span', {class: colorToCSS[annotation.color]});
+			try {
+				annotateOnDOM(range, annotation.color, annotation.id);
+			} catch(e) {
+				console.error("Failed to annotate", annotation);
+			}
 		});
 	}
 
@@ -100,7 +131,6 @@
 		document.addEventListener("mouseup", () => {
 			const selection = window.getSelection();
 			if (isSelecting(selection)) {
-				//addAnnotation(pageId, selection);
 				const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
 				// show the annotation at the middle of the bottom left of the selection
 				createAnnotationPosition = {
@@ -114,6 +144,15 @@
 			}
 		});
 	});
+
+
+	onMount(function registerGlobalFunctions() {
+		function onClickAnnotation(annotationId) {
+			deleteAnnotation(annotationId)
+		}
+
+		window.onClickAnnotation = onClickAnnotation;
+	})
 
 </script>
 
@@ -129,7 +168,7 @@
 	<CreateAnnotation
 	 {...createAnnotationPosition}
 	 onClose={() => showCreateAnnotation = false}
-	 onHighlight={() => addAnnotation(pageId, window.getSelection())}
+	 onAnnotate={onAnnotate}
 	 />
 {/if}
 

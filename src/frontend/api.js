@@ -54,3 +54,7 @@ export function createPage (body) {
 export function createAnnotation (body) {
   return api.post(`/api/annotation`, body)
 };
+
+export function deleteAnnotation(id) {
+  return api.delete(`/api/annotation/${id}`)
+}
