@@ -1,11 +1,11 @@
 (ns ubinote.api.user
-  (:require [compojure.core :refer [context defroutes GET POST]]
-            [compojure.coercions :refer [as-int]]
+  (:require [compojure.coercions :refer [as-int]]
+            [compojure.core :refer [context defroutes GET POST]]
+            [schema.core :as s]
+            [toucan.db :as db]
             [ubinote.api.common :as api]
             [ubinote.models :refer [User]]
-            [ubinote.models.common.schemas :as schemas]
-            [schema.core :as s]
-            [toucan.db :as db]))
+            [ubinote.models.common.schemas :as schemas]))
 
 (def NewUser
   {:email      schemas/EmailAddress

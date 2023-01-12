@@ -1,14 +1,13 @@
 (ns ubinote.api.page
-  (:require [compojure.core :refer [context defroutes POST GET]]
-            [compojure.coercions :refer [as-int]]
-            [ubinote.api.common :as api]
-            [ubinote.models :refer [Page Annotation]]
-            [ubinote.models.page :as page]
-            [ubinote.models.common.schemas :as schemas]
+  (:require [compojure.coercions :refer [as-int]]
+            [compojure.core :refer [context defroutes POST GET]]
             [ring.util.response :as response]
+            [schema.core :as s]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
-            [schema.core :as s]))
+            [ubinote.api.common :as api]
+            [ubinote.models.common.schemas :as schemas]
+            [ubinote.models.page :as page]))
 
 (s/def NewPage
   {:url                   schemas/URL
@@ -35,10 +34,6 @@
   (-> (db/select Page)
       (hydrate :user)))
 
-(defn- get-annotation
-  [id _req]
-  (db/select Annotation :page_id id))
-
 (defn- get-page-content
   "Returns the static file of the page"
   [id _req]
@@ -51,6 +46,4 @@
   (GET "/" [] list-pages)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-page id))
-           ;; Get all annotations for a page
-           (GET "/annotation" [] (partial get-annotation id))
            (GET "/content" [] (partial get-page-content id))))

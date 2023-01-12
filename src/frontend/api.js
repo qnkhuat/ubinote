@@ -25,11 +25,6 @@ export function deleteSession () {
 };
 
 // ---------------------------- Page ---------------------------- //
-// return the static url for a given path
-export function getStaticPage (path) {
-  return `${process.env.UN_API_URL}/static/${path}`
-};
-
 export function getPage (id) {
   return api.get(`/api/page/${id}`)
 };

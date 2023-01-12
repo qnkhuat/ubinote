@@ -1,13 +1,13 @@
 (ns ubinote.api.session
-  (:require [compojure.core :refer [defroutes POST DELETE]]
-            [cemerick.friend.credentials :as creds]
+  (:require [cemerick.friend.credentials :as creds]
+            [compojure.core :refer [defroutes POST DELETE]]
+            [schema.core :as s]
+            [toucan.db :as db]
             [ubinote.api.common :as api]
             [ubinote.models.common.schemas :as schemas]
             [ubinote.models.session :refer [Session]]
             [ubinote.models.user :refer [default-user-columns]]
-            [ubinote.server.middleware.session :as mw.session]
-            [toucan.db :as db]
-            [schema.core :as s]))
+            [ubinote.server.middleware.session :as mw.session]))
 
 (def NewSession
   {:email    schemas/EmailAddress

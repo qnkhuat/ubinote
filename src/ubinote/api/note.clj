@@ -13,7 +13,7 @@
    :content       s/Str})
 
 (def ^:private validate-create-note
-  "Schema for adding a user"
+  "Schema for adding a note"
   (s/validator NewNote))
 
 (defn create-note
