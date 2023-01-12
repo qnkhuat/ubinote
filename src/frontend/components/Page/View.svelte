@@ -46,13 +46,12 @@
 	//------------------------ functions ------------------------//
 
 	// highlight on DOM
-	function annotateOnDOM(range, color, annotationId) {
-		const result =  highlightRange(range, 'span',
+	function annotateOnDOM(range, annotationId, color) {
+		const [_, removeHighlight] =  highlightRange(range, 'span',
 			{
 				class: colorToCSS[color],
 				onclick: `onClickAnnotation(${annotationId})`
 			})
-		const [_, removeHighlight] = result;
 		annotations[annotationId] = removeHighlight;
 	}
 
@@ -74,7 +73,7 @@
 			page_id: pageId,
 			color: color,
 		}).then((resp) => {
-			return [range, resp.data.id]
+			return [range, resp.data.id];
 		});
 	}
 
@@ -93,7 +92,9 @@
 		return addAnnotation(pageId, window.getSelection(), color).
 			then((resp) => {
 				const [range, annotationId] = resp;
-				annotateOnDOM(range, annotationId);
+				annotateOnDOM(range, annotationId, color);
+			}).catch((err) => {
+				console.log("Failed to add annotation", err);
 			})
 	}
 
@@ -104,7 +105,7 @@
 		pageDetail.annotations.forEach(annotation => {
 			const range = toRangeBody(annotation.coordinate);
 			try {
-				annotateOnDOM(range, annotation.color, annotation.id);
+				annotateOnDOM(range, annotation.id, annotation.color);
 			} catch(e) {
 				console.error("Failed to annotate", annotation);
 			}
