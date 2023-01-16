@@ -18,6 +18,7 @@
 	let annotationToolTipContext; // `null` to turn off, `new` to create annotation, `edit` to edit
 	let annotationToolTipPosition = {x: 0, y: 0};
 	let annotations = {}; // {annotationId: removeHighlightFunction}
+	let activeAnnotation = null; // for edit
 
 	//------------------------ constants  ------------------------//
 
@@ -47,20 +48,18 @@
 
 	// highlight on DOM
 	function annotateOnDOM(range, annotation, color) {
-		console.log(range, annotation, color);
 		const [_, removeHighlight] =  highlightRange(range, 'span',
 			{
 				class: colorToCSS[color],
-				onclick: `onClickAnnotation(${annotation.id})`
+				onclick: `onClickAnnotation(${annotation.id})`,
 			})
 		annotations[annotation.id] = {
 			...annotation,
 			remove: removeHighlight
 		};
-		console.log(annotations);
 	}
 
-	// call API to add the annotation
+	// call API to add an annotation
 	function addAnnotation(pageId, selection, color) {
 		if (selection == null) {
 			console.error("Attempted to add annotation when selection is null");
@@ -82,10 +81,11 @@
 		});
 	}
 
+	// call API to delete an annotation
 	function deleteAnnotation(annotationId) {
 		api.deleteAnnotation(annotationId).
 			then((_err) => {
-				// remove annotation on DOm
+				// remove annotation on DOM
 				annotations[annotationId]["remove"]()
 			}).
 			catch((err) => {
@@ -97,7 +97,6 @@
 		return addAnnotation(pageId, window.getSelection(), color).
 			then((resp) => {
 				const [range, annotation] = resp;
-				console.log(range, annotation);
 				annotateOnDOM(range, annotation, color);
 				window.getSelection().empty(); // remove users selection
 			}).catch((err) => {
@@ -105,6 +104,13 @@
 			})
 	}
 
+	function rangeToToolTopPosition(range) {
+		const boundingRect = range.getBoundingClientRect()
+		return {
+			x: boundingRect.left + window.scrollX + boundingRect.width / 2,
+			y: boundingRect.bottom + window.scrollY
+		}
+	}
 
 	//------------------------ reactive functions  ------------------------//
 
@@ -114,7 +120,7 @@
 			try {
 				annotateOnDOM(range, annotation, annotation.color);
 			} catch(e) {
-				console.error("Failed to annotate", annotation);
+				console.error("Failed to annotate", annotation, e);
 			}
 		});
 	}
@@ -137,27 +143,22 @@
 			});
 
 		document.addEventListener("mouseup", () => {
+			// if user is selecting, show tooltip
 			const selection = window.getSelection();
 			if (isSelecting(selection)) {
-				const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
-				// show the annotation at the middle of the bottom left of the selection
-				annotationToolTipPosition = {
-					x: boundingRect.left + window.scrollX + boundingRect.width / 2,
-					y: boundingRect.bottom + window.scrollY
-				}
+				annotationToolTipPosition = rangeToToolTopPosition(selection.getRangeAt(0));
 				annotationToolTipContext = "new";
-			}
-			else {
-				annotationToolTipContext = null;
 			}
 		});
 	});
 
-
 	onMount(function registerGlobalFunctions() {
 		function onClickAnnotation(annotationId) {
+			const annotation = annotations[annotationId];
+
+			annotationToolTipPosition = rangeToToolTopPosition(toRangeBody(annotation.coordinate));
 			annotationToolTipContext = "edit";
-			deleteAnnotation(annotationId)
+			activeAnnotation = annotation;
 		}
 
 		window.onClickAnnotation = onClickAnnotation;
@@ -166,45 +167,45 @@
 </script>
 
 {#if pageContent}
-<div id="page-content">
-	{@html pageContent}
-</div>
+	<div id="page-content">
+		{@html pageContent}
+	</div>
 {:else}
-<Loading />
+	<Loading />
 {/if}
 
-{#if annotationToolTipContext}
-<div>
-	<h1>Hello world </h1>
-	<AnnotationToolTip
-		{...annotationToolTipPosition}
+{#if annotationToolTipContext != null}
+	<div>
+		<AnnotationToolTip
+			{...annotationToolTipPosition}
 		context={annotationToolTipContext}
-		onClose={() => annotationToolTipContext = null}
 		onAnnotate={onAnnotate}
-	/>
-</div>
+		onDelete={() => deleteAnnotation(activeAnnotation.id)}
+		onClose={() => annotationToolTipContext = null}
+		/>
+	</div>
 {/if}
 
 <style>
 	#page-content {
-	width: 100%;
-	position: relative;
+		width: 100%;
+		position: relative;
 	}
 
 	/* highlight colors */
 	:global(.highlight-red) {
-	color: red;
+		color: red;
 	}
 
 	:global(.highlight-green) {
-	color: green;
+		color: green;
 	}
 
 	:global(.highlight-blue) {
-	color: blue;
+		color: blue;
 	}
 
 	:global(.highlight-yellow) {
-	color: yellow;
+		color: yellow;
 	}
 </style>
