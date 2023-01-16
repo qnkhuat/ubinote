@@ -6,6 +6,7 @@
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
             [ubinote.api.common :as api]
+            [ubinote.models :refer [Page]]
             [ubinote.models.common.schemas :as schemas]
             [ubinote.models.page :as page]))
 
