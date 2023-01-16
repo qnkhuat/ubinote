@@ -7,7 +7,7 @@
 
 	import * as api from "frontend/api.js";
 	import { highlightRange } from "frontend/lib/highlight/higlight-dom-range";
-	import CreateAnnotation from "frontend/components/Page/CreateAnnotation.svelte";
+	import AnnotationToolTip from "frontend/components/Page/AnnotationToolTip.svelte";
 
 	//------------------------ props  ------------------------//
 	export let pageId;
@@ -15,9 +15,9 @@
 	//------------------------ states  ------------------------//
 	let pageDetail;
 	let pageContent;
-	let showCreateAnnotation;
-	let createAnnotationPosition = {x: 0, y: 0};
-	let annotations = {};
+	let annotationToolTipContext; // `null` to turn off, `new` to create annotation, `edit` to edit
+	let annotationToolTipPosition = {x: 0, y: 0};
+	let annotations = {}; // {annotationId: removeHighlightFunction}
 
 	//------------------------ constants  ------------------------//
 
@@ -46,13 +46,18 @@
 	//------------------------ functions ------------------------//
 
 	// highlight on DOM
-	function annotateOnDOM(range, annotationId, color) {
+	function annotateOnDOM(range, annotation, color) {
+		console.log(range, annotation, color);
 		const [_, removeHighlight] =  highlightRange(range, 'span',
 			{
 				class: colorToCSS[color],
-				onclick: `onClickAnnotation(${annotationId})`
+				onclick: `onClickAnnotation(${annotation.id})`
 			})
-		annotations[annotationId] = removeHighlight;
+		annotations[annotation.id] = {
+			...annotation,
+			remove: removeHighlight
+		};
+		console.log(annotations);
 	}
 
 	// call API to add the annotation
@@ -73,7 +78,7 @@
 			page_id: pageId,
 			color: color,
 		}).then((resp) => {
-			return [range, resp.data.id];
+			return [range, resp.data];
 		});
 	}
 
@@ -81,7 +86,7 @@
 		api.deleteAnnotation(annotationId).
 			then((_err) => {
 				// remove annotation on DOm
-				annotations[annotationId]()
+				annotations[annotationId]["remove"]()
 			}).
 			catch((err) => {
 				console.error("Failed to delete annotation", annotationId, err)
@@ -91,8 +96,10 @@
 	function onAnnotate(color) {
 		return addAnnotation(pageId, window.getSelection(), color).
 			then((resp) => {
-				const [range, annotationId] = resp;
-				annotateOnDOM(range, annotationId, color);
+				const [range, annotation] = resp;
+				console.log(range, annotation);
+				annotateOnDOM(range, annotation, color);
+				window.getSelection().empty(); // remove users selection
 			}).catch((err) => {
 				console.log("Failed to add annotation", err);
 			})
@@ -105,7 +112,7 @@
 		pageDetail.annotations.forEach(annotation => {
 			const range = toRangeBody(annotation.coordinate);
 			try {
-				annotateOnDOM(range, annotation.id, annotation.color);
+				annotateOnDOM(range, annotation, annotation.color);
 			} catch(e) {
 				console.error("Failed to annotate", annotation);
 			}
@@ -134,14 +141,14 @@
 			if (isSelecting(selection)) {
 				const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
 				// show the annotation at the middle of the bottom left of the selection
-				createAnnotationPosition = {
+				annotationToolTipPosition = {
 					x: boundingRect.left + window.scrollX + boundingRect.width / 2,
 					y: boundingRect.bottom + window.scrollY
 				}
-				showCreateAnnotation = true;
+				annotationToolTipContext = "new";
 			}
 			else {
-				showCreateAnnotation = false;
+				annotationToolTipContext = null;
 			}
 		});
 	});
@@ -149,6 +156,7 @@
 
 	onMount(function registerGlobalFunctions() {
 		function onClickAnnotation(annotationId) {
+			annotationToolTipContext = "edit";
 			deleteAnnotation(annotationId)
 		}
 
@@ -158,41 +166,45 @@
 </script>
 
 {#if pageContent}
-	<div id="page-content">
-		{@html pageContent}
-	</div>
+<div id="page-content">
+	{@html pageContent}
+</div>
 {:else}
-	<Loading />
+<Loading />
 {/if}
 
-{#if showCreateAnnotation}
-	<CreateAnnotation
-	 {...createAnnotationPosition}
-	 onClose={() => showCreateAnnotation = false}
-	 onAnnotate={onAnnotate}
-	 />
+{#if annotationToolTipContext}
+<div>
+	<h1>Hello world </h1>
+	<AnnotationToolTip
+		{...annotationToolTipPosition}
+		context={annotationToolTipContext}
+		onClose={() => annotationToolTipContext = null}
+		onAnnotate={onAnnotate}
+	/>
+</div>
 {/if}
 
 <style>
 	#page-content {
-		width: 100%;
-		position: relative;
+	width: 100%;
+	position: relative;
 	}
 
 	/* highlight colors */
 	:global(.highlight-red) {
-		color: red;
+	color: red;
 	}
 
 	:global(.highlight-green) {
-		color: green;
+	color: green;
 	}
 
 	:global(.highlight-blue) {
-		color: blue;
+	color: blue;
 	}
 
 	:global(.highlight-yellow) {
-		color: yellow;
+	color: yellow;
 	}
 </style>
