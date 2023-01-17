@@ -23,7 +23,7 @@
 	//------------------------ constants  ------------------------//
 
 	const colorToCSS = {
-		"red": "highlight-red",
+		"pink": "highlight-pink",
 		"green": "highlight-green",
 		"blue": "highlight-blue",
 		"yellow": "highlight-yellow"
@@ -47,10 +47,10 @@
 	//------------------------ functions ------------------------//
 
 	// highlight on DOM
-	function annotateOnDOM(range, annotation, color) {
+	function annotateOnDOM(range, annotation) {
 		const [_, removeHighlight] =  highlightRange(range, 'span',
 			{
-				class: colorToCSS[color],
+				class: colorToCSS[annotation.color],
 				onclick: `onClickAnnotation(${annotation.id})`,
 			})
 		annotations[annotation.id] = {
@@ -97,7 +97,7 @@
 		return addAnnotation(pageId, window.getSelection(), color).
 			then((resp) => {
 				const [range, annotation] = resp;
-				annotateOnDOM(range, annotation, color);
+				annotateOnDOM(range, annotation);
 				window.getSelection().empty(); // remove users selection
 			}).catch((err) => {
 				console.log("Failed to add annotation", err);
@@ -118,7 +118,7 @@
 		pageDetail.annotations.forEach(annotation => {
 			const range = toRangeBody(annotation.coordinate);
 			try {
-				annotateOnDOM(range, annotation, annotation.color);
+				annotateOnDOM(range, annotation);
 			} catch(e) {
 				console.error("Failed to annotate", annotation, e);
 			}
@@ -193,19 +193,25 @@
 	}
 
 	/* highlight colors */
-	:global(.highlight-red) {
-		color: red;
+	/* color code taken from the Preview app on mac */
+	:global(.highlight-yellow) {
+		background-color: #FACD5AA6;
+		cursor:pointer;
 	}
 
 	:global(.highlight-green) {
-		color: green;
+		background-color: #7CC868A6;
+		cursor:pointer;
+	}
+
+	:global(.highlight-pink) {
+		background-color: #FB5C89A6;
+		cursor:pointer;
 	}
 
 	:global(.highlight-blue) {
-		color: blue;
+		background-color: #69AFF0A6;
+		cursor:pointer;
 	}
 
-	:global(.highlight-yellow) {
-		color: yellow;
-	}
 </style>

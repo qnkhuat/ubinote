@@ -19,7 +19,7 @@
 	function handleClick(action) {
 		switch (action) {
 			case "annotate":
-				onAnnotate("red");
+				onAnnotate("yellow");
 				break;
 			case "delete":
 				onDelete();

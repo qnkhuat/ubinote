@@ -4,7 +4,6 @@
 
 	import "carbon-components-svelte/css/white.css";
 	import {
-		Button,
 		DataTable,
 	} from "carbon-components-svelte";
 
@@ -35,8 +34,7 @@
 	{key: "title", value: "Title"},
 	{key: "domain", value: "Domain"},
 	{key: "url", value: "URL"},
-	{key: "created_at", value: "Created At"},
-	{key: "updated_at", value: "Updated At"},
+	{key: "updated_at", value: "Last updated"},
 	]}
 	rows={pages}
 	/>
