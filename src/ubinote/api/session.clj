@@ -1,9 +1,10 @@
 (ns ubinote.api.session
   (:require [cemerick.friend.credentials :as creds]
-            [compojure.core :refer [defroutes POST DELETE]]
+            [compojure.core :refer [defroutes DELETE POST GET]]
             [schema.core :as s]
             [toucan.db :as db]
             [ubinote.api.common :as api]
+            [ubinote.config :as cfg]
             [ubinote.models.common.schemas :as schemas]
             [ubinote.models.session :refer [Session]]
             [ubinote.models.user :refer [default-user-columns]]
@@ -11,7 +12,8 @@
 
 (def NewSession
   {:email    schemas/EmailAddress
-   :password schemas/Password})
+   :password schemas/Password
+   s/Keyword s/Any})
 
 (defn verify-user
   [email password]
@@ -40,6 +42,11 @@
     (db/delete! Session :id session-id)
     (mw.session/clear-session-cookie api/generic-204-response)))
 
+(defn session-properties
+  [_req]
+  {:has_user_setup (cfg/setup?)})
+
 (defroutes routes
   (POST "/" [] create-session)
-  (DELETE "/" [] delete-session))
+  (DELETE "/" [] delete-session)
+  (GET "/properties" [] session-properties))

@@ -1,11 +1,11 @@
-(ns ubinote.server.core
+(ns ubinote.server
   (:require
     [clojure.tools.logging :as log]
     [ring.adapter.jetty :refer [run-jetty]]
     [ubinote.config :as cfg]
     [ubinote.migration :as am]
     [ubinote.server.db :as adb]
-    [ubinote.server.middleware.core :as middleware]
+    [ubinote.server.middleware :as middleware]
     [ubinote.server.routes :as routes]))
 
 ;; ensure we use a `BasicContextSelector` instead of a `ClassLoaderContextSelector` for log4j2. Ensures there is only

@@ -82,7 +82,7 @@
 (def is-prod?
   (= run-mode :prod))
 
-;; Probably need to cache this?
+;; TODO: cache this
 (defn setup?
   "Did the app set up successfully?
   Meaning we created an user."

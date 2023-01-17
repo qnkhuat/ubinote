@@ -1,4 +1,4 @@
-(ns ubinote.server.middleware.core
+(ns ubinote.server.middleware
   (:require
     [compojure.response :refer [Renderable]]
     [ring.middleware.cookies :refer [wrap-cookies]]

@@ -16,6 +16,10 @@ export function getCurrentUser () {
 
 // ---------------------------- Session ---------------------------- //
 
+export function sessionProperties () {
+  return api.get("api/session/properties")
+};
+
 export function createSession (body) {
   return api.post("api/session", body)
 };
@@ -23,6 +27,13 @@ export function createSession (body) {
 export function deleteSession () {
   return api.delete("api/session/")
 };
+
+
+// ---------------------------- Setup ---------------------------- //
+
+export function setup(body) {
+  return api.post("api/setup", body)
+}
 
 // ---------------------------- Page ---------------------------- //
 export function getPage (id) {

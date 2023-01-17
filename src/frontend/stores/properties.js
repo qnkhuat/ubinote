@@ -5,7 +5,11 @@ export const currentUser = writable(null);
 
 export function getCurrentUser() {
 	return api.getCurrentUser().then((resp) => {
-		currentUser.set(resp.data);
+		if (resp.status == 200){
+			currentUser.set(resp.data);
+		} else {
+			currentUser.set(null);
+		}
 	}).catch((_err) => {
 		currentUser.set(null);
 	});

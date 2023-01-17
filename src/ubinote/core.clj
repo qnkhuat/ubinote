@@ -1,5 +1,5 @@
 (ns ubinote.core
-  (:require [ubinote.server.core :as server]))
+  (:require [ubinote.server :as server]))
 
 (defn -main []
   (server/start! server/app))
