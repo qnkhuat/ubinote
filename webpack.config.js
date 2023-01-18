@@ -26,7 +26,7 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.svelte$/,
+				test: /\.(html|svelte)$/,
 				use: {
 					loader: 'svelte-loader',
 					options: {
@@ -47,10 +47,12 @@ module.exports = {
 				},
 			},
 			{
-				test: /\.css$/,
+				// a regex that matches css sass scss
+				test: /\.(css|sass|scss)$/,
 				use: [
 					MiniCssExtractPlugin.loader,
-					'css-loader'
+					'css-loader',
+					"sass-loader",
 				]
 			},
 			{

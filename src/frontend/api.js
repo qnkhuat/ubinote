@@ -6,25 +6,25 @@ const api = axios.create({
 
 // ---------------------------- User ---------------------------- //
 
-export function createUser (body) {
+export function createUser(body) {
   return api.post("api/user", body)
 };
 
-export function getCurrentUser () {
+export function getCurrentUser() {
   return api.get("api/user/current")
 };
 
 // ---------------------------- Session ---------------------------- //
 
-export function sessionProperties () {
+export function sessionProperties() {
   return api.get("api/session/properties")
 };
 
-export function createSession (body) {
+export function createSession(body) {
   return api.post("api/session", body)
 };
 
-export function deleteSession () {
+export function deleteSession() {
   return api.delete("api/session/")
 };
 
@@ -36,28 +36,28 @@ export function setup(body) {
 }
 
 // ---------------------------- Page ---------------------------- //
-export function getPage (id) {
+export function getPage(id) {
   return api.get(`/api/page/${id}`)
 };
 
-export function getPageContent (id) {
+export function getPageContent(id) {
   return api.get(`/api/page/${id}/content`)
 };
 
 //
-export function listPages () {
+export function listPages() {
   return api.get("/api/page")
 };
 
 //
 
-export function createPage (body) {
+export function createPage(body) {
   return api.post("/api/page", body)
 };
 
 // ---------------------------- Annotation ---------------------------- //
 
-export function createAnnotation (body) {
+export function createAnnotation(body) {
   return api.post(`/api/annotation`, body)
 };
 

@@ -23,7 +23,7 @@
 </script>
 
 <Form>
-	<TextInput labelText= "Email" placehodler="Your email please" bind:value={email}/>
+	<TextInput labelText= "Email" placeholder="Your email please" bind:value={email}/>
 	<PasswordInput labelText="Password" placeholder="Enter password..." bind:value={password}/>
 	<Button type="submit" on:click={(e) => {
 				 e.preventDefault();
