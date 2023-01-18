@@ -5,6 +5,11 @@ The so called "Project Management" of Ubinote
 - can create page, add highlight
 - simple login, setup flow
 
+Thing left till phase 1 complete:
+- a header
+- search on data table
+- production build
+
 
 # Phase 2
 - can add/edit/delete comments
