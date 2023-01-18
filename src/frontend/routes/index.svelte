@@ -94,7 +94,7 @@
 	 sortable
 	 on:click:cell={openPage}
 	 headers={[
-	 {key: "open", value: "Open", display: (_) => "Open"},
+	 {key: "open", value: "Open", display: (_) => "Open", sort: false},
 	 {key: "title", value: "Title"},
 	 {key: "domain", value: "Domain"},
 	 {key: "url", value: "URL"},
