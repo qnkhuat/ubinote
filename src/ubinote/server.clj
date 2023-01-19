@@ -18,7 +18,8 @@
 (System/setProperty "clojure.tools.logging.factory" "clojure.tools.logging.impl/log4j2-factory")
 (System/setProperty "log4j2.configurationFile" "log4j2.xml")
 
-(def app (middleware/apply-middleware routes/routes middleware/middlewares))
+(def app
+  (middleware/apply-middleware routes/routes middleware/middlewares))
 
 (defn start!
   [app]

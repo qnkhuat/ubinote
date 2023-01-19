@@ -3,4 +3,4 @@
   (:require [ubinote.server :as server]))
 
 (defn -main []
-  (server/start! server/app))
+  (server/start! #'server/app))

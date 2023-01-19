@@ -1,12 +1,11 @@
 (ns dev
   (:require
-    [ring.middleware.reload :refer [wrap-reload]]
     [ubinote.server :as server]))
 
 (defonce ^:private instance* (atom nil))
 
 (defn start! []
-  (server/start! (wrap-reload #'server/app)))
+  (reset! instance* (server/start! #'server/app)))
 
 (defn stop! []
   (when @instance*
