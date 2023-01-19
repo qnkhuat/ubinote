@@ -1,24 +1,24 @@
 (ns ubinote.models
-  (:require [cheshire.core :as json]
-            [ubinote.models.page :as page]
-            [ubinote.models.user :as user]
-            [ubinote.models.annotation :as annotation]
-            [ubinote.models.note :as m-note]
-            [potemkin :as p]
-            [toucan.models :as models]))
+  (:require
+    [cheshire.core :as json]
+    [potemkin :as p]
+    [toucan.models :as models]
+    [ubinote.models.annotation :as annotation]
+    [ubinote.models.note :as m-note]
+    [ubinote.models.page :as page]
+    [ubinote.models.user :as user]))
 
 (comment
- page/keep-me
- user/keep-me
- annotation/keep-me
- m-note/keep-me)
+  page/keep-me
+  user/keep-me
+  annotation/keep-me
+  m-note/keep-me)
 
 (p/import-vars
- [page Page]
- [user User]
- [annotation Annotation]
- [m-note Note])
-
+  [page Page]
+  [user User]
+  [annotation Annotation]
+  [m-note Note])
 
 ;; --------------------------- Adding toucan properties and types ------------------------
 (defn- add-created-at-timestamp [obj & _]

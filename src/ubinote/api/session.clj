@@ -1,14 +1,15 @@
 (ns ubinote.api.session
-  (:require [cemerick.friend.credentials :as creds]
-            [compojure.core :refer [defroutes DELETE POST GET]]
-            [schema.core :as s]
-            [toucan.db :as db]
-            [ubinote.api.common :as api]
-            [ubinote.config :as cfg]
-            [ubinote.models.common.schemas :as schemas]
-            [ubinote.models.session :refer [Session]]
-            [ubinote.models.user :refer [default-user-columns]]
-            [ubinote.server.middleware.session :as mw.session]))
+  (:require
+    [compojure.core :refer [defroutes DELETE POST GET]]
+    [schema.core :as s]
+    [toucan.db :as db]
+    [ubinote.api.common :as api]
+    [ubinote.config :as cfg]
+    [ubinote.models.common.schemas :as schemas]
+    [ubinote.models.session :refer [Session]]
+    [ubinote.models.user :refer [default-user-columns]]
+    [ubinote.server.middleware.session :as mw.session]
+    [ubinote.util.password :as passwd]))
 
 (def NewSession
   {:email    schemas/EmailAddress
@@ -19,7 +20,7 @@
   [email password]
   (let [user (db/select-one ['User :id :email :password] :email email)]
     (api/check-404 user {:message "User not found"})
-    (api/check-401 (creds/bcrypt-verify password (:password user)))
+    (api/check-401 (passwd/bcrypt-verify password (:password user)))
     (select-keys user default-user-columns)))
 
 (def ^:private validate-create-session

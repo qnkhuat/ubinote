@@ -1,7 +1,8 @@
 (ns ubinote.models.user
-  (:require [toucan.models :as models]
-            [cemerick.friend.credentials :as creds]
-            [clojure.string :as str]))
+  (:require
+   [clojure.string :as str]
+   [toucan.models :as models]
+   [ubinote.util.password :as passwd]))
 
 (models/defmodel User :core_user)
 
@@ -11,7 +12,7 @@
 (defn- hash-password
   [{:keys [password] :as user}]
   (if password
-    (assoc user :password (creds/hash-bcrypt password))
+    (assoc user :password (passwd/hash-bcrypt password))
     user))
 
 (defn- pre-insert
@@ -19,13 +20,13 @@
   (merge user
          {:email (str/lower-case email)}
          (when password
-           {:password (creds/hash-bcrypt password)})))
+           {:password (passwd/hash-bcrypt password)})))
 
 (defn- pre-update
   [{:keys [password] :as user}]
   (merge user
          (when password
-           {:password (creds/hash-bcrypt password)})))
+           {:password (passwd/hash-bcrypt password)})))
 
 (extend (class User)
   models/IModel

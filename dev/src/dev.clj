@@ -1,6 +1,7 @@
 (ns dev
-  (:require [ubinote.server :as server]
-            [ring.middleware.reload :refer [wrap-reload]]))
+  (:require
+    [ring.middleware.reload :refer [wrap-reload]]
+    [ubinote.server :as server]))
 
 (defonce ^:private instance* (atom nil))
 

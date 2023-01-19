@@ -2,7 +2,6 @@
   (:require
     [compojure.response :refer [Renderable]]
     [ring.middleware.cookies :refer [wrap-cookies]]
-    [ring.middleware.cors :refer [wrap-cors]]
     [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
     [ring.middleware.keyword-params :refer [wrap-keyword-params]]
     [ring.middleware.params :refer [wrap-params]]
@@ -49,10 +48,11 @@
   ;; this is for dev mode only and it allows We make call from hot-reloading
   ;; host on FE
   (if (= :dev cfg/run-mode)
-    (wrap-cors handler
-               :access-control-allow-credentials "true"
-               :access-control-allow-origin      #"http://localhost:8080/*"
-               :access-control-allow-methods     [:options :get :put :post :delete])
+    ;; load the wrap-cors middleware dynamically
+    ((ns-resolve (find-ns 'ring.middleware.cors) 'wrap-cors) handler
+     :access-control-allow-credentials "true"
+     :access-control-allow-origin      #"http://localhost:8080/*"
+     :access-control-allow-methods     [:options :get :put :post :delete])
     handler))
 
 (def middlewares

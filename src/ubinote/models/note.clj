@@ -10,7 +10,7 @@
          {:properties (constantly {:timestamped? true})}))
 
 (defn with-notes
-  "Hydrate all notes for an annotaiton."
+  "Hydrate all notes for an annotation"
   {:hydrate :notes}
   [{annotation-id :id :as _annotation}]
   (db/select Note :annotation_id annotation-id))
