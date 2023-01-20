@@ -109,7 +109,8 @@
 			 <ToolbarSearch
 			persistent
 			shouldFilterRows={(row, value) => {
-			return (row.title.toLowerCase().includes(value.toLowerCase()));
+			const valueLowered = value.toLowerCase();
+			return (row.title.toLowerCase().includes(valueLowered) || row.url.toLowerCase().includes(valueLowered));
 			}}
 			/>
 		 </ToolbarContent>
