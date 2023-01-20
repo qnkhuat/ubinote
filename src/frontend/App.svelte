@@ -1,9 +1,9 @@
 <script>
-  import { Router } from 'svelte-router-spa'
-
+  import { Router } from "svelte-router-spa";
   import { Loading } from "carbon-components-svelte";
 
-  import routes  from 'frontend/routes'
+  import Layout from "frontend/components/Layout.svelte";
+  import routes  from "frontend/routes";
   import { getCurrentUser } from "frontend/stores/user.js";
   import { getSessionProperties } from "frontend/stores/sessionProperties.js";
   let loaded = false;
@@ -19,7 +19,9 @@
 
 
 {#if loaded}
-  <Router {routes}/>
+  <Layout>
+    <Router {routes}/>
+  </Layout>
 {:else}
   <Loading/>
 {/if}

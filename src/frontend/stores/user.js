@@ -10,3 +10,10 @@ export function getCurrentUser() {
 		currentUser.set(null);
 	});
 }
+
+
+export function logout() {
+	return api.deleteSession().then(() => {
+		currentUser.set(null);
+	});
+}

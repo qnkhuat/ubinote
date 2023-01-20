@@ -29,9 +29,4 @@
 				 e.preventDefault();
 				 submit();
 				 }}>Login</Button>
-
-	<Button type="submit" on:click={(e) => {
-				 e.preventDefault();
-				 api.deleteSession()
-				 }}>Logout</Button>
 </Form>

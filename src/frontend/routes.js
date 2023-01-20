@@ -2,6 +2,7 @@ import Home from "frontend/routes/index.svelte";
 import Login from "frontend/routes/login.svelte"
 import Setup from "frontend/routes/setup.svelte";
 import PageId from "frontend/routes/page/[id].svelte";
+import NotFound from "frontend/routes/404.svelte";
 import { currentUser } from "frontend/stores/user.js";
 import { sessionProperties } from "frontend/stores/sessionProperties.js";
 
@@ -65,6 +66,11 @@ const routes = [
 			guard: () => !setup(),
 			redirect: "/login"
 		}
+	},
+	{
+		name: "404",
+		path: "404",
+		component: NotFound,
 	}
 ]
 
