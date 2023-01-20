@@ -10,7 +10,10 @@
 		DataTable,
 		TextInput,
 		InlineLoading,
-		ToastNotification
+		ToastNotification,
+		Toolbar,
+		ToolbarContent,
+		ToolbarSearch,
 	} from "carbon-components-svelte";
 
 	import { listPages } from "frontend/api.js";
@@ -100,16 +103,26 @@
 	 {key: "url", value: "URL"},
 	 {key: "updated_at", value: "Last updated"},
 	 ]}
-	 rows={pages}
-	 />
+	 rows={pages}>
+	 <Toolbar>
+		 <ToolbarContent>
+			 <ToolbarSearch
+			persistent
+			shouldFilterRows={(row, value) => {
+			return (row.title.toLowerCase().includes(value.toLowerCase()));
+			}}
+			/>
+		 </ToolbarContent>
+	 </Toolbar>
+	</DataTable>
 
-	 {#if notificationState}
-		 <ToastNotification
-			 class="notification"
-			 lowContrast
-		   {...notificationState}
-		 />
-	 {/if}
+	{#if notificationState}
+		<ToastNotification
+			class="notification"
+	 lowContrast
+	 {...notificationState}
+	 />
+	{/if}
 
 </div>
 
