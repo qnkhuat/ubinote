@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.UN_API_URL,
+  baseURL: "",
 })
 
 // ---------------------------- User ---------------------------- //

@@ -39,9 +39,7 @@
  {; clj -M:dev
   :dev
   {:extra-paths ["dev/src"]
-   :extra-deps  {ring-cors/ring-cors {:mvn/version "0.1.13"}
-                 ring/ring-devel     {:mvn/version "1.9.4"}
-                 cider/cider-nrepl   {:mvn/version "0.27.1"}
+   :extra-deps  {cider/cider-nrepl   {:mvn/version "0.27.1"}
                  hashp/hashp         {:mvn/version "0.2.1"}}
    :jvm-opts  ["-Dun.run.mode=dev"
                "-XX:-OmitStackTraceInFastThrow"]

@@ -3,7 +3,7 @@
     [clojure.tools.logging :as log]
     [ring.adapter.jetty :refer [run-jetty]]
     [ubinote.config :as cfg]
-    [ubinote.migration :as am]
+    [ubinote.migration :as migration]
     [ubinote.server.db :as adb]
     [ubinote.server.middleware :as middleware]
     [ubinote.server.routes :as routes]))
@@ -25,7 +25,7 @@
   [app]
   (log/infof "Starting server at http://localhost:%d" (cfg/config-int :port))
   (adb/setup-db!)
-  (am/migrate!)
+  (migration/migrate!)
   (run-jetty app
              {:port  (cfg/config-int :port)
               :join? false}))

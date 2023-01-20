@@ -38,7 +38,8 @@
   (b/uber {:class-dir class-dir
            :uber-file uber-file
            :basis     basis
-           :main      'ubinote.core}))
+           :main      'ubinote.core})
+  (println (format "Jar built: %s" uber-file)))
 
 (defn uberjar [_]
   (println "Start to build")
