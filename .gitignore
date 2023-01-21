@@ -23,7 +23,7 @@ pom.xml.asc
 # ignore /resources/frontend except /resources/frontend/index.html
 # because it is the entry point for the frontend
 !./resources/frontend/index.html
-./resources/frontend/*
+/resources/frontend/*
 
 # frontend
 ## dependencies
