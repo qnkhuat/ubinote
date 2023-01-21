@@ -20,9 +20,10 @@ pom.xml.asc
 
 # build
 # during development, app will be built into this folder
-!/resources/frontend/index.html
-/resources/frontend/*
-
+# ignore /resources/frontend except /resources/frontend/index.html
+# because it is the entry point for the frontend
+!./resources/frontend/index.html
+./resources/frontend/*
 
 # frontend
 ## dependencies
