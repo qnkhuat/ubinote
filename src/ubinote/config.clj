@@ -27,7 +27,7 @@
 ;; TODO: validate config with spec
 (def default
   {:un-run-mode         "prod"
-   :un-db-type          "postgres" ; #{h2, postgres}
+   :un-db-type          "h2" ; #{h2, postgres}
    :un-db-name          "ubinote"
    :un-db-host          "localhost" ; postgres
    :un-db-port          "5432"      ; postgres
