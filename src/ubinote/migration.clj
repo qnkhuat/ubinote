@@ -69,9 +69,10 @@
 ;; --------------------------- Migrations ---------------------------
 (defmigration create-user-table
   ;; we user core_user instead user because user is a preserved table for most dbs
+  ;; TODO: can we use TEXT for email, got future not supported when apply not null for CLOB on h2
   (str "CREATE TABLE core_user (
        id SERIAL PRIMARY KEY NOT NULL,
-       email " (postgres?->h2 "TEXT") " NOT NULL UNIQUE,"
+       email VARCHAR(254) NOT NULL UNIQUE,"
        "first_name VARCHAR(254) NOT NULL,
        last_name VARCHAR(254) NOT NULL,
        password VARCHAR(254) NOT NULL,

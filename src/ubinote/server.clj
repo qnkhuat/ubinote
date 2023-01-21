@@ -24,6 +24,7 @@
 (defn start!
   [app]
   (log/infof "Starting server at http://localhost:%d" (cfg/config-int :port))
+  (log/infof "Static files folder: %s" (cfg/config-str :root))
   (adb/setup-db!)
   (migration/migrate!)
   (run-jetty app
