@@ -8,6 +8,8 @@ The so called "Project Management" of Ubinote
 
 # Phase 2
 - can add/edit/delete comments
+- Finetune:
+  - clean way to install single-file-cli, maybe provide an env to set chrome-bin
 
 # Phase 3
 - PDF

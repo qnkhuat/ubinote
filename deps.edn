@@ -9,6 +9,7 @@
   cheshire/cheshire                         {:mvn/version "5.10.2"}   ; fast JSON encoding (used by Ring JSON middleware)
   potemkin/potemkin                         {:mvn/version "0.4.5"}    ; utility macros & fns
   org.mindrot/jbcrypt                       {:mvn/version "0.4"}      ; Crypto library
+  org.clojure/core.memoize                  {:mvn/version "1.0.257"}  ; Memoize functions
 
   ;; webserver+routing
   compojure/compojure                       {:mvn/version "1.6.2"}

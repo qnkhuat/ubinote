@@ -1,33 +1,39 @@
 (ns ubinote.cmd
-  (:require [ubinote.util.fs :as fs]
-            [clojure.string :as string]
-            [clojure.java.shell :refer [sh]]
-            [clojure.tools.logging :as log]))
+  (:require
+    [clojure.core.memoize :as memoize]
+    [clojure.java.shell :refer [sh]]
+    [clojure.string :as str]
+    [clojure.tools.logging :as log]
+    [ubinote.util.fs :as fs]))
 
-(defn which
+(def ^:private which
   "like `which` command"
-  [exe]
-  (if (fs/absolute? exe)
-    (fs/executable? exe)
-    (fs/find-in (-> (fs/env-path)
-                    (string/split (re-pattern fs/path-separator)))
-                exe fs/executable?)))
+  (memoize/ttl
+    (fn [exe]
+      (some-> (sh "which" exe)
+              :out
+              str/trim))
+    :ttl/threshold (* 1000 1)))
 
-(defn find-chrome-binary
-  []
-  (first (filter (fn [path] (which path))
-                 ["chromium-browser"
-                  "chromium"
-                  "/Applications/Chromium.app/Contents/MacOS/Chromium"
-                  "chrome"
-                  "google-chrome"
-                  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-                  "google-chrome-stable"
-                  "google-chrome-beta"
-                  "google-chrome-canary"
-                  "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary"
-                  "google-chrome-unstable"
-                  "google-chrome-dev"])))
+(def ^:private find-chrome-binary
+  (memoize/ttl
+    (fn []
+      (first (filter (fn [path]
+                       (let [exe (which path)]
+                         (and (not (str/blank? exe)) (fs/executable? exe))))
+                     ["chromium-browser"
+                      "chromium"
+                      "/Applications/Chromium.app/Contents/MacOS/Chromium"
+                      "chrome"
+                      "google-chrome"
+                      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+                      "google-chrome-stable"
+                      "google-chrome-beta"
+                      "google-chrome-canary"
+                      "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary"
+                      "google-chrome-unstable"
+                      "google-chrome-dev"])))
+    :ttl/threshold (* 1000 1)))
 
 (defn single-file
   "download an url as a single fs with name is the page {title}-{time-locale}.html"
@@ -39,8 +45,8 @@
    ;; TODO maybe call an OPTIONs to the endpoint to check if it's reachable
    (let [chrome-bin      (find-chrome-binary)
          single-file-bin (which "single-file")
-         ;; https://github.com/gildas-lormeau/SingleFile/tree/master/cli
-         ;; to install npm install -g "gildas-lormeau/single-file-cli"
+         ;; https://github.com/gildas-lormeau/single-file-cli
+         ;; to install npm install -g "single-file-cli"
          args (filter some? [single-file-bin (format "--browser-executable-path=%s" chrome-bin)
                              (format "--filename-template={page-title}-{time-locale}.html")
                              url out-path])

@@ -88,7 +88,7 @@
   (let [{:keys [relative absolute]} (out-path url)
         domain                      (get-domain url)
         {:keys [err]}               (cmd/single-file url absolute)
-        _                           (api/check-400 (= err "") {:url "Failed to download single-file"})
+        _                           (api/check-400 (= err "") {:errors (format "Failed to archive %s" err)})
         {:keys [title]}             (extract-html absolute)]
     ;; TODO: move the file after download to name with title
     (db/insert! Page (assoc new-page
