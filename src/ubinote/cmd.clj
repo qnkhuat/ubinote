@@ -49,6 +49,8 @@
          ;; to install npm install -g "single-file-cli"
          args (filter some? [single-file-bin (format "--browser-executable-path=%s" chrome-bin)
                              (format "--filename-template={page-title}-{time-locale}.html")
+                             (when (= chrome-bin "google-chrome")
+                               "--browser-args=[\"--no-sandbox\"]")
                              url out-path])
          _    (assert chrome-bin "Could not find `CHROME_BINARY` in your system")
          _    (assert single-file-bin "Could not find `single-file` in your system")
