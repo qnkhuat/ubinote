@@ -4,6 +4,7 @@
     [clojure.java.shell :refer [sh]]
     [clojure.string :as str]
     [clojure.tools.logging :as log]
+    [ubinote.config :as cfg]
     [ubinote.util.fs :as fs]))
 
 (def ^:private which
@@ -44,7 +45,9 @@
    {:pre [(fs/absolute? out-path)]}
    ;; TODO maybe call an OPTIONs to the endpoint to check if it's reachable
    (let [chrome-bin      (find-chrome-binary)
-         single-file-bin (which "single-file")
+         single-file-bin (or
+                           (cfg/config-str :single-file-bin)
+                           (which "single-file"))
          ;; https://github.com/gildas-lormeau/single-file-cli
          ;; to install npm install -g "single-file-cli"
          args (filter some? [single-file-bin (format "--browser-executable-path=%s" chrome-bin)
@@ -52,8 +55,8 @@
                              (when (= chrome-bin "google-chrome")
                                "--browser-args=[\"--no-sandbox\"]")
                              url out-path])
-         _    (assert chrome-bin "Could not find `CHROME_BINARY` in your system")
-         _    (assert single-file-bin "Could not find `single-file` in your system")
+         _    (assert (not (str/blank? chrome-bin)) "Could not find `CHROME_BINARY` in your system")
+         _    (assert (not (str/blank? single-file-bin)) "Could not find `single-file` in your system")
          out  (apply sh args)]
      (log/info ::single-file out)
      out)))

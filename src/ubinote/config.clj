@@ -27,14 +27,14 @@
 ;; TODO: validate config with spec
 (def default
   {:un-run-mode         "prod"
-   :un-db-type          "h2" ; #{h2, postgres}
+   :un-db-type          "h2"         ;; #{h2, postgres}
    :un-db-name          "ubinote"
-   :un-db-host          "localhost" ; postgres
-   :un-db-port          "5432"      ; postgres
+   :un-db-host          "localhost"  ;; postgres
+   :un-db-port          "5432"       ;; postgres
    :un-port             "8000"
-   :un-max-session-age  "20160" ; session length in minutes (14 days)
-   ;; root to store and serve archived files
-   :un-root             ".ubinote"})
+   :un-max-session-age  "20160"      ;; session length in minutes (14 days)
+   :un-single-file-bin  nil          ;; path to single-file binary
+   :un-root             ".ubinote"}) ;; root to store and serve archived files
 
 (def env (merge default (read-env)))
 
