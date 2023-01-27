@@ -19,7 +19,7 @@ module.exports = {
 		mainFields: ['svelte', 'browser', 'module', 'main']
 	},
 	output: {
-		path: path.join(__dirname, '/resources/frontend/'),
+		path: path.join(__dirname, 'resources/frontend/'),
 		filename: '[name].js',
 		chunkFilename: '[name].[id].js'
 	},
