@@ -10,7 +10,7 @@
       (handler request)
       (catch Exception e
         ;; TODO: mask the value for schemas error, because it mays contain user's password
-        (let [{:keys [status-code errors], :as info} #p (ex-data e)
+        (let [{:keys [status-code errors], :as info} (ex-data e)
               body                                   (cond
                                                        ;; If status code was specified but other data wasn't, it's something like a
                                                        ;; 404. Return message as the (plain-text) body.
