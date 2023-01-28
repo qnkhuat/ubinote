@@ -1,20 +1,19 @@
 (ns ubinote.api.session
   (:require
     [compojure.core :refer [defroutes DELETE POST GET]]
-    [schema.core :as s]
     [toucan.db :as db]
     [ubinote.api.common :as api]
     [ubinote.config :as cfg]
-    [ubinote.models.common.schemas :as schemas]
+    [ubinote.models.common.schema :as schema]
     [ubinote.models.session :refer [Session]]
     [ubinote.models.user :refer [default-user-columns]]
     [ubinote.server.middleware.session :as mw.session]
     [ubinote.util.password :as passwd]))
 
 (def NewSession
-  {:email    schemas/EmailAddress
-   :password schemas/Password
-   s/Keyword s/Any})
+  [:map
+   [:email    schema/EmailAddress]
+   [:password schema/Password]])
 
 (defn verify-user
   [email password]
@@ -23,13 +22,9 @@
     (api/check-401 (passwd/bcrypt-verify password (:password user)))
     (select-keys user default-user-columns)))
 
-(def ^:private validate-create-session
-  "Schema for creating session"
-  (s/validator NewSession))
-
 (defn create-session
   [{:keys [body] :as req}]
-  (validate-create-session body)
+  (schema/validate-schema body NewSession)
   (let [user    (api/check-401 (verify-user (:email body) (:password body)))
         session (select-keys (db/insert! Session {:creator_id (:id user)}) [:id])]
     (mw.session/set-session-cookie req {:body   session

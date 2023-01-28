@@ -17,6 +17,7 @@ pom.xml.asc
 
 ## lint
 .clj-kondo/.cache
+.clj-kondo/metosin/
 
 # build
 # during development, app will be built into this folder
@@ -34,3 +35,4 @@ pom.xml.asc
 
 ## production
 .svelte-kit
+

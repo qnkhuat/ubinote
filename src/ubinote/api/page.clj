@@ -1,27 +1,26 @@
 (ns ubinote.api.page
   (:require [compojure.coercions :refer [as-int]]
             [compojure.core :refer [context defroutes POST GET]]
+            [malli.core :as mc]
             [ring.util.response :as response]
-            [schema.core :as s]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
             [ubinote.api.common :as api]
             [ubinote.models :refer [Page]]
-            [ubinote.models.common.schemas :as schemas]
+            [ubinote.models.common.schema :as schema]
             [ubinote.models.page :as page]))
 
-(s/def NewPage
-  {:url                   schemas/URL
-   :creator_id            s/Int
-   (s/optional-key :tags) [s/Str]})
-
-(def validate-add-page
-  (s/validator NewPage))
+(def NewPage
+  (mc/schema
+    [:map
+     [:url schema/URL]
+     [:creator_id schema/IntegerGreaterThanZero]
+     [:tags       {:optional true} [:sequential :string]]]))
 
 (defn- add-page
   [{:keys [body] :as _req}]
   (-> (assoc body :creator_id api/*current-user-id*)
-      validate-add-page
+      (schema/validate-schema NewPage)
       page/create-page))
 
 (defn- get-page
