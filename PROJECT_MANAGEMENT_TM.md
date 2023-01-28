@@ -1,31 +1,31 @@
 The so called "Project Management" of Ubinote
 
 
-# Phase 1
-- can create page, add highlight
-- simple login, setup flow
-
+# Phase 1.5
+- [x] Switch to malli
+- [ ] add tests
+- [ ] switch to toucan 2
 
 # Phase 2
-- can add/edit/delete comments
-- Finetune:
+- [ ] can add/edit/delete comments
+- [ ] Finetune:
   - clean way to install single-file-cli, maybe provide an env to set chrome-bin
 
 # Phase 3
-- PDF
+- [ ] PDF
 
 # To prioritize
-- follow links
-- full-text search
-- public sharing
+- [ ] follow links
+- [ ] full-text search
+- [ ] public sharing
 
 # Known bugs:
-- CSS and font is not correctly recorded for https://philip.greenspun.com/materialism/money
+- [ ] CSS and font is not correctly recorded for https://philip.greenspun.com/materialism/money
 
 Some note on design
-- when users select text, automatically display a popup to whether highlight or add note
-- Note display
+- [ ] when users select text, automatically display a popup to whether highlight or add note
+- [ ] Note display
   - It's best to display the note on the right of the whole text paragraph
   - but I guess since our app needs to be universal, then maybe only display note when user click on the highlight?
-- starts with simple: add/delete no edit for now
-- I think the hard stuff is how to have a component to wrap text that can trigger events? like the hyper-annotation from memex
+- [ ] starts with simple: add/delete no edit for now
+- [ ] I think the hard stuff is how to have a component to wrap text that can trigger events? like the hyper-annotation from memex
