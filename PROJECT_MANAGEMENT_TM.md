@@ -14,8 +14,13 @@ The so called "Project Management" of Ubinote
 # Phase 3
 - PDF
 
-# Phase 4
-- maybe follow links
+# To prioritize
+- follow links
+- full-text search
+- public sharing
+
+# Known bugs:
+- CSS and font is not correctly recorded for https://philip.greenspun.com/materialism/money
 
 Some note on design
 - when users select text, automatically display a popup to whether highlight or add note
