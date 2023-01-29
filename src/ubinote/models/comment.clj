@@ -1,16 +1,16 @@
-(ns ubinote.models.note
+(ns ubinote.models.comment
   (:require [toucan.db :as db]
             [toucan.models :as models]))
 
-(models/defmodel Note :note)
+(models/defmodel Comment :comment)
 
-(extend (class Note)
+(extend (class Comment)
   models/IModel
   (merge models/IModelDefaults
          {:properties (constantly {:timestamped? true})}))
 
-(defn with-notes
+(defn with-comments
   "Hydrate all notes for an annotation"
-  {:hydrate :notes}
+  {:hydrate :comments}
   [{annotation-id :id :as _annotation}]
-  (db/select Note :annotation_id annotation-id))
+  (db/select Comment :annotation_id annotation-id))

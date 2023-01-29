@@ -4,7 +4,7 @@
     [potemkin :as p]
     [toucan.models :as models]
     [ubinote.models.annotation :as annotation]
-    [ubinote.models.note :as m-note]
+    [ubinote.models.comment :as comment]
     [ubinote.models.page :as page]
     [ubinote.models.user :as user]))
 
@@ -12,13 +12,13 @@
   page/keep-me
   user/keep-me
   annotation/keep-me
-  m-note/keep-me)
+  comment/keep-me)
 
 (p/import-vars
   [page Page]
   [user User]
   [annotation Annotation]
-  [m-note Note])
+  [comment Comment])
 
 ;; --------------------------- Adding toucan properties and types ------------------------
 (defn- add-created-at-timestamp [obj & _]
