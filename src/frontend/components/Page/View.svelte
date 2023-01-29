@@ -107,7 +107,7 @@
 	function rangeToToolTopPosition(range) {
 		const boundingRect = range.getBoundingClientRect()
 		return {
-			x: boundingRect.left + window.scrollX + boundingRect.width / 2,
+			x: event.clientX,
 			y: boundingRect.bottom + window.scrollY
 		}
 	}

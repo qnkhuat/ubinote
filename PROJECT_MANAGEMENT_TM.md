@@ -1,15 +1,10 @@
 The so called "Project Management" of Ubinote
 
-
-# Phase 1.5
-- [x] Switch to malli
-- [ ] add tests
-- [ ] switch to toucan 2
-
 # Phase 2
 - [ ] can add/edit/delete comments
 - [ ] Finetune:
   - clean way to install single-file-cli, maybe provide an env to set chrome-bin
+- [ ] switch to toucan 2
 
 # Phase 3
 - [ ] PDF
