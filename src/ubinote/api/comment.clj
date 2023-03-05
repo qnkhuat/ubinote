@@ -1,13 +1,13 @@
 (ns ubinote.api.comment
   (:require [compojure.coercions :refer [as-int]]
-            [compojure.core :refer [context defroutes POST GET]]
+            [compojure.core :refer [context defroutes POST GET DELETE]]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
             [ubinote.api.common :as api]
             [ubinote.models :refer [Comment]]
             [ubinote.models.common.schema :as schema]))
 
-(def NewNote
+(def NewComment
   [:map
    [:annotation_id schema/IntegerGreaterThanZero]
    [:creator_id schema/IntegerGreaterThanZero]
@@ -16,7 +16,7 @@
 (defn create-comment
   [{:keys [body] :as _req}]
   (let [cmt (assoc body :creator_id api/*current-user-id*)]
-    (schema/validate-schema cmt NewNote)
+    (schema/validate-schema cmt NewComment)
     (db/insert! Comment cmt)))
 
 (defn get-comment
@@ -28,4 +28,5 @@
 (defroutes routes
   (POST "/" [] create-comment)
   (context "/:id" [id :<< as-int]
-           (GET "/" [] (partial get-comment id))))
+           (GET "/" [] (partial get-comment id))
+           (DELETE "/" [] (partial get-comment id))))
