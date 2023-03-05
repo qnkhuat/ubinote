@@ -1,11 +1,12 @@
 (ns ubinote.migration
   "This migration should works for both h2 and postgres"
-  (:require [ubinote.models.migration :refer [Migration]]
-            [ubinote.config :as cfg]
-            [clojure.java.jdbc :as jdbc]
-            [clojure.string :as string]
-            [clojure.tools.logging :as log]
-            [toucan.db :as db]))
+  (:require
+    [clojure.java.jdbc :as jdbc]
+    [clojure.string :as string]
+    [clojure.tools.logging :as log]
+    [toucan.db :as db]
+    [ubinote.config :as cfg]
+    [ubinote.models.migration :refer [Migration]]))
 
 (def migrations (atom []))
 
@@ -128,3 +129,7 @@
        creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        created_at TIMESTAMP NOT NULL DEFAULT now());"
        (create-index "session" "id")))
+
+(defmigration create-password-salt
+  (str "ALTER TABLE core_user
+       ADD password_salt VARCHAR(254) NOT NULL DEFAULT '';"))

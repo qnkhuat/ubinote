@@ -3,7 +3,7 @@
     [compojure.coercions :refer [as-int]]
     [compojure.core :refer [context defroutes POST DELETE]]
     [schema.core :as s]
-    [toucan.db :as db]
+    [toucan2.core :as tc]
     [ubinote.api.common :as api]
     [ubinote.models.annotation :refer [Annotation]]))
 
@@ -17,12 +17,12 @@
 (defn- create
   [{:keys [body] :as _req}]
   (->> (assoc body :creator_id api/*current-user-id*)
-       (db/insert! Annotation)))
+       (tc/insert! Annotation)))
 
 (defn- delete-annotation
   [id _req]
-  (api/check-404 (db/select-one Annotation :id id))
-  (db/delete! Annotation :id id))
+  (api/check-404 (tc/select-one Annotation :id id))
+  (tc/delete! Annotation :id id))
 
 (defroutes routes
   (POST "/" [] create)

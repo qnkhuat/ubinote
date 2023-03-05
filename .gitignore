@@ -16,8 +16,7 @@ pom.xml.asc
 .cpcache/
 
 ## lint
-.clj-kondo/.cache
-.clj-kondo/metosin/
+.clj-kondo/
 
 # build
 # during development, app will be built into this folder

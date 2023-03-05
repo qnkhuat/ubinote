@@ -1,8 +1,14 @@
 (ns ubinote.models.user
   (:require
    [clojure.string :as str]
+   [methodical.core :as m]
    [toucan.models :as models]
+   [toucan2.core :as tc]
    [ubinote.util.password :as passwd]))
+
+(m/defmethod tc/table-name :m/user
+  [_model]
+  "core_user")
 
 (models/defmodel User :core_user)
 
@@ -10,23 +16,25 @@
   [:id :email :first_name :last_name :created_at :updated_at])
 
 (defn- hash-password
-  [{:keys [password] :as user}]
-  (if password
-    (assoc user :password (passwd/hash-bcrypt password))
-    user))
+  [{:keys [password password_salt] :as user}]
+  (when password_salt
+    (throw (ex-info "password should not be encryped." {})))
+  (let [salt (random-uuid)]
+    (merge user
+           {:password_salt salt
+            :password      (passwd/hash-bcrypt (str salt password))})))
 
 (defn- pre-insert
-  [{:keys [email password] :as user}]
-  (merge user
-         {:email (str/lower-case email)}
-         (when password
-           {:password (passwd/hash-bcrypt password)})))
+  [{:keys [email] :as user}]
+  (merge (hash-password user)
+         {:email (str/lower-case email)}))
+
 
 (defn- pre-update
   [{:keys [password] :as user}]
   (merge user
          (when password
-           {:password (passwd/hash-bcrypt password)})))
+           (hash-password user))))
 
 (extend (class User)
   models/IModel
@@ -38,3 +46,11 @@
           :pre-insert     pre-insert
           :pre-update     pre-update
           :types          (constantly {:coordinate :json})}))
+
+(tc/define-before-insert :m/user
+  [{:keys [email] :as user}]
+  (pre-insert user))
+
+(tc/define-before-update :m/user
+  [{:keys [password] :as user}]
+  (pre-update user))

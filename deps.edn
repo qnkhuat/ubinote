@@ -32,6 +32,7 @@
   org.postgresql/postgresql                 {:mvn/version "42.2.13"}  ; Postgres driver
   com.mchange/c3p0                          {:mvn/version "0.9.5.5"}
   toucan/toucan                             {:mvn/version "1.18.0"}
+  io.github.camsaul/toucan2                 {:mvn/version "1.0.519"}
 
   ;; hickory/hickory                           {:mvn/version "0.7.1"} ; seems like a fater parser than enlive, but using enlive for now bc it has DOM selector
   enlive/enlive                             {:mvn/version "1.1.6"}}   ; html parser

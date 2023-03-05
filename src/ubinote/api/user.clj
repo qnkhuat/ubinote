@@ -1,10 +1,10 @@
 (ns ubinote.api.user
-  (:require [compojure.coercions :refer [as-int]]
-            [compojure.core :refer [context defroutes GET POST]]
-            [toucan.db :as db]
-            [ubinote.api.common :as api]
-            [ubinote.models :refer [User]]
-            [ubinote.models.common.schema :as schema]))
+  (:require
+    [compojure.coercions :refer [as-int]]
+    [compojure.core :refer [context defroutes GET POST]]
+    [toucan2.core :as tc]
+    [ubinote.api.common :as api]
+    [ubinote.models.common.schema :as schema]))
 
 (def NewUser
   [:map
@@ -17,16 +17,16 @@
   [{:keys [body] :as _req}]
   (schema/validate-schema body NewUser)
   ;; TODO: catch exception when create duplicate users
-  (db/insert! User body))
+  (tc/insert! :m/user body))
 
 (defn get-user
   [id _req]
-  (-> (db/select-one User :id id)
+  (-> (tc/select-one :m/user :id id)
       api/check-404))
 
 (defn list-users
   [_req]
-  (db/select User))
+  (tc/select :m/user))
 
 (defn current-user
   [_req]

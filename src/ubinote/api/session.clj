@@ -17,9 +17,9 @@
 
 (defn verify-user
   [email password]
-  (let [user (db/select-one ['User :id :email :password] :email email)]
+  (let [user (db/select-one ['User :id :email :password :password_salt] :email email)]
     (api/check-404 user {:message "User not found"})
-    (api/check-401 (passwd/bcrypt-verify password (:password user)))
+    (api/check-401 (passwd/verify-password #p password #p (:password_salt user) #p (:password user)))
     (select-keys user default-user-columns)))
 
 (defn create-session

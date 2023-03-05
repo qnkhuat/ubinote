@@ -1,13 +1,17 @@
 (ns ubinote.server.db
-  (:require [ubinote.config :as cfg]
-            [clojure.java.jdbc :as jdbc]
-            [clojure.java.io :as io]
-            [clojure.string :as string]
-            [toucan.models :as models]
-            [toucan.db :as db])
-  (:import java.util.Properties
-           java.io.BufferedReader
-           com.mchange.v2.c3p0.ComboPooledDataSource))
+  (:require
+    [clojure.java.io :as io]
+    [clojure.java.jdbc :as jdbc]
+    [clojure.string :as string]
+    [methodical.core :as m]
+    [toucan.db :as db]
+    [toucan.models :as models]
+    [toucan2.core :as tc]
+    [ubinote.config :as cfg])
+  (:import
+    java.util.Properties
+    java.io.BufferedReader
+    com.mchange.v2.c3p0.ComboPooledDataSource))
 
 ;; ------------------------------------------- Extend jdbc protocols -------------------------------------------
 (defn clob->str
@@ -67,28 +71,42 @@
    :mysql    :mysql})
 
 (defn- db-details
-  [db-type]
+  [{:keys [db-type db-host db-port db-name]}]
   (connection-pool
    (case db-type
      :h2       {:classname       "org.h2.Driver"
                 :subprotocol     "h2:file"
-                :subname         (.getAbsolutePath (io/file (cfg/config-str :db-name)))
+                :subname         (.getAbsolutePath (io/file db-name))
                 "MVCC"           "TRUE"
                 "DB_CLOSE_DELAY" "-1"
                 "DEFRAG_ALWAYS"  "TRUE"}
      :postgres {:classname       "org.postgresql.Driver"
                 :subprotocol     "postgresql"
                 :subname         (format "//%s:%s/%s"
-                                         (cfg/config-str :db-host)
-                                         (cfg/config-str :db-port)
-                                         (cfg/config-str :db-name))
+                                         db-host
+                                         db-port
+                                         db-name)
                 "MVCC"           "TRUE"
                 "DB_CLOSE_DELAY" "-1"
                 "DEFRAG_ALWAYS"  "TRUE"})))
 
+(def ^:dynamic *application-db*
+  (db-details {:db-type (cfg/config-kw :db-type)
+               :db-host (cfg/config-str :db-host)
+               :db-port (cfg/config-str :db-port)
+               :db-name (cfg/config-str :db-name)}))
+
+(m/defmethod tc/do-with-connection :default
+  [_connectable f]
+  (tc/do-with-connection *application-db* f))
+
 (defn setup-db!
+  "TODO: SHOULD BE REMOVED ONCE WE COMPLETELY SWITCH TO TOUCAN 2"
   []
   (let [db-type (cfg/config-kw :db-type)]
     (models/set-root-namespace! 'ubinote.model)
     (db/set-default-quoting-style! (db-type quoting-style))
-    (db/set-default-db-connection! (db-details db-type))))
+    (db/set-default-db-connection! (db-details {:db-type (cfg/config-kw :db-type)
+                                                :db-host (cfg/config-str :db-host)
+                                                :db-port (cfg/config-str :db-port)
+                                                :db-name (cfg/config-str :db-name)}))))
