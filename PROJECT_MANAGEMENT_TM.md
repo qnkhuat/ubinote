@@ -24,3 +24,11 @@ Some note on design
   - but I guess since our app needs to be universal, then maybe only display note when user click on the highlight?
 - [ ] starts with simple: add/delete no edit for now
 - [ ] I think the hard stuff is how to have a component to wrap text that can trigger events? like the hyper-annotation from memex
+
+
+
+
+
+Some thoughts on what todo :
+- need to test if the new migration with password salt works backward
+- Rework the wrap api exception middle so that it makes more sense, currently check-401 is not catched properly. and also let's normalize to always returns a map, {:message ...}
