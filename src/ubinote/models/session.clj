@@ -1,6 +1,13 @@
 (ns ubinote.models.session
-  (:require [toucan.models :as models])
+  (:require
+    [methodical.core :as m]
+    [toucan.models :as models]
+    [toucan2.core :as tc])
   (:import java.util.UUID))
+
+(m/defmethod tc/table-name :m/session
+  [_model]
+  "session")
 
 (models/defmodel Session :session)
 
@@ -10,9 +17,17 @@
          {:id (.toString (UUID/randomUUID))}))
 
 (defn- pre-update
-  [session]
-  (throw (ex-info "Not allowed to update session.")))
+  [_session]
+  (throw (ex-info "Not allowed to update session." {})))
 
+(tc/define-before-insert :m/session
+  [session]
+  (merge session
+         {:id (.toString (UUID/randomUUID))}))
+
+(tc/define-before-update :m/session
+  [_session]
+  (throw (ex-info "Not allowed to update session." {})))
 
 (extend (class Session)
   models/IModel

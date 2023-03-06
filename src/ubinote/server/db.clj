@@ -3,10 +3,12 @@
     [clojure.java.io :as io]
     [clojure.java.jdbc :as jdbc]
     [clojure.string :as string]
+    [honey.sql :as sql]
     [methodical.core :as m]
     [toucan.db :as db]
     [toucan.models :as models]
     [toucan2.core :as tc]
+    [toucan2.map-backend.honeysql2 :as t2.honeysql]
     [ubinote.config :as cfg])
   (:import
     java.util.Properties
@@ -73,22 +75,36 @@
 (defn- db-details
   [{:keys [db-type db-host db-port db-name]}]
   (connection-pool
-   (case db-type
-     :h2       {:classname       "org.h2.Driver"
-                :subprotocol     "h2:file"
-                :subname         (.getAbsolutePath (io/file db-name))
-                "MVCC"           "TRUE"
-                "DB_CLOSE_DELAY" "-1"
-                "DEFRAG_ALWAYS"  "TRUE"}
-     :postgres {:classname       "org.postgresql.Driver"
-                :subprotocol     "postgresql"
-                :subname         (format "//%s:%s/%s"
-                                         db-host
-                                         db-port
-                                         db-name)
-                "MVCC"           "TRUE"
-                "DB_CLOSE_DELAY" "-1"
-                "DEFRAG_ALWAYS"  "TRUE"})))
+    (case db-type
+      :h2       {:classname       "org.h2.Driver"
+                 :subprotocol     "h2:file"
+                 :subname         (.getAbsolutePath (io/file db-name))
+                 "MVCC"           "TRUE"
+                 "DB_CLOSE_DELAY" "-1"
+                 "DEFRAG_ALWAYS"  "TRUE"}
+      :postgres {:classname       "org.postgresql.Driver"
+                 :subprotocol     "postgresql"
+                 :subname         (format "//%s:%s/%s"
+                                          db-host
+                                          db-port
+                                          db-name)
+                 "MVCC"           "TRUE"
+                 "DB_CLOSE_DELAY" "-1"
+                 "DEFRAG_ALWAYS"  "TRUE"})))
+
+(defn- english-upper-case
+  "Use this function when you need to upper-case an identifier or table name. Similar to `clojure.string/upper-case`
+  but always converts the string to upper-case characters in the English locale. Using `clojure.string/upper-case` for
+  table names, like we are using below in the `:h2` `honeysql.format` function can cause issues when the user has
+  changed the locale to a language that has different upper-case characters. Turkish is one example, where `i` gets
+  converted to `İ`. This causes the `SETTING` table to become the `SETTİNG` table, which doesn't exist."
+  [^CharSequence s]
+  (-> s str (.toUpperCase java.util.Locale/ENGLISH)))
+
+(sql/register-dialect!
+ :h2
+ (update (sql/get-dialect :ansi) :quote (fn [quote]
+                                          (comp english-upper-case quote))))
 
 (def ^:dynamic *application-db*
   (db-details {:db-type (cfg/config-kw :db-type)
@@ -99,6 +115,12 @@
 (m/defmethod tc/do-with-connection :default
   [_connectable f]
   (tc/do-with-connection *application-db* f))
+
+
+(reset! t2.honeysql/global-options
+        {:quoted       true
+         :dialect      (sql/get-dialect (cfg/config-kw :db-type))
+         :quoted-snake false})
 
 (defn setup-db!
   "TODO: SHOULD BE REMOVED ONCE WE COMPLETELY SWITCH TO TOUCAN 2"
