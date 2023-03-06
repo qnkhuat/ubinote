@@ -12,14 +12,14 @@
         ;; TODO: mask the value for schemas error, because it mays contain user's password
         (let [{:keys [status-code errors], :as info} (ex-data e)
               body                                   (cond
-                                                       ;; If status code was specified but other data wasn't, it's something like a
-                                                       ;; 404. Return message as the (plain-text) body.
-                                                       (= [:status-code] (keys errors))
-                                                       (.getMessage e)
+                                                       ;;;; If status code was specified but other data wasn't, it's something like a
+                                                       ;;;; 404. Return message as the (plain-text) body.
+                                                       ;;(= [:status-code] (keys errors))
+                                                       ;;(.getMessage e)
 
                                                        ;; sometimes we throw like {:status-code 400 :errors "Failed to fetch"}
                                                        (and status-code errors)
-                                                       {:message (.getMesage e)
+                                                       {:message (.getMessage e)
                                                         :errors  errors}
 
                                                        ;; invalid API schema

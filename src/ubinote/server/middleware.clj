@@ -1,6 +1,8 @@
 (ns ubinote.server.middleware
   (:require
+    [cheshire.generate :as json.generate]
     [compojure.response :refer [Renderable]]
+    [java-time :as t]
     [ring.middleware.cookies :refer [wrap-cookies]]
     [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
     [ring.middleware.keyword-params :refer [wrap-keyword-params]]
@@ -9,7 +11,13 @@
     [ubinote.server.middleware.log :refer [wrap-request-logger]]
     [ubinote.server.middleware.paging :refer [wrap-paging]]
     [ubinote.server.middleware.security :refer [add-security-header]]
-    [ubinote.server.middleware.session :refer [wrap-session-id wrap-current-user-info]]))
+    [ubinote.server.middleware.session :refer [wrap-session-id wrap-current-user-info]])
+  (:import
+    (java.time.temporal Temporal)))
+
+;; For java.time classes use the date util function that writes them as ISO-8601
+(json.generate/add-encoder Temporal (fn [t json-generator]
+                                      (.writeString json-generator (java-time/format t))))
 
 (defn- wrap-resp-if-needed
   " Enable endpoint to be able to just return an object or nil

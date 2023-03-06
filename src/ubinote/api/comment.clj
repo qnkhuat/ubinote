@@ -1,11 +1,12 @@
 (ns ubinote.api.comment
-  (:require [compojure.coercions :refer [as-int]]
-            [compojure.core :refer [context defroutes POST GET DELETE]]
-            [toucan.db :as db]
-            [toucan.hydrate :refer [hydrate]]
-            [ubinote.api.common :as api]
-            [ubinote.models :refer [Comment]]
-            [ubinote.models.common.schema :as schema]))
+  (:require
+    [compojure.coercions :refer [as-int]]
+    [compojure.core :refer [context defroutes POST GET DELETE]]
+    [toucan.db :as db]
+    [toucan.hydrate :refer [hydrate]]
+    [ubinote.api.common :as api]
+    [ubinote.models :refer [Comment]]
+    [ubinote.models.common.schema :as schema]))
 
 (def NewComment
   [:map

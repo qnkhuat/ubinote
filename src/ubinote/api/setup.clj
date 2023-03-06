@@ -9,8 +9,8 @@
   [req]
   (if (cfg/setup?)
     (throw (ex-info "App was already setup." {:status-code 400}))
-    (do (api.user/create-user req)
-        (api.session/create-session req))))
+    #p (do (api.user/create-user req)
+           (api.session/create-session req))))
 
 (defroutes routes
   (POST "/" [] create-setup-user))

@@ -1,17 +1,33 @@
 (ns ubinote.models.page
-  (:require [clojure.string :as string]
-            [ubinote.cmd :as cmd]
-            [ubinote.util.fs :as fs]
-            [ubinote.util.b64 :as b64]
-            [ubinote.api.common :as api]
-            [ubinote.config :as cfg]
-            [net.cgrand.enlive-html :as html]
-            [toucan.models :as models]
-            [toucan.db :as db]))
+  (:require
+    [clojure.string :as string]
+    [methodical.core :as m]
+    [net.cgrand.enlive-html :as html]
+    [toucan.models :as models]
+    [toucan2.core :as tc]
+    [toucan2.tools.hydrate :as tc.hydrate]
+    [ubinote.api.common :as api]
+    [ubinote.cmd :as cmd]
+    [ubinote.config :as cfg]
+    [ubinote.util.b64 :as b64]
+    [ubinote.util.fs :as fs]))
 
-;; ------------------------------- Toucan helpers -------------------------------
+
+;; ------------------------------- Toucan methods -------------------------------
 
 (models/defmodel Page :page)
+
+(m/defmethod tc/table-name :m/page
+  [_model]
+  "page")
+
+(m/defmethod tc.hydrate/model-for-automagic-hydration [:default :page]
+  [_original-model _k]
+  :m/page)
+
+(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :user :m/page]
+  [_original-model _dest-key _hydrating-model]
+  [:page_id])
 
 (extend (class Page)
   models/IModel
@@ -35,8 +51,8 @@
   "Inference document's extension from url"
   [url]
   (cond
-   (string/ends-with? url ".pdf") ".pdf"
-   :else                          ".html"))
+    (string/ends-with? url ".pdf") ".pdf"
+    :else                          ".html"))
 
 (defn format-filename
   "Generate filename for a given url with format {year}{month}{date}_{hour}{minute}{second}_{base64(url)}.{ext}"
@@ -91,8 +107,8 @@
         _                           (api/check-400 (= err "") {:errors (format "Failed to archive %s" err)})
         {:keys [title]}             (extract-html absolute)]
     ;; TODO: move the file after download to name with title
-    (db/insert! Page (assoc new-page
-                            :domain domain
-                            :path relative
-                            :title title
-                            :status "archived"))))
+    (first (tc/insert-returning-instances! :m/page (assoc new-page
+                                                          :domain domain
+                                                          :path relative
+                                                          :title title
+                                                          :status "archived")))))

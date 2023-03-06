@@ -12,6 +12,6 @@
   (org.h2.tools.Shell/main
     (into-array
       String
-      ["-url" (let [url(.getJdbcUrl (:datasource db/*application-db*))]
+      ["-url" (let [url (.getJdbcUrl (:datasource db/*application-db*))]
                 (println "Connecting to database at URL" url)
                 url)])))

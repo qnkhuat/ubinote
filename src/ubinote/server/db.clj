@@ -9,6 +9,7 @@
     [toucan.models :as models]
     [toucan2.core :as tc]
     [toucan2.map-backend.honeysql2 :as t2.honeysql]
+    [toucan2.pipeline :as tc.pipeline]
     [ubinote.config :as cfg])
   (:import
     java.util.Properties
@@ -112,14 +113,22 @@
                :db-port (cfg/config-str :db-port)
                :db-name (cfg/config-str :db-name)}))
 
+(m/defmethod tc.pipeline/build :around :default
+  "Normally, our Honey SQL 2 `:dialect` is set to `::application-db`; however, Toucan 2 does need to know the actual
+  dialect to do special query building magic. When building a Honey SQL form, make sure `:dialect` is bound to the
+  *actual* dialect for the application database."
+  [query-type model parsed-args resolved-query]
+  (binding [t2.honeysql/*options* (assoc t2.honeysql/*options*
+                                         :dialect (quoting-style (cfg/config-kw :db-type)))]
+    (next-method query-type model parsed-args resolved-query)))
+
 (m/defmethod tc/do-with-connection :default
   [_connectable f]
   (tc/do-with-connection *application-db* f))
 
-
 (reset! t2.honeysql/global-options
         {:quoted       true
-         :dialect      (sql/get-dialect (cfg/config-kw :db-type))
+         :dialect      (:dialect (sql/get-dialect (cfg/config-kw :db-type)))
          :quoted-snake false})
 
 (defn setup-db!

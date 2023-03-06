@@ -10,6 +10,7 @@
   potemkin/potemkin                         {:mvn/version "0.4.5"}    ; utility macros & fns
   org.mindrot/jbcrypt                       {:mvn/version "0.4"}      ; Crypto library
   org.clojure/core.memoize                  {:mvn/version "1.0.257"}  ; Memoize functions
+  clojure.java-time/clojure.java-time       {:mvn/version "1.2.0"}    ; time utils
 
   ;; webserver+routing
   compojure/compojure                       {:mvn/version "1.6.2"}

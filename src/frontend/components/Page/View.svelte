@@ -115,7 +115,7 @@
 	//------------------------ reactive functions  ------------------------//
 
 	$ : if (pageContent && pageDetail) {
-		pageDetail.annotations.forEach(annotation => {
+		pageDetail.annotations?.forEach(annotation => {
 			const range = toRangeBody(annotation.coordinate);
 			try {
 				annotateOnDOM(range, annotation);

@@ -6,7 +6,6 @@
     [ring.util.response :as response]
     [toucan2.core :as tc]
     [ubinote.api.common :as api]
-    [ubinote.models :refer [Page]]
     [ubinote.models.common.schema :as schema]
     [ubinote.models.page :as page]))
 
@@ -25,19 +24,19 @@
 
 (defn- get-page
   [id _req]
-  (-> (api/check-404 (tc/select-one Page :id id))
-      (tc/hydrate :user :annotations
+  (-> (api/check-404 (tc/select-one :m/page :id id))
+      (tc/hydrate :user :annotation
                [:annotations :comments])))
 
 (defn- list-pages
   [_req]
-  (-> (tc/select Page)
+  (-> (tc/select :m/page)
       (tc/hydrate :user)))
 
 (defn- get-page-content
   "Returns the static file of the page"
   [id _req]
-  (-> (api/check-404 (tc/select-one-fn :path Page :id id))
+  (-> (api/check-404 (tc/select-one-fn :path :m/page :id id))
       (response/file-response {:root page/root})
       (response/content-type "text/html")))
 
