@@ -54,6 +54,12 @@
   :run
   {:main-opts ["-m" "ubinote.core"]}
 
+  ; clj -X:h2-shell
+  :h2-shell
+  {:extra-paths ["dev/src"]
+   :exec-fn     dev.h2-shell/shell
+   :java-opts   ["-Dfile.encoding=UTF-8"]}
+
   ; clj -T:build uber
   :build
   {:deps       {io.github.clojure/tools.build {:git/tag "v0.9.2" :git/sha "fe6b140"}}
