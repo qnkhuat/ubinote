@@ -2,9 +2,12 @@ The so called "Project Management" of Ubinote
 
 # Phase 2
 - [ ] can add/edit/delete comments
+- [ ] delete page
+- [ ] make public
 - [ ] Finetune:
   - clean way to install single-file-cli, maybe provide an env to set chrome-bin
 - [ ] switch to toucan 2
+- [ ] public sharing
 
 # Phase 3
 - [ ] PDF
@@ -12,7 +15,7 @@ The so called "Project Management" of Ubinote
 # To prioritize
 - [ ] follow links
 - [ ] full-text search
-- [ ] public sharing
+
 
 # Known bugs:
 - [ ] CSS and font is not correctly recorded for https://philip.greenspun.com/materialism/money
