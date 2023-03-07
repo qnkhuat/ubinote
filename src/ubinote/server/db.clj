@@ -5,8 +5,6 @@
     [clojure.string :as string]
     [honey.sql :as sql]
     [methodical.core :as m]
-    [toucan.db :as db]
-    [toucan.models :as models]
     [toucan2.core :as tc]
     [toucan2.map-backend.honeysql2 :as t2.honeysql]
     [toucan2.pipeline :as tc.pipeline]
@@ -32,7 +30,7 @@
           (with-open [buffered-reader (BufferedReader. reader)]
             (->str buffered-reader)))))))
 
-;; Proudly stolen from https://github.com/metabase/metabase/blob/master/src/metabase/db/jdbc_protocols.clj
+;; Proudly stolen from https://github.com/metabase/metabase/blob/master/src/metabase/jdbc_protocols.clj
 (extend-protocol jdbc/IResultSetReadColumn
   org.postgresql.util.PGobject
   (result-set-read-column [clob _ _]
@@ -130,14 +128,3 @@
         {:quoted       true
          :dialect      (:dialect (sql/get-dialect (cfg/config-kw :db-type)))
          :quoted-snake false})
-
-(defn setup-db!
-  "TODO: SHOULD BE REMOVED ONCE WE COMPLETELY SWITCH TO TOUCAN 2"
-  []
-  (let [db-type (cfg/config-kw :db-type)]
-    (models/set-root-namespace! 'ubinote.model)
-    (db/set-default-quoting-style! (db-type quoting-style))
-    (db/set-default-db-connection! (db-details {:db-type (cfg/config-kw :db-type)
-                                                :db-host (cfg/config-str :db-host)
-                                                :db-port (cfg/config-str :db-port)
-                                                :db-name (cfg/config-str :db-name)}))))

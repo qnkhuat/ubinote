@@ -1,7 +1,10 @@
 (ns ubinote.models.migration
-  (:require [toucan.models :as models])
-  (:import java.util.UUID))
+  (:require
+    [methodical.core :as m]
+    [toucan2.core :as tc]))
 
-(models/defmodel Migration :migration
-  models/IModel
-  (properties [_] {:created-at-timestamped? true}))
+(m/defmethod tc/table-name :m/migration
+  [_model]
+  "migration")
+
+(derive :m/migration :hooks/created-at-timestamped)

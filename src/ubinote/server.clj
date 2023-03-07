@@ -5,13 +5,14 @@
     [ubinote.config :as cfg]
     [ubinote.migration :as migration]
     [ubinote.models :as models]
-    [ubinote.server.db :as adb]
+    [ubinote.server.db :as udb]
     [ubinote.server.middleware :as middleware]
     [ubinote.server.routes :as routes]))
 
 (comment
   ;; make sure all models are loaded
-  models/keepme)
+  models/keepme
+  udb/keepme)
 
 ;; ensure we use a `BasicContextSelector` instead of a `ClassLoaderContextSelector` for log4j2. Ensures there is only
 ;; one LoggerContext instead of one per classpath root. Practical effect is that now `(LogManager/getContext true)`
@@ -30,7 +31,6 @@
   [app]
   (log/infof "Starting server at http://localhost:%d" (cfg/config-int :port))
   (log/infof "Static files folder: %s" (cfg/config-str :root))
-  (adb/setup-db!)
   (migration/migrate!)
   (run-jetty app
              {:port  (cfg/config-int :port)

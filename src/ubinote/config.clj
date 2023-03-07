@@ -1,6 +1,7 @@
 (ns ubinote.config
-  (:require [clojure.string :as string]
-            [toucan.db :as db]))
+  (:require
+    [clojure.string :as string]
+    [toucan2.core :as tc]))
 
 (defn- keywordize [s]
   (-> (string/lower-case s)
@@ -87,4 +88,4 @@
   "Did the app set up successfully?
   Meaning we created an user."
   []
-  (some? (db/select-one 'User)))
+  (some? (tc/select-one :m/user)))

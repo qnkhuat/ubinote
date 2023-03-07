@@ -3,7 +3,6 @@
     [clojure.string :as string]
     [methodical.core :as m]
     [net.cgrand.enlive-html :as html]
-    [toucan.models :as models]
     [toucan2.core :as tc]
     [toucan2.tools.hydrate :as tc.hydrate]
     [ubinote.api.common :as api]
@@ -15,24 +14,19 @@
 
 ;; ------------------------------- Toucan methods -------------------------------
 
-(models/defmodel Page :page)
-
 (m/defmethod tc/table-name :m/page
-  [_model]
-  "page")
+ [_model]
+ "page")
+
+(derive :m/page :hooks/timestamped)
 
 (m/defmethod tc.hydrate/model-for-automagic-hydration [:default :page]
   [_original-model _k]
-  :m/page)
+ :m/page)
 
 (m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :page :default]
   [_original-model _dest-key _hydrating-model]
-  [:page_id])
-
-(extend (class Page)
-  models/IModel
-  (merge models/IModelDefaults
-         {:properties (constantly {:timestamped? true})}))
+ [:page_id])
 
 ;; ------------------------------- Create page fns -------------------------------
 

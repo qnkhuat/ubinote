@@ -2,7 +2,6 @@
   (:require
     [compojure.coercions :refer [as-int]]
     [compojure.core :refer [context defroutes POST GET DELETE]]
-    [toucan.hydrate :refer [hydrate]]
     [toucan2.core :as tc]
     [ubinote.api.common :as api]
     [ubinote.models.common.schema :as schema]))
@@ -22,7 +21,7 @@
 (defn get-comment
   [id _req]
   (-> (tc/select-one :m/comment :id id)
-      (hydrate :annotation :user)
+      (tc/hydrate :annotation :user)
       api/check-404))
 
 (defn- delete-comment

@@ -1,10 +1,9 @@
 (ns ubinote.server.middleware.session
-  (:require [clojure.string :as str]
-            [ubinote.api.common :as api]
-            [ubinote.models.user :refer [User]]
-            [ubinote.models.session :refer [Session]]
-            [ring.util.response :as response]
-            [toucan.db :as db]))
+  (:require
+    [clojure.string :as str]
+    [ring.util.response :as response]
+    [toucan2.core :as tc]
+    [ubinote.api.common :as api]))
 
 (defn https?
   "True if the original request made by the frontend client (i.e., browser) was made over HTTPS.
@@ -76,17 +75,19 @@
   "Return User ID and superuser status for Session with `session-id` if it is valid and not expired."
   [session-id]
   (when session-id
-    (first (db/query {:select [:id]
-                      :from  [User]
+    (first (tc/query :default
+                     :m/session
+                     {:select [:id]
+                      :from  [:core_user]
                       :where [:= :id {:select [:creator_id]
-                                      :from   [Session]
+                                      :from   [:session]
                                       ;; TODO: add expired time here
                                       :where  [:= :id session-id]}]}))))
 
 (defn- find-user
   [id]
-  (db/query {:select [:*]
-             :from   [User]
+  (tc/query {:select [:*]
+             :from   [:core_user]
              :where  [:= :id id]}))
 
 (defn wrap-current-user-info

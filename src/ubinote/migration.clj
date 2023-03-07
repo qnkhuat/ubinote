@@ -1,56 +1,56 @@
 (ns ubinote.migration
   "This migration should works for both h2 and postgres"
   (:require
-    [clojure.java.jdbc :as jdbc]
     [clojure.string :as string]
     [clojure.tools.logging :as log]
-    [toucan.db :as db]
-    [ubinote.config :as cfg]
-    [ubinote.models.migration :refer [Migration]]))
+    [next.jdbc :as jdbc]
+    [toucan2.core :as tc]
+    [ubinote.config :as cfg]))
 
 (def migrations (atom []))
 
 (def postgres? (= :postgres (cfg/config-kw :db-type)))
 
 (defn- create-migrations-table-if-needed! []
-  (jdbc/execute! (db/connection)
-                 ["CREATE TABLE IF NOT EXISTS migration (
-                   name VARCHAR PRIMARY KEY NOT NULL,
-                   created_at TIMESTAMP NOT NULL DEFAULT now());"]))
+  (log/info "Creating migration table if needed...")
+  (tc/with-connection [conn]
+    (with-open [stmt (jdbc/prepare conn ["CREATE TABLE IF NOT EXISTS migration (
+                                         name VARCHAR PRIMARY KEY NOT NULL,
+                                         created_at TIMESTAMP NOT NULL DEFAULT now());"])]
+      (jdbc/execute! stmt))))
 
 (defn- previous-migrations []
-  (set (db/select-field :name Migration)))
+  (or (tc/select-fn-set :name :m/migration) #{}))
 
 (defn- migrate!*
   "Runs DB migrations. Copied from metastore."
   []
   (log/info "Running migrations if needed...")
   (create-migrations-table-if-needed!)
-  (when-let [the-previous-migrations (previous-migrations)]
-    (db/transaction
-      (doseq [[migration-name statements] @migrations]
-        (when-not (the-previous-migrations migration-name)
+  (let [the-previous-migrations (previous-migrations)]
+    (doseq [[migration-name statement] @migrations]
+      (when-not (the-previous-migrations migration-name)
+        (tc/with-transaction [conn]
           (log/info "Running migration" migration-name)
           (try
-            (doseq [statement statements]
-              (jdbc/execute! (db/connection) statement))
-            (db/insert! Migration :name migration-name)
+            (with-open [stmt (jdbc/prepare conn [statement])]
+              (jdbc/execute! stmt)
+              (tc/insert! :conn conn :m/migration :name migration-name))
             (catch Exception e
-              (throw (ex-info (format "Data migration %s failed: \n%s\n%s" migration-name (string/join "\n" statements) (.getMessage e)) {}))))))))
+              (throw (ex-info (format "Data migration %s failed: %s" migration-name (.getMessage e)) (or (ex-data e) {})))))))))
   (log/info "Migrations finished"))
-
 
 (def ^{:doc "Memoized migrate!* to only run once."} migrate!
   (memoize migrate!*))
 
-(defn- defmigration* [migration-name & sql-statements]
+(defn- defmigration* [migration-name sql-statement]
   (if (some #(= (str migration-name) (first %)) @migrations)
     (throw (ex-info (format "Migration with name %s existed" migration-name) {:migration-name migration-name}))
-    (swap! migrations conj [migration-name sql-statements]))
+    (swap! migrations conj [migration-name sql-statement]))
   nil)
 
-(defmacro ^:private defmigration {:style/indent 1} [migration-name & sql-statements]
-  `(defmigration* ~(str migration-name) ~@sql-statements))
+(defmacro ^:private defmigration {:style/indent 1} [migration-name sql-statement]
+  `(defmigration* ~(str migration-name) ~sql-statement))
 
 ;; --------------------------- Utils ---------------------------
 (defn- create-index [table field]
