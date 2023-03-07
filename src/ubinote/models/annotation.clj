@@ -31,3 +31,5 @@
   [annotation]
   (merge {:color "red"}
          annotation))
+
+(derive :m/annotation :hooks/timestamped)

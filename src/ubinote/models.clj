@@ -17,7 +17,6 @@
 (p/import-vars
   [page Page]
   [user User]
-  [annotation Annotation]
   [comment Comment])
 
 ;; --------------------------- Adding toucan properties and types ------------------------

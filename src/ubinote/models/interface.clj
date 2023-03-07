@@ -7,6 +7,34 @@
 
 (def json-out (fn [x] (json/parse-string x keyword)))
 
-(tc/deftransforms :tf/json
-  {:name {:in  json/generate-string
-          :out #(json/parse-string % keyword)}})
+(defn- add-created-at-timestamp [obj & _]
+  (assoc obj :created_at :%now))
+
+(defn- add-updated-at-timestamp [obj & _]
+  (assoc obj :updated_at :%now))
+
+(tc/define-before-insert :hooks/timestamped
+  [instance]
+  (-> instance
+      add-created-at-timestamp
+      add-updated-at-timestamp))
+
+(tc/define-before-update :hooks/timestamped
+  [instance]
+  (-> instance
+      add-updated-at-timestamp))
+
+(tc/define-before-insert :hooks/updated-at-timestamped
+  [instance]
+  (-> instance
+      add-updated-at-timestamp))
+
+(tc/define-before-update :hooks/updated-at-timestamped
+  [instance]
+  (-> instance
+      add-updated-at-timestamp))
+
+(tc/define-before-insert :hooks/created-at-timestamped
+  [instance]
+  (-> instance
+      add-created-at-timestamp))
