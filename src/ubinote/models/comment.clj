@@ -1,23 +1,20 @@
 (ns ubinote.models.comment
   (:require
     [methodical.core :as m]
-    [toucan.db :as db]
-    [toucan.models :as models]
-    [toucan2.core :as tc]))
-
-(models/defmodel Comment :comment)
+    [toucan2.core :as tc]
+    [toucan2.tools.hydrate :as tc.hydrate]))
 
 (m/defmethod tc/table-name :m/comment
   [_model]
   "comment")
 
-(extend (class Comment)
-  models/IModel
-  (merge models/IModelDefaults
-         {:properties (constantly {:timestamped? true})}))
+(derive :m/comment :hooks/timestamped)
 
-(defn with-comments
-  "Hydrate all notes for an annotation"
-  {:hydrate :comments}
-  [{annotation-id :id :as _annotation}]
-  (db/select Comment :annotation_id annotation-id))
+;; hydrations
+
+(m/defmethod tc.hydrate/batched-hydrate [:m/annotation :comments]
+  [_model _k annotations]
+  (let [annotation-id->comments (when (seq annotations)
+                                  (->> (tc/select :m/comment :annotation_id [:in (map :id annotations)])
+                                       (group-by :annotation_id)))]
+    (map #(assoc % :comments (get annotation-id->comments (:id %) [])) annotations)))

@@ -25,7 +25,7 @@
   [_original-model _k]
   :m/page)
 
-(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :user :m/page]
+(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :page :default]
   [_original-model _dest-key _hydrating-model]
   [:page_id])
 

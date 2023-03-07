@@ -9,15 +9,15 @@
     [ubinote.models.user :as user]))
 
 (comment
+  comment/keep-me
   page/keep-me
   user/keep-me
-  annotation/keep-me
-  comment/keep-me)
+  annotation/keep-me)
 
 (p/import-vars
   [page Page]
-  [user User]
-  [comment Comment])
+  [user User])
+
 
 ;; --------------------------- Adding toucan properties and types ------------------------
 (defn- add-created-at-timestamp [obj & _]

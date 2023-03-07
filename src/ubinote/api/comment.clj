@@ -2,10 +2,9 @@
   (:require
     [compojure.coercions :refer [as-int]]
     [compojure.core :refer [context defroutes POST GET DELETE]]
-    [toucan.db :as db]
     [toucan.hydrate :refer [hydrate]]
+    [toucan2.core :as tc]
     [ubinote.api.common :as api]
-    [ubinote.models :refer [Comment]]
     [ubinote.models.common.schema :as schema]))
 
 (def NewComment
@@ -18,16 +17,22 @@
   [{:keys [body] :as _req}]
   (let [cmt (assoc body :creator_id api/*current-user-id*)]
     (schema/validate-schema cmt NewComment)
-    (db/insert! Comment cmt)))
+    (first (tc/insert-returning-instances! :m/comment cmt))))
 
 (defn get-comment
   [id _req]
-  (-> (db/select-one Comment :id id)
+  (-> (tc/select-one :m/comment :id id)
       (hydrate :annotation :user)
       api/check-404))
+
+(defn- delete-comment
+  [id _req]
+  (api/check-404 (tc/select-one :m/comment :id id))
+  (tc/delete! :m/comment :id id)
+  api/generic-204-response)
 
 (defroutes routes
   (POST "/" [] create-comment)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-comment id))
-           (DELETE "/" [] (partial get-comment id))))
+           (DELETE "/" [] (partial delete-comment id))))

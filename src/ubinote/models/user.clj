@@ -16,11 +16,11 @@
   [_original-model _k]
   :m/user)
 
-(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :user :m/user]
+(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :user :default]
   [_original-model _dest-key _hydrating-model]
   [:user_id])
 
-(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:m/page :user :m/user]
+(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:m/page :user :default]
   [_original-model _dest-key _hydrating-model]
   [:creator_id])
 
