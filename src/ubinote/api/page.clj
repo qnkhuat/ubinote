@@ -25,8 +25,7 @@
 (defn- get-page
   [id _req]
   (-> (api/check-404 (tc/select-one :m/page :id id))
-      (tc/hydrate :user :annotation
-               [:annotations :comments])))
+      (tc/hydrate :user :annotations)))
 
 (defn- list-pages
   [_req]

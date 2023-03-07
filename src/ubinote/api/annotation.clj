@@ -21,7 +21,8 @@
 (defn- delete-annotation
   [id _req]
   (api/check-404 (tc/select-one :m/annotation :id id))
-  (tc/delete! :m/annotation :id id))
+  (tc/delete! :m/annotation :id id)
+  api/generic-204-response)
 
 (defroutes routes
   (POST "/" [] create)

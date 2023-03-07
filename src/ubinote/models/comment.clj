@@ -1,8 +1,15 @@
 (ns ubinote.models.comment
-  (:require [toucan.db :as db]
-            [toucan.models :as models]))
+  (:require
+    [methodical.core :as m]
+    [toucan.db :as db]
+    [toucan.models :as models]
+    [toucan2.core :as tc]))
 
 (models/defmodel Comment :comment)
+
+(m/defmethod tc/table-name :m/comment
+  [_model]
+  "comment")
 
 (extend (class Comment)
   models/IModel

@@ -1,10 +1,9 @@
 (ns ubinote.models.annotation
   (:require
     [methodical.core :as m]
-    [toucan.db :as db]
-    [toucan.models :as models]
     [toucan2.core :as tc]
-    [toucan2.tools.hydrate :as tc.hydrate]))
+    [toucan2.tools.hydrate :as tc.hydrate]
+    [ubinote.models.interface :as mi]))
 
 ;; --------------------------- Toucan methods  ---------------------------
 
@@ -20,28 +19,15 @@
   [_original-model _dest-key _hydrating-model]
   [:annotation_id])
 
-(defn- pre-insert
-  [annotation]
-  ;; default color to red
-  (merge {:color "red"}
-         annotation))
+(tc/deftransforms :m/annotation
+ {:coordinate {:in  mi/json-in
+               :out mi/json-out}})
+
+(m/defmethod tc.hydrate/simple-hydrate [:m/page :annotations]
+  [_model _k instance]
+  (assoc instance :annotations (tc/select :m/annotation :page_id (:id instance))))
 
 (tc/define-before-insert :m/annotation
   [annotation]
   (merge {:color "red"}
          annotation))
-
-(models/defmodel Annotation :annotation)
-
-(extend (class Annotation)
-  models/IModel
-  (merge models/IModelDefaults
-         {:properties (constantly {:timestamped? true})
-          :pre-insert pre-insert
-          :types      (constantly {:coordinate :json})}))
-
-(defn with-annotations
-  "Hydrate all annotaitons for a page."
-  {:hydrate :annotations}
-  [{page_id :id :as _page}]
-  (db/select Annotation :page_id page_id))
