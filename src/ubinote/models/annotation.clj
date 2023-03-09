@@ -21,7 +21,7 @@
 
 (tc/define-before-insert :m/annotation
   [annotation]
-  (merge {:color "red"}
+  (merge {:color "yellow"}
          annotation))
 
 ;; hydrations

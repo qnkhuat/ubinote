@@ -16,7 +16,8 @@
 (defn- create
   [{:keys [body] :as _req}]
   (->> (assoc body :creator_id api/*current-user-id*)
-       (tc/insert-returning-instances! :m/annotation)))
+       (tc/insert-returning-instances! :m/annotation)
+       first))
 
 (defn- delete-annotation
   [id _req]
