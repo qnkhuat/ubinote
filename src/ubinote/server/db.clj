@@ -14,6 +14,10 @@
     java.io.BufferedReader
     com.mchange.v2.c3p0.ComboPooledDataSource))
 
+(def supported-dbms
+  "List of dbms we support."
+  #{:postgres :h2})
+
 ;; ------------------------------------------- Extend jdbc protocols -------------------------------------------
 (defn clob->str
   "Convert an H2 clob to a String."
@@ -66,9 +70,10 @@
                                                        (.setProperty properties (name k) (str v)))
                                                      properties)))})
 
-(def quoting-style
+(def ^:private db-type->dialect-name
   {:postgres :ansi
    :h2       :h2
+   ;; not really sure it works on mysql...
    :mysql    :mysql})
 
 (defn- db-details
@@ -117,7 +122,7 @@
   *actual* dialect for the application database."
   [query-type model parsed-args resolved-query]
   (binding [t2.honeysql/*options* (assoc t2.honeysql/*options*
-                                         :dialect (quoting-style (cfg/config-kw :db-type)))]
+                                         :dialect (db-type->dialect-name (cfg/config-kw :db-type)))]
     (next-method query-type model parsed-args resolved-query)))
 
 (m/defmethod tc/do-with-connection :default
@@ -126,5 +131,5 @@
 
 (reset! t2.honeysql/global-options
         {:quoted       true
-         :dialect      (:dialect (sql/get-dialect (cfg/config-kw :db-type)))
+         :dialect      (:dialect (sql/get-dialect (db-type->dialect-name (cfg/config-kw :db-type))))
          :quoted-snake false})

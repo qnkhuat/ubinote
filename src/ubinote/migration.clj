@@ -5,7 +5,8 @@
     [clojure.tools.logging :as log]
     [next.jdbc :as jdbc]
     [toucan2.core :as tc]
-    [ubinote.config :as cfg]))
+    [ubinote.config :as cfg]
+    [ubinote.server.db :as db]))
 
 (def migrations (atom []))
 
@@ -28,12 +29,14 @@
   (log/info "Running migrations if needed...")
   (create-migrations-table-if-needed!)
   (let [the-previous-migrations (previous-migrations)]
-    (doseq [[migration-name statement] @migrations]
+    (doseq [[migration-name statement-or-map] @migrations]
       (when-not (the-previous-migrations migration-name)
         (tc/with-transaction [conn]
           (log/info "Running migration" migration-name)
           (try
-            (with-open [stmt (jdbc/prepare conn [statement])]
+            (with-open [stmt (jdbc/prepare conn [(if (map? statement-or-map)
+                                                   ((cfg/config-kw :db-type) statement-or-map)
+                                                   statement-or-map)])]
               (jdbc/execute! stmt)
               (tc/insert! :conn conn :m/migration :name migration-name))
             (catch Exception e
@@ -43,14 +46,18 @@
 (def ^{:doc "Memoized migrate!* to only run once."} migrate!
   (memoize migrate!*))
 
-(defn- defmigration* [migration-name sql-statement]
+(defn- defmigration* [migration-name sql-statement-or-map]
   (if (some #(= (str migration-name) (first %)) @migrations)
     (throw (ex-info (format "Migration with name %s existed" migration-name) {:migration-name migration-name}))
-    (swap! migrations conj [migration-name sql-statement]))
+    (swap! migrations conj [migration-name sql-statement-or-map]))
   nil)
 
-(defmacro ^:private defmigration {:style/indent 1} [migration-name sql-statement]
-  `(defmigration* ~(str migration-name) ~sql-statement))
+(defmacro ^:private defmigration {:style/indent 1} [migration-name sql-statement-or-map]
+  "Define a migration, the sql-statement-or-map could be a string,
+  or a map from db-type to SQL in case we need custom migration for each dbms."
+  (when (map? sql-statement-or-map)
+    (assert (= db/supported-dbms (set (keys sql-statement-or-map))) "Make sure you define migration for all supported dbms"))
+  `(defmigration* ~(str migration-name) ~sql-statement-or-map))
 
 ;; --------------------------- Utils ---------------------------
 (defn- create-index [table field]
@@ -133,3 +140,9 @@
 (defmigration create-password-salt
   (str "ALTER TABLE core_user
        ADD password_salt VARCHAR(254) NOT NULL DEFAULT '';"))
+
+(defmigration include-public-setting-table
+  (str "ALTER TABLE page ADD COLUMN public_uuid VARCHAR(254);
+       ALTER TABLE page ADD COLUMN public_view_annotation BOOLEAN NOT NULL DEFAULT FALSE;
+       ALTER TABLE page ADD COLUMN public_view_comment BOOLEAN NOT NULL DEFAULT FALSE;"
+       (create-index "page" "public_uuid")))

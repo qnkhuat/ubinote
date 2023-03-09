@@ -1,12 +1,13 @@
 (ns ubinote.api
-  (:require [compojure.core :refer [defroutes GET context]]
-            [ubinote.api.annotation :as ant]
-            [ubinote.api.comment :as comment]
-            [ubinote.api.page :as page]
-            [ubinote.api.session :as session]
-            [ubinote.api.setup :as setup]
-            [ubinote.api.user :as user]
-            [ubinote.server.middleware.auth :refer [+auth]]))
+  (:require
+    [compojure.core :refer [defroutes GET context]]
+    [ubinote.api.annotation :as ant]
+    [ubinote.api.comment :as comment]
+    [ubinote.api.page :as page]
+    [ubinote.api.session :as session]
+    [ubinote.api.setup :as setup]
+    [ubinote.api.user :as user]
+    [ubinote.server.middleware.auth :refer [+auth]]))
 
 (defroutes routes
   (GET "/health" []         "Doing great!")
