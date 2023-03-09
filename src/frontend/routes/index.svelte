@@ -8,6 +8,7 @@
 		Form,
 		Button,
 		DataTable,
+		Modal,
 		TextInput,
 		InlineLoading,
 		ToastNotification,
@@ -24,10 +25,23 @@
 	let pages = [];
 	let addingPage = false;
 	let notificationState = null;
+	let toDeletePage = null;
 
-	function openPage(cell) {
-		if (cell.detail.key == "open")
+	function onDeletePage(page) {
+		api.deletePage(page.id).
+			then(function() {
+				pages = pages.filter(p => p.id != page.id)
+				toDeletePage = null;
+			});
+	}
+
+	function onCellClick(cell) {
+		const key = cell.detail.key;
+		if (key == "open")
 			navigateTo("/page/" + cell.detail.value);
+		else if (key == "delete") {
+			toDeletePage = pages.find(p => p.id == cell.detail.value);
+		}
 	}
 
 	function loadPages() {
@@ -35,7 +49,7 @@
 			let data = resp.data;
 			pages = data
 				.sort((a, b) =>	new Date(b.updated_at) - new Date(a.updated_at))
-				.map((page) =>	Object.assign(page, {open: page["id"]}));
+				.map((page) =>	Object.assign(page, {open: page["id"], delete: page["id"]}));
 		});
 	}
 
@@ -84,7 +98,7 @@
 	<Form id="new-page">
 		<TextInput placeholder="Archive a page" bind:value={newPageURL}/>
 		<Button class="add-button" size="small" type="submit"
-																					on:click={newPage}>
+			on:click={newPage}>
 			{#if addingPage}
 				<InlineLoading class="add-button" description="Adding..." />
 			{:else}
@@ -94,35 +108,47 @@
 	</Form>
 
 	<DataTable
-	 sortable
-	 on:click:cell={openPage}
-	 headers={[
-	 {key: "open", value: "Open", display: (_) => "Open", sort: false},
-	 {key: "title", value: "Title"},
-	 {key: "domain", value: "Domain"},
-	 {key: "url", value: "URL"},
-	 {key: "updated_at", value: "Last updated"},
-	 ]}
-	 rows={pages}>
-	 <Toolbar>
-		 <ToolbarContent>
-			 <ToolbarSearch
-			persistent
-			shouldFilterRows={(row, value) => {
-			const valueLowered = value.toLowerCase();
-			return (row.title.toLowerCase().includes(valueLowered) || row.url.toLowerCase().includes(valueLowered));
-			}}
-			/>
-		 </ToolbarContent>
-	 </Toolbar>
+	sortable
+	on:click:cell={onCellClick}
+	headers={[
+	{key: "open", value: "Open", display: (_) => "Open", sort: false},
+	{key: "title", value: "Title"},
+	{key: "domain", value: "Domain"},
+	{key: "url", value: "URL"},
+	{key: "updated_at", value: "Last updated"},
+	{key: "delete", value: "Delete", display: (_) => "Delete", sort: false},
+	]}
+	rows={pages}>
+	<Toolbar>
+	<ToolbarContent>
+	<ToolbarSearch
+	persistent
+	shouldFilterRows={(row, value) => {
+	const valueLowered = value.toLowerCase();
+	return (row.title.toLowerCase().includes(valueLowered) || row.url.toLowerCase().includes(valueLowered));
+	}}
+	/>
+	</ToolbarContent>
+	</Toolbar>
 	</DataTable>
+
+	<Modal
+	bind:open={toDeletePage}
+	modalHeading="Delete page"
+	primaryButtonText="Delete"
+	secondaryButtonText="Cancel"
+	danger=true
+	on:click:button--secondary={() => (toDeletePage = null)}
+	on:submit={() => onDeletePage(toDeletePage)}>
+	<p>Want to delete "{toDeletePage?.title}" page?</p>
+	</Modal>
 
 	{#if notificationState}
 		<ToastNotification
-			class="notification"
-	 lowContrast
-	 {...notificationState}
-	 />
+		class="notification"
+		lowContrast
+		{...notificationState}
+		/>
 	{/if}
 
 </div>

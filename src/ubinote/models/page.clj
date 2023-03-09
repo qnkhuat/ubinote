@@ -1,6 +1,7 @@
 (ns ubinote.models.page
   (:require
     [clojure.string :as string]
+    [clojure.java.io :as io]
     [methodical.core :as m]
     [net.cgrand.enlive-html :as html]
     [toucan2.core :as tc]
@@ -106,3 +107,12 @@
                                                           :path relative
                                                           :title title
                                                           :status "archived")))))
+
+(defn delete-page
+  "Delete a page and its static files."
+  ([page]
+   (delete-page page true))
+  ([page hard-delete?]
+   (tc/delete! :m/page :id (:id page))
+   (when hard-delete?
+     (io/delete-file (fs/path-join root (:path page))))))

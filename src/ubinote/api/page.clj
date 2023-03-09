@@ -1,7 +1,7 @@
 (ns ubinote.api.page
   (:require
     [compojure.coercions :refer [as-int]]
-    [compojure.core :refer [context defroutes POST GET]]
+    [compojure.core :refer [context defroutes DELETE POST GET]]
     [malli.core :as mc]
     [ring.util.response :as response]
     [toucan2.core :as tc]
@@ -39,9 +39,16 @@
       (response/file-response {:root page/root})
       (response/content-type "text/html")))
 
+(defn- delete-page
+  [id _req]
+  (-> (api/check-404 (tc/select-one :m/page :id id))
+      (page/delete-page))
+  api/generic-204-response)
+
 (defroutes routes
   (POST "/" [] add-page)
   (GET "/" [] list-pages)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-page id))
+           (DELETE "/" [] (partial delete-page id))
            (GET "/content" [] (partial get-page-content id))))

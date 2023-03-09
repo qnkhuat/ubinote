@@ -40,6 +40,10 @@ export function getPage(id) {
   return api.get(`/api/page/${id}`)
 };
 
+export function deletePage(id) {
+  return api.delete(`/api/page/${id}`)
+};
+
 export function getPageContent(id) {
   return api.get(`/api/page/${id}/content`)
 };

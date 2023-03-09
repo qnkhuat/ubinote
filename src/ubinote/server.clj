@@ -5,6 +5,7 @@
     [ubinote.config :as cfg]
     [ubinote.migration :as migration]
     [ubinote.models :as models]
+    [ubinote.models.page :as page]
     [ubinote.server.db :as udb]
     [ubinote.server.middleware :as middleware]
     [ubinote.server.routes :as routes]))
@@ -30,7 +31,7 @@
 (defn start!
   [app]
   (log/infof "Starting server at http://localhost:%d" (cfg/config-int :port))
-  (log/infof "Static files folder: %s" (cfg/config-str :root))
+  (log/infof "Static files are stored at: %s" page/root)
   (migration/migrate!)
   (run-jetty app
              {:port  (cfg/config-int :port)
