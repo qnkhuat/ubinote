@@ -3,10 +3,9 @@ The so called "Project Management" of Ubinote
 # Phase 2
 - [ ] can add/edit/delete comments
 - [ ] delete page
-- [ ] make public
 - [ ] Finetune:
   - clean way to install single-file-cli, maybe provide an env to set chrome-bin
-- [ ] switch to toucan 2
+- [x] switch to toucan 2
 - [ ] public sharing
 
 # Phase 3
