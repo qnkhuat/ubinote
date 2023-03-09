@@ -27,12 +27,12 @@
   </HeaderUtilities>
 </Header>
 
-<div id="content">
+<div id="ubinote-content">
   <slot></slot>
 </div>
 
 <style lang="scss">
-  :global(#content) {
+  :global(#ubinote-content) {
     padding-left: 0px !important;
     padding-right:0px !important;
     padding-top: 3rem !important;
