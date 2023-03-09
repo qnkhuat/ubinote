@@ -186,10 +186,13 @@
 	</div>
 {/if}
 
-<style>
+<style lang="scss">
 	#page-content {
-		width: 100%;
 		position: relative;
+			/* Make sures we respect the font setting of the page */
+			:global(*) {
+				font-family: inherit;
+			}
 	}
 
 	/* highlight colors */
@@ -213,5 +216,6 @@
 		background-color: #69AFF0A6;
 		cursor:pointer;
 	}
+
 
 </style>

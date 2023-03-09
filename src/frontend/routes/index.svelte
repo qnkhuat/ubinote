@@ -7,6 +7,7 @@
 	import {
 		Form,
 		Button,
+		Content,
 		DataTable,
 		Modal,
 		TextInput,
@@ -94,7 +95,7 @@
 
 </script>
 
-<div>
+<Content>
 	<Form id="new-page">
 		<TextInput placeholder="Archive a page" bind:value={newPageURL}/>
 		<Button class="add-button" size="small" type="submit"
@@ -150,8 +151,7 @@
 		{...notificationState}
 		/>
 	{/if}
-
-</div>
+</Content>
 
 <style lang="scss">
 	:global(#new-page) {

@@ -4,14 +4,13 @@
     HeaderNavItem,
     HeaderUtilities,
     SkipToContent,
-    Content,
   } from "carbon-components-svelte";
 
   import { navigateTo } from "svelte-router-spa";
 
   import {logout} from "frontend/stores/user.js";
 
-  function onLogout(e) {
+  function onLogout(_e) {
     logout().then(() => {
       navigateTo("/login");
     });
@@ -28,6 +27,16 @@
   </HeaderUtilities>
 </Header>
 
-<Content>
+<div id="content">
   <slot></slot>
-</Content>
+</div>
+
+<style lang="scss">
+  :global(#content) {
+    padding-left: 0px !important;
+    padding-right:0px !important;
+    padding-top: 3rem !important;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
+</style>
