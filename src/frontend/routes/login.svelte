@@ -3,6 +3,7 @@
 	import * as api from "frontend/api.js";
 	import { getCurrentUser } from "frontend/stores/user.js";
 	import {
+		Content,
 		Form,
 		TextInput,
 		Button,
@@ -22,11 +23,13 @@
 	}
 </script>
 
-<Form>
-	<TextInput labelText= "Email" placeholder="Your email please" bind:value={email}/>
-	<PasswordInput labelText="Password" placeholder="Enter password..." bind:value={password}/>
-	<Button type="submit" on:click={(e) => {
-				 e.preventDefault();
-				 submit();
-				 }}>Login</Button>
-</Form>
+<Content>
+	<Form>
+		<TextInput labelText= "Email" placeholder="Your email please" bind:value={email}/>
+		<PasswordInput labelText="Password" placeholder="Enter password..." bind:value={password}/>
+		<Button type="submit" on:click={(e) => {
+			e.preventDefault();
+			submit();
+		}}>Login</Button>
+	</Form>
+</Content>
