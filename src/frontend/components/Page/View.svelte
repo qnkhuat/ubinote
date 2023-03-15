@@ -4,13 +4,13 @@
 
 	import { Loading } from "carbon-components-svelte";
 
-
 	import * as api from "frontend/api.js";
 	import { highlightRange } from "frontend/lib/highlight/higlight-dom-range";
 	import AnnotationToolTip from "frontend/components/Page/AnnotationToolTip.svelte";
 
 	//------------------------ props  ------------------------//
-	export let pageId;
+	export let page;
+	let pageId = page.id;
 
 	//------------------------ states  ------------------------//
 	let pageDetail;
@@ -131,15 +131,6 @@
 				pageContent = resp.data;
 			}).catch(err => {
 				console.error("Failed to load page content: ", err);
-			}).then(() => {
-				// load page detail after page content is loaded
-				// so that we could render page content before render annotations
-				api.getPage(pageId)
-					.then(resp => {
-						pageDetail = resp.data;
-					}).catch(err => {
-						console.error("Failed to load page detail: ", err);
-					});
 			});
 
 		document.addEventListener("mouseup", () => {
@@ -167,7 +158,7 @@
 </script>
 
 {#if pageContent}
-	<div id="page-content">
+	<div id="ubinote-page-content">
 		{@html pageContent}
 	</div>
 {:else}
@@ -187,7 +178,7 @@
 {/if}
 
 <style lang="scss">
-	#page-content {
+	#ubinote-page-content {
 		position: relative;
 			/* Make sures we respect the font setting of the page */
 			:global(*) {

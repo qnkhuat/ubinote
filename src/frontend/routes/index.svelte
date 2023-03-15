@@ -109,57 +109,57 @@
 	</Form>
 
 	<DataTable
-	sortable
-	on:click:cell={onCellClick}
-	headers={[
-	{key: "open", value: "Open", display: (_) => "Open", sort: false},
-	{key: "title", value: "Title"},
-	{key: "domain", value: "Domain"},
-	{key: "url", value: "URL"},
-	{key: "updated_at", value: "Last updated"},
-	{key: "delete", value: "Delete", display: (_) => "Delete", sort: false},
-	]}
-	rows={pages}>
-	<Toolbar>
-	<ToolbarContent>
-	<ToolbarSearch
-	persistent
-	shouldFilterRows={(row, value) => {
-	const valueLowered = value.toLowerCase();
-	return (row.title.toLowerCase().includes(valueLowered) || row.url.toLowerCase().includes(valueLowered));
-	}}
-	/>
-	</ToolbarContent>
-	</Toolbar>
+		sortable
+		on:click:cell={onCellClick}
+		headers={[
+			{key: "open", value: "Open", display: (_) => "Open", sort: false},
+			{key: "title", value: "Title"},
+			{key: "domain", value: "Domain"},
+			{key: "url", value: "URL"},
+			{key: "updated_at", value: "Last updated"},
+			{key: "delete", value: "Delete", display: (_) => "Delete", sort: false},
+		]}
+		rows={pages}>
+			<Toolbar>
+				<ToolbarContent>
+					<ToolbarSearch
+						persistent
+						shouldFilterRows={(row, value) => {
+							const valueLowered = value.toLowerCase();
+							return (row.title.toLowerCase().includes(valueLowered) || row.url.toLowerCase().includes(valueLowered));
+						}}>
+					</ToolbarSearch>
+				</ToolbarContent>
+			</Toolbar>
 	</DataTable>
 
-	<Modal
+<Modal
 	bind:open={toDeletePage}
-	modalHeading="Delete page"
-	primaryButtonText="Delete"
-	secondaryButtonText="Cancel"
-	danger=true
+	modalHeading={"Delete page"}
+	primaryButtonText={"Delete"}
+	secondaryButtonText={"Cancel"}
+	danger={true}
 	on:click:button--secondary={() => (toDeletePage = null)}
 	on:submit={() => onDeletePage(toDeletePage)}>
 	<p>Want to delete "{toDeletePage?.title}" page?</p>
-	</Modal>
+</Modal>
 
-	{#if notificationState}
-		<ToastNotification
+{#if notificationState}
+	<ToastNotification
 		class="notification"
 		lowContrast
 		{...notificationState}
-		/>
-	{/if}
+	/>
+{/if}
 </Content>
 
 <style lang="scss">
 	:global(#new-page) {
 		margin-bottom: 20px;
 		display: flex;
-			:global(.bx--inline-loading__text) {
-				color: white;
-			}
+		:global(.bx--inline-loading__text) {
+			color: white;
+		}
 	}
 
 	:global(.add-button) {

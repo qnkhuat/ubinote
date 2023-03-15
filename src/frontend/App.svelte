@@ -19,9 +19,9 @@
 
 
 {#if loaded}
-  <Layout>
-    <Router {routes}/>
-  </Layout>
+<Layout>
+  <Router {routes}/>
+</Layout>
 {:else}
   <Loading/>
 {/if}

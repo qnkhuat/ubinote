@@ -14,7 +14,7 @@
 	let password = null;
 
 	function submit() {
-		api.createSession({email, password}).then(resp => {
+		api.createSession({email, password}).then(_resp => {
 			getCurrentUser().then(() => {
 				// is there a way to refer to the last page the user was on?
 				navigateTo("/");

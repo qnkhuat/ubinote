@@ -5,9 +5,7 @@
     HeaderUtilities,
     SkipToContent,
   } from "carbon-components-svelte";
-
   import { navigateTo } from "svelte-router-spa";
-
   import {logout} from "frontend/stores/user.js";
 
   function onLogout(_e) {

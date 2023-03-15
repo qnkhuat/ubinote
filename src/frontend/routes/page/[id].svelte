@@ -1,12 +1,68 @@
 <script>
 	import { onMount } from "svelte";
-	import * as api from "frontend/api.js";
+	import Settings from "carbon-icons-svelte/lib/Settings.svelte";
+	import {
+		Button,
+		Toggle,
+		Modal,
+		Loading,
+		OverflowMenu,
+		OverflowMenuItem
+	} from "carbon-components-svelte";
+
 	import PageView from "frontend/components/Page/View.svelte";
+	import * as api from "frontend/api.js";
 
 	export let currentRoute;
+	let page;
+	let openPublicSettings = true;
 	const pageId = parseInt(currentRoute.namedParams.id);
+
+	$ : {
+		console.log("openPublicSettings", openPublicSettings);
+		console.log("page", page);
+	}
+
+	onMount(function loadPage() {
+		api.getPage(pageId).then((resp) => {
+			page = resp.data;
+		}).catch(err => {
+			console.error("Failed to load page detail: ", err);
+		});;
+
+	})
 </script>
 
-<div id="page-view">
-	<PageView {pageId} />
+{#if page}
+<div id="ubinote-page-view">
+	<div id="ubinote-page-settings">
+		<p>{page.title}</p>
+		<OverflowMenu flipped iconDescription="Settings" icon={Settings}>
+			<OverflowMenuItem text="Public settings" on:click={() => {openPublicSettings = true}}/>
+		</OverflowMenu>
+	</div>
+	<PageView {page} />
 </div>
+{:else}
+	<Loading />
+{/if}
+
+<Modal
+	bind:open={openPublicSettings}
+	modalHeading={"Public settings"}
+	danger={true}
+	passiveModal={true}>
+	<Toggle toggled={page?.public_uuid != null}/>
+</Modal>
+
+
+<style lang="scss">
+	#ubinote-page-settings {
+		background-color: #f4f4f4;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+	}
+
+</style>

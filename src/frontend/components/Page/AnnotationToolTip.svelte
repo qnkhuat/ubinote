@@ -30,7 +30,7 @@
 
 </script>
 
-<div id="annotation-tooltip"
+<div id="ubinote-annotation-tooltip"
 		 style="left: {x}px; top: {y}px;"
 	 >
 	 <div class="content"
@@ -44,7 +44,7 @@
 </div>
 
 <style lang="scss">
-	#annotation-tooltip {
+	#ubinote-annotation-tooltip {
 		position: absolute;
 		display: flex;
 		background-color: red;

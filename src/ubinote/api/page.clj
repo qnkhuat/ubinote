@@ -39,6 +39,15 @@
       (response/file-response {:root page/root})
       (response/content-type "text/html")))
 
+(defn- public-page
+  [id _req]
+  (let [page (api/check-404 (tc/select-one :m/page :id id))
+        uuid (str (java.util.UUID/randomUUID))]
+    (when (:public_uuid page)
+      (throw (ex-info "Page is already public" {:status-code 400})))
+    (tc/update! :m/page id :public_uuid uuid)
+    uuid))
+
 (defn- delete-page
   [id _req]
   (-> (api/check-404 (tc/select-one :m/page :id id))
@@ -51,4 +60,5 @@
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-page id))
            (DELETE "/" [] (partial delete-page id))
+           (POST "/public" [] (partial public-page id))
            (GET "/content" [] (partial get-page-content id))))
