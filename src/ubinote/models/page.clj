@@ -1,7 +1,7 @@
 (ns ubinote.models.page
   (:require
-    [clojure.string :as string]
     [clojure.java.io :as io]
+    [clojure.string :as string]
     [methodical.core :as m]
     [net.cgrand.enlive-html :as html]
     [toucan2.core :as tc]

@@ -16,7 +16,7 @@
 	export let currentRoute;
 
 	let page;
-	let openPublicSettings = true;
+	let openPublicSettings = false;
 	const pageId = parseInt(currentRoute.namedParams.id);
 
 	function onTogglePublic(is_public) {
@@ -71,7 +71,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 1rem;
+		padding: 3rem;
 	}
 
 </style>

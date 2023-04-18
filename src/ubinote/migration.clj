@@ -142,7 +142,5 @@
        ADD password_salt VARCHAR(254) NOT NULL DEFAULT '';"))
 
 (defmigration include-public-setting-table
-  (str "ALTER TABLE page ADD COLUMN public_uuid VARCHAR(254);
-       ALTER TABLE page ADD COLUMN public_view_annotation BOOLEAN NOT NULL DEFAULT FALSE;
-       ALTER TABLE page ADD COLUMN public_view_comment BOOLEAN NOT NULL DEFAULT FALSE;"
+  (str "ALTER TABLE page ADD COLUMN public_uuid VARCHAR(254);"
        (create-index "page" "public_uuid")))

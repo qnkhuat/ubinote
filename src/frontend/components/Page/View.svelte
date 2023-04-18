@@ -10,6 +10,7 @@
 
 	//------------------------ props  ------------------------//
 	export let page;
+	export let isPublic = false; // is this page a public page?
 	let pageId = page.id;
 
 	//------------------------ states  ------------------------//
@@ -28,19 +29,36 @@
 		"yellow": "highlight-yellow"
 	}
 
-
 	//------------------------ utils  ------------------------//
 	// from range wrt body
 	function fromRangeBody (range) {
 		return fromRange(document.body, range)
 	};
+
 	// to range wrt body
 	function toRangeBody (range) {
 		return toRange(document.body, range)
 	};
+
 	function isSelecting(selection) {
 		const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
 		return !selection.isCollapsed && boundingRect.width > 2;
+	}
+
+	function loadPageContent() {
+		if (!isPublic) {
+			api.getPageContent(page.id).then((resp) => {
+				pageContent = resp.data;
+			}).catch(err => {
+				console.error("Failed to load page content: ", err);
+			});
+		}	else {
+			api.getPublicPageContent(page.public_uuid).then((resp) => {
+				pageContent = resp.data;
+			}).catch(err => {
+				console.error("Failed to load page content: ", err);
+			});
+		}
 	}
 
 	//------------------------ functions ------------------------//
@@ -137,22 +155,19 @@
 	}
 
 	onMount(function loadContent() {
-		api.getPageContent(pageId)
-			.then(resp => {
-				console.debug("Got page content");
-				pageContent = resp.data;
-			}).catch(err => {
-				console.error("Failed to load page content: ", err);
-			});
+		loadPageContent();
 
-		document.addEventListener("mouseup", () => {
-			// if user is selecting, show tooltip
-			const selection = window.getSelection();
-			if (isSelecting(selection)) {
-				annotationToolTipPosition = rangeToToolTopPosition(selection.getRangeAt(0));
-				annotationToolTipContext = "new";
-			}
-		});
+		// register select listener
+		if (!isPublic) {
+			document.addEventListener("mouseup", () => {
+				// if user is selecting, show tooltip
+				const selection = window.getSelection();
+				if (isSelecting(selection)) {
+					annotationToolTipPosition = rangeToToolTopPosition(selection.getRangeAt(0));
+					annotationToolTipContext = "new";
+				}
+			})
+		};
 	});
 
 	onMount(function registerGlobalFunctions() {
@@ -164,7 +179,11 @@
 			activeAnnotation = annotation;
 		}
 
-		window.onClickAnnotation = onClickAnnotation;
+		// maybe we should allow click to see comments though
+		// but that's story for later day
+		if (!isPublic) {
+			window.onClickAnnotation = onClickAnnotation;
+		}
 	})
 
 </script>
