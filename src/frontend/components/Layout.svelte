@@ -6,7 +6,10 @@
     SkipToContent,
   } from "carbon-components-svelte";
   import { navigateTo } from "svelte-router-spa";
-  import {logout} from "frontend/stores/user.js";
+  import { currentUser, logout} from "frontend/stores/user.js";
+
+  let currentUserValue;
+  currentUser.subscribe(value => {currentUserValue = value});
 
   function onLogout(_e) {
     logout().then(() => {
@@ -21,7 +24,9 @@
     <SkipToContent />
   </svelte:fragment>
   <HeaderUtilities>
-    <HeaderNavItem on:click={(e) => onLogout(e)} text="Logout" />
+    {#if currentUserValue}
+      <HeaderNavItem on:click={(e) => onLogout(e)} text="Logout" />
+    {/if}
   </HeaderUtilities>
 </Header>
 
