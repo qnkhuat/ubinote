@@ -2,6 +2,7 @@
 	import { onMount } from "svelte";
 	import Settings from "carbon-icons-svelte/lib/Settings.svelte";
 	import {
+		CopyButton,
 		Button,
 		Toggle,
 		Modal,
@@ -16,7 +17,7 @@
 	export let currentRoute;
 
 	let page;
-	let openPublicSettings = false;
+	let openPublicSettings = true;
 	const pageId = parseInt(currentRoute.namedParams.id);
 
 	function onTogglePublic(is_public) {
@@ -29,6 +30,11 @@
 				page.public_uuid = null;
 			});
 		}
+	}
+
+	function publicPageURL() {
+		const location = window.location;
+		return `${location.protocol}//${location.host}/public/page/${page.public_uuid}`
 	}
 
 	onMount(function loadPage() {
@@ -61,7 +67,7 @@
 	passiveModal={true}>
 	<Toggle toggled={page?.public_uuid != null} on:toggle={(toggled) => onTogglePublic(toggled.detail.toggled)}/>
 	{#if page?.public_uuid}
-		<p>Public UUID: {page.public_uuid}</p>
+		<p>Public UUID: <a href={publicPageURL()}>{publicPageURL()}</p>
 	{/if}
 </Modal>
 
@@ -71,7 +77,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 3rem;
+		padding: 0.5rem;
 	}
 
 </style>

@@ -74,7 +74,6 @@ export function deleteAnnotation(id) {
   return api.delete(`/api/annotation/${id}`)
 }
 
-
 // ---------------------------- Public ---------------------------- //
 
 export function getPublicPage(uuid) {
