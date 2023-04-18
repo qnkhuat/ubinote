@@ -13,7 +13,6 @@
 	let pageId = page.id;
 
 	//------------------------ states  ------------------------//
-	let pageDetail;
 	let pageContent;
 	let annotationToolTipContext; // `null` to turn off, `new` to create annotation, `edit` to edit
 	let annotationToolTipPosition = {x: 0, y: 0};
@@ -100,22 +99,26 @@
 				annotateOnDOM(range, annotation);
 				window.getSelection().empty(); // remove users selection
 			}).catch((err) => {
-				console.log("Failed to add annotation", err);
+				console.error("Failed to add annotation", err);
 			})
 	}
 
 	function rangeToToolTopPosition(range) {
 		const boundingRect = range.getBoundingClientRect()
 		return {
-			x: event.clientX,
+			x: window.event.clientX,
 			y: boundingRect.bottom + window.scrollY
 		}
 	}
 
 	//------------------------ reactive functions  ------------------------//
 
-	$ : if (pageContent && pageDetail) {
-		pageDetail.annotations?.forEach(annotation => {
+	function isContentRendered() {
+		return document.getElementById("ubinote-page-content") != null;
+	}
+
+	function renderAnnotations() {
+		page.annotations?.forEach(annotation => {
 			const range = toRangeBody(annotation.coordinate);
 			try {
 				annotateOnDOM(range, annotation);
@@ -125,9 +128,18 @@
 		});
 	}
 
+	$ : if (pageContent && page) {
+		if (isContentRendered()) {
+			renderAnnotations();
+		} else {
+			setTimeout(renderAnnotations, 100);
+		}
+	}
+
 	onMount(function loadContent() {
 		api.getPageContent(pageId)
 			.then(resp => {
+				console.debug("Got page content");
 				pageContent = resp.data;
 			}).catch(err => {
 				console.error("Failed to load page content: ", err);
