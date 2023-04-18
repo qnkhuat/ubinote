@@ -14,13 +14,21 @@
 	import * as api from "frontend/api.js";
 
 	export let currentRoute;
+
 	let page;
 	let openPublicSettings = true;
 	const pageId = parseInt(currentRoute.namedParams.id);
 
-	$ : {
-		console.log("openPublicSettings", openPublicSettings);
-		console.log("page", page);
+	function onTogglePublic(is_public) {
+		if (is_public && page.public_uuid == null) {
+			api.createPublicPage(pageId).then((data) => {
+				page.public_uuid = data.data;
+			});
+		} else if (!is_public && page.public_uuid != null) {
+			api.deletePublicPage(pageId).then((_data) => {
+				page.public_uuid = null;
+			});
+		}
 	}
 
 	onMount(function loadPage() {
@@ -29,7 +37,6 @@
 		}).catch(err => {
 			console.error("Failed to load page detail: ", err);
 		});;
-
 	})
 </script>
 
@@ -52,9 +59,11 @@
 	modalHeading={"Public settings"}
 	danger={true}
 	passiveModal={true}>
-	<Toggle toggled={page?.public_uuid != null}/>
+	<Toggle toggled={page?.public_uuid != null} on:toggle={(toggled) => onTogglePublic(toggled.detail.toggled)}/>
+	{#if page?.public_uuid}
+		<p>Public UUID: {page.public_uuid}</p>
+	{/if}
 </Modal>
-
 
 <style lang="scss">
 	#ubinote-page-settings {

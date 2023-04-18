@@ -45,8 +45,16 @@
         uuid (str (java.util.UUID/randomUUID))]
     (when (:public_uuid page)
       (throw (ex-info "Page is already public" {:status-code 400})))
-    (tc/update! :m/page id :public_uuid uuid)
+    (tc/update! :m/page id {:public_uuid uuid})
     uuid))
+
+(defn- disable-public
+  [id _req]
+  (let [page (api/check-404 (tc/select-one :m/page :id id))]
+    (when-not (:public_uuid page)
+      (throw (ex-info "Page is not public" {:status-code 400})))
+    (tc/update! :m/page id {:public_uuid nil})
+    api/generic-204-response))
 
 (defn- delete-page
   [id _req]
@@ -61,4 +69,5 @@
            (GET "/" [] (partial get-page id))
            (DELETE "/" [] (partial delete-page id))
            (POST "/public" [] (partial public-page id))
+           (DELETE "/public" [] (partial disable-public id))
            (GET "/content" [] (partial get-page-content id))))

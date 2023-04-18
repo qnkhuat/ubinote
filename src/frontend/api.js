@@ -48,16 +48,21 @@ export function getPageContent(id) {
   return api.get(`/api/page/${id}/content`)
 };
 
-//
 export function listPages() {
   return api.get("/api/page")
 };
 
-//
-
 export function createPage(body) {
   return api.post("/api/page", body)
 };
+
+export function createPublicPage(id) {
+  return api.post(`/api/page/${id}/public`);
+}
+
+export function deletePublicPage(id) {
+  return api.delete(`/api/page/${id}/public`);
+}
 
 // ---------------------------- Annotation ---------------------------- //
 
