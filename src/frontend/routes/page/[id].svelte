@@ -17,7 +17,7 @@
 	export let currentRoute;
 
 	let page;
-	let openPublicSettings = true;
+	let openPublicSettings = false;
 	const pageId = parseInt(currentRoute.namedParams.id);
 
 	function onTogglePublic(is_public) {
@@ -47,15 +47,15 @@
 </script>
 
 {#if page}
-<div id="ubinote-page-view">
-	<div id="ubinote-page-settings">
-		<p>{page.title}</p>
-		<OverflowMenu flipped iconDescription="Settings" icon={Settings}>
+	<div id="ubinote-page-view">
+		<div id="ubinote-page-settings">
+			<p>{page.title}</p>
+			<OverflowMenu flipped iconDescription="Settings" icon={Settings}>
 			<OverflowMenuItem text="Public settings" on:click={() => {openPublicSettings = true}}/>
-		</OverflowMenu>
+			</OverflowMenu>
+		</div>
+		<PageView {page} />
 	</div>
-	<PageView {page} />
-</div>
 {:else}
 	<Loading />
 {/if}
@@ -65,10 +65,17 @@
 	modalHeading={"Public settings"}
 	danger={true}
 	passiveModal={true}>
-	<Toggle toggled={page?.public_uuid != null} on:toggle={(toggled) => onTogglePublic(toggled.detail.toggled)}/>
-	{#if page?.public_uuid}
-		<p>Public UUID: <a href={publicPageURL()}>{publicPageURL()}</p>
-	{/if}
+
+<Toggle toggled={page?.public_uuid != null}
+				style="padding: 0.5rem;"
+		on:toggle={(toggled) => onTogglePublic(toggled.detail.toggled)}/>
+		{#if page?.public_uuid}
+			<div style="display:flex; align-items: center; z-index:1000; overflow:hidden;">
+				<span style="padding-right: 10px;">Public UUID: <a href={publicPageURL()}>{publicPageURL()}</span>
+				<CopyButton text={publicPageURL()}/>
+			</div>
+		{/if}
+
 </Modal>
 
 <style lang="scss">
