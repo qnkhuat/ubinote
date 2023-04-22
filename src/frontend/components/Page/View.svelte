@@ -28,16 +28,17 @@
 		"blue": "highlight-blue",
 		"yellow": "highlight-yellow"
 	}
+	//const iframeDocument = document.getElementById("ubinote-iframe-content").contentWindow.document;
 
 	//------------------------ utils  ------------------------//
 	// from range wrt body
 	function fromRangeBody (range) {
-		return fromRange(document.body, range)
+		return fromRange(document.getElementById("ubinote-iframe-content").contentWindow.document.body, range)
 	};
 
 	// to range wrt body
 	function toRangeBody (range) {
-		return toRange(document.body, range)
+		return toRange(document.getElementById("ubinote-iframe-content").contentWindow.document.body, range)
 	};
 
 	function isSelecting(selection) {
@@ -111,11 +112,11 @@
 	}
 
 	function onAnnotate(color) {
-		return addAnnotation(pageId, window.getSelection(), color).
+		return addAnnotation(pageId, document.getElementById("ubinote-iframe-content").contentWindow.getSelection(), color).
 			then((resp) => {
 				const [range, annotation] = resp;
 				annotateOnDOM(range, annotation);
-				window.getSelection().empty(); // remove users selection
+				document.getElementById("ubinote-iframe-content").contentWindow.getSelection().empty(); // remove users selection
 			}).catch((err) => {
 				console.error("Failed to add annotation", err);
 			})
@@ -124,8 +125,8 @@
 	function rangeToToolTopPosition(range) {
 		const boundingRect = range.getBoundingClientRect()
 		return {
-			x: window.event.clientX,
-			y: boundingRect.bottom + window.scrollY
+			x: window.clientX,
+			y: boundingRect.bottom + document.getElementById("ubinote-iframe-content").contentWindow.scrollY
 		}
 	}
 
@@ -159,14 +160,17 @@
 
 		// register select listener
 		if (!isPublic) {
-			document.addEventListener("mouseup", () => {
-				// if user is selecting, show tooltip
-				const selection = window.getSelection();
-				if (isSelecting(selection)) {
-					annotationToolTipPosition = rangeToToolTopPosition(selection.getRangeAt(0));
-					annotationToolTipContext = "new";
-				}
-			})
+			setTimeout(() => {
+				const iframe =  document.getElementById("ubinote-iframe-content")
+				iframe.contentWindow.document.addEventListener("mouseup", () => {
+					// if user is selecting, show tooltip
+					const selection = iframe.contentWindow.getSelection();
+					if (isSelecting(selection)) {
+						annotationToolTipPosition = rangeToToolTopPosition(selection.getRangeAt(0));
+						annotationToolTipContext = "new";
+					}
+				})
+			}, 500)
 		};
 	});
 
@@ -182,19 +186,20 @@
 		// maybe we should allow click to see comments though
 		// but that's story for later day
 		if (!isPublic) {
-			window.onClickAnnotation = onClickAnnotation;
+			document.getElementById("ubinote-iframe-content").contentWindow.onClickAnnotation = onClickAnnotation;
 		}
 	})
 
 </script>
 
 {#if pageContent}
-	<div id="ubinote-page-content">
+	<!--<div id="ubinote-page-content">
 		{@html pageContent}
-	</div>
+	</div>-->
 {:else}
 	<Loading />
 {/if}
+<iframe id="ubinote-iframe-content" src="http://localhost:8000/api/page/2/content" style="width:100%; height:2000px;"/>
 
 {#if annotationToolTipContext != null}
 	<div>
