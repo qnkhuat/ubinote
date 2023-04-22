@@ -11,5 +11,5 @@
   [handler]
   (fn [request]
     (let [resp (handler request)]
-      (update resp :headers merge security-header))))
+      (update resp :headers #(merge security-header %)))))
 
