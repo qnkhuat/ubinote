@@ -14,7 +14,6 @@
 	//------------------------ states  ------------------------//
 
 	function handleClickOutside(_e) {
-		console.log("CLICKING OUTSIDE");
 		onClose();
 	}
 	function handleClick(action) {
