@@ -9,7 +9,7 @@
 	//------------------------ props  ------------------------//
 	export let page;
 	export let isPublic = false; // is this page a public page?
-	let pageId = page.id;
+	let pageId = isPublic ? page.public_uuid : page.id ;
 
 	//------------------------ states  ------------------------//
 	let annotationToolTipContext; // `null` to turn off, `new` to create annotation, `edit` to edit
@@ -28,6 +28,9 @@
 	}
 
 	//------------------------ utils  ------------------------//
+	function resizeIframe(obj) {
+    obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+  }
 	// from range wrt body
 	function fromRangeBody (range) {
 		return fromRange(iframeWindow?.document.body, range)
@@ -116,6 +119,7 @@
 	function onIframeLoad() {
 		// step 0: update iframe Document state
 		iframeWindow = document.getElementById("ubinote-iframe-content").contentWindow;
+		resizeIframe(this);
 
 		// step 1 : inject css
 		const style = iframeWindow.document.createElement("style");
@@ -191,8 +195,8 @@
 <iframe
 	id="ubinote-iframe-content"
  title="Ubinote content"
- src={`/api/page/${pageId}/content`}
- style="width:100%; height:2000px;"/>
+ src={ isPublic ? `/api/public/page/${pageId}/content` : `/api/page/${pageId}/content`}
+ style="width:100%; display:flex;"/>
 
 {#if annotationToolTipContext != null}
 	<div>
@@ -209,9 +213,5 @@
 <style lang="scss">
 	#ubinote-page-content {
 		position: relative;
-			/* Make sures we respect the font setting of the page */
-			:global(*) {
-				font-family: inherit;
-			}
 	}
 </style>
