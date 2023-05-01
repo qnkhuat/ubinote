@@ -29,6 +29,8 @@
 
 	//------------------------ utils  ------------------------//
 	function resizeIframe(obj) {
+		// not sure why but if you set the height only once the height is a bit shorter than real height 🤷‍♂️
+    obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
     obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
   }
 	// from range wrt body
@@ -118,10 +120,10 @@
 
 	function onIframeLoad() {
 		// step 0: update iframe Document state
-		iframeWindow = document.getElementById("ubinote-iframe-content").contentWindow;
 		resizeIframe(this);
 
 		// step 1 : inject css
+		iframeWindow = document.getElementById("ubinote-iframe-content").contentWindow;
 		const style = iframeWindow.document.createElement("style");
 		style.textContent = `
 .highlight-yellow {
@@ -194,8 +196,10 @@
 <iframe
 	id="ubinote-iframe-content"
  title="Ubinote content"
+ frameborder="0"
+ scrolling="no"
  src={ isPublic ? `/api/public/page/${pageId}/content` : `/api/page/${pageId}/content`}
- style="width:100%; display:flex;"/>
+ style="width:100%; heigth: 100%; display:flex;"/>
 
 {#if annotationToolTipContext != null}
 	<div>
@@ -210,7 +214,4 @@
 {/if}
 
 <style lang="scss">
-	#ubinote-page-content {
-		position: relative;
-	}
 </style>
