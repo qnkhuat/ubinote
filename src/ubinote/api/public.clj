@@ -17,8 +17,7 @@
   [uuid _req]
   (-> (api/check-404 (tc/select-one-fn :path :m/page :public_uuid uuid))
       (response/file-response {:root page/root})
-      (response/content-type "text/html")
-      (response/header "X-Frame-Options" "SAMEORIGIN")))
+      (response/content-type "text/html")))
 
 (defroutes routes
   (context "/page" []

@@ -13,7 +13,7 @@
 
 	//------------------------ states  ------------------------//
 
-	function handleClickOutside(_e) {
+	function handleClickOutside(e) {
 		onClose();
 	}
 	function handleClick(action) {

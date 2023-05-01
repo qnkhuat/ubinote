@@ -2,6 +2,8 @@
 	import { onMount } from "svelte";
 	import { fromRange, toRange } from "dom-anchor-text-position";
 
+	import { Loading } from "carbon-components-svelte";
+
 	import * as api from "frontend/api.js";
 	import { highlightRange } from "frontend/lib/highlight/higlight-dom-range";
 	import AnnotationToolTip from "frontend/components/Page/AnnotationToolTip.svelte";
@@ -9,14 +11,14 @@
 	//------------------------ props  ------------------------//
 	export let page;
 	export let isPublic = false; // is this page a public page?
-	let pageId = isPublic ? page.public_uuid : page.id ;
+	let pageId = page.id;
 
 	//------------------------ states  ------------------------//
+	let pageContent;
 	let annotationToolTipContext; // `null` to turn off, `new` to create annotation, `edit` to edit
 	let annotationToolTipPosition = {x: 0, y: 0};
 	let annotations = {}; // {annotationId: removeHighlightFunction}
 	let activeAnnotation = null; // for edit
-	let iframeWindow = null; // store the pointer for iframeWindow, should get filled on iframe load
 
 	//------------------------ constants  ------------------------//
 
@@ -28,22 +30,35 @@
 	}
 
 	//------------------------ utils  ------------------------//
-	function resizeIframe(obj) {
-    obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-  }
 	// from range wrt body
 	function fromRangeBody (range) {
-		return fromRange(iframeWindow?.document.body, range)
+		return fromRange(document.body, range)
 	};
 
 	// to range wrt body
 	function toRangeBody (range) {
-		return toRange(iframeWindow?.document.body, range)
+		return toRange(document.body, range)
 	};
 
 	function isSelecting(selection) {
 		const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
 		return !selection.isCollapsed && boundingRect.width > 2;
+	}
+
+	function loadPageContent() {
+		if (!isPublic) {
+			api.getPageContent(page.id).then((resp) => {
+				pageContent = resp.data;
+			}).catch(err => {
+				console.error("Failed to load page content: ", err);
+			});
+		}	else {
+			api.getPublicPageContent(page.public_uuid).then((resp) => {
+				pageContent = resp.data;
+			}).catch(err => {
+				console.error("Failed to load page content: ", err);
+			});
+		}
 	}
 
 	//------------------------ functions ------------------------//
@@ -96,57 +111,31 @@
 	}
 
 	function onAnnotate(color) {
-		return addAnnotation(pageId, iframeWindow.getSelection(), color).
+		return addAnnotation(pageId, window.getSelection(), color).
 			then((resp) => {
 				const [range, annotation] = resp;
 				annotateOnDOM(range, annotation);
-				iframeWindow.getSelection().empty(); // remove users selection
+				window.getSelection().empty(); // remove users selection
 			}).catch((err) => {
 				console.error("Failed to add annotation", err);
 			})
 	}
 
-	function rangeToToolTopPosition(event, range) {
+	function rangeToToolTopPosition(range) {
 		const boundingRect = range.getBoundingClientRect()
 		return {
-			x: Math.min(event.clientX, boundingRect.right),
-			y: boundingRect.bottom + document.getElementById("ubinote-iframe-content").offsetTop,
+			x: window.event.clientX,
+			y: boundingRect.bottom + window.scrollY
 		}
 	}
 
 	//------------------------ reactive functions  ------------------------//
 
-	function onIframeLoad() {
-		// step 0: update iframe Document state
-		iframeWindow = document.getElementById("ubinote-iframe-content").contentWindow;
-		resizeIframe(this);
+	function isContentRendered() {
+		return document.getElementById("ubinote-page-content") != null;
+	}
 
-		// step 1 : inject css
-		const style = iframeWindow.document.createElement("style");
-		style.textContent = `
-.highlight-yellow {
-	background-color: #FACD5AA6;
-	cursor:pointer;
-}
-
-.highlight-green {
-	background-color: #7CC868A6;
-	cursor:pointer;
-}
-
-.highlight-pink {
-	background-color: #FB5C89A6;
-	cursor:pointer;
-}
-
-.highlight-blue {
-	background-color: #69AFF0A6;
-	cursor:pointer;
-}
-			`
-		iframeWindow.document.head.appendChild(style);
-
-		// step 2:
+	function renderAnnotations() {
 		page.annotations?.forEach(annotation => {
 			const range = toRangeBody(annotation.coordinate);
 			try {
@@ -155,24 +144,37 @@
 				console.error("Failed to annotate", annotation, e);
 			}
 		});
+	}
 
-		// step 3: inject mouse up tracker
+	$ : if (pageContent && page) {
+		if (isContentRendered()) {
+			renderAnnotations();
+		} else {
+			setTimeout(renderAnnotations, 100);
+		}
+	}
+
+	onMount(function loadContent() {
+		loadPageContent();
+
+		// register select listener
 		if (!isPublic) {
-			iframeWindow.document.addEventListener("mouseup", (event) => {
+			document.addEventListener("mouseup", () => {
 				// if user is selecting, show tooltip
-				const selection = iframeWindow?.getSelection();
+				const selection = window.getSelection();
 				if (isSelecting(selection)) {
-					annotationToolTipPosition = rangeToToolTopPosition(event, selection.getRangeAt(0));
+					annotationToolTipPosition = rangeToToolTopPosition(selection.getRangeAt(0));
 					annotationToolTipContext = "new";
 				}
 			})
-		}
+		};
+	});
 
-		// step 4: inject click on annotation tracker
+	onMount(function registerGlobalFunctions() {
 		function onClickAnnotation(annotationId) {
 			const annotation = annotations[annotationId];
 
-			annotationToolTipPosition = rangeToToolTopPosition(iframeWindow.event, toRangeBody(annotation.coordinate));
+			annotationToolTipPosition = rangeToToolTopPosition(toRangeBody(annotation.coordinate));
 			annotationToolTipContext = "edit";
 			activeAnnotation = annotation;
 		}
@@ -180,22 +182,19 @@
 		// maybe we should allow click to see comments though
 		// but that's story for later day
 		if (!isPublic) {
-			iframeWindow.onClickAnnotation = onClickAnnotation;
+			window.onClickAnnotation = onClickAnnotation;
 		}
-	}
-
-	onMount(function loadContent() {
-		const iframe = document.getElementById("ubinote-iframe-content");
-		iframe.onload = onIframeLoad;
-	});
+	})
 
 </script>
 
-<iframe
-	id="ubinote-iframe-content"
- title="Ubinote content"
- src={ isPublic ? `/api/public/page/${pageId}/content` : `/api/page/${pageId}/content`}
- style="width:100%; display:flex;"/>
+{#if pageContent}
+	<div id="ubinote-page-content">
+		{@html pageContent}
+	</div>
+{:else}
+	<Loading />
+{/if}
 
 {#if annotationToolTipContext != null}
 	<div>
@@ -212,5 +211,33 @@
 <style lang="scss">
 	#ubinote-page-content {
 		position: relative;
+			/* Make sures we respect the font setting of the page */
+			:global(*) {
+				font-family: inherit;
+			}
 	}
+
+	/* highlight colors */
+	/* color code taken from the Preview app on mac */
+	:global(.highlight-yellow) {
+		background-color: #FACD5AA6;
+		cursor:pointer;
+	}
+
+	:global(.highlight-green) {
+		background-color: #7CC868A6;
+		cursor:pointer;
+	}
+
+	:global(.highlight-pink) {
+		background-color: #FB5C89A6;
+		cursor:pointer;
+	}
+
+	:global(.highlight-blue) {
+		background-color: #69AFF0A6;
+		cursor:pointer;
+	}
+
+
 </style>
