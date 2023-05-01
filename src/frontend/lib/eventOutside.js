@@ -9,11 +9,11 @@ export default function eventOutside(node, eventType="click") {
     }
   }
 
-	document.addEventListener(eventType, handleClick, true);
+  document.getElementById("ubinote-iframe-content").contentWindow.document.addEventListener(eventType, handleClick, true);
 
   return {
     destroy() {
-      document.removeEventListener(eventType, handleClick, true);
+      document.getElementById("ubinote-iframe-content").contentWindow.document.removeEventListener(eventType, handleClick, true);
     }
-	}
+  }
 }

@@ -37,7 +37,8 @@
   [id _req]
   (-> (api/check-404 (tc/select-one-fn :path :m/page :id id))
       (response/file-response {:root page/root})
-      (response/content-type "text/html")))
+      (response/content-type "text/html")
+      (response/header "X-Frame-Options" "SAMEORIGIN")))
 
 (defn- public-page
   [id _req]
