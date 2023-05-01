@@ -109,8 +109,8 @@
 	function rangeToToolTopPosition(event, range) {
 		const boundingRect = range.getBoundingClientRect()
 		return {
-			x: event.clientX,
-			y: boundingRect.bottom + document.getElementById("ubinote-iframe-content").getBoundingClientRect().top
+			x: Math.min(event.clientX, boundingRect.right),
+			y: boundingRect.bottom + document.getElementById("ubinote-iframe-content").offsetTop,
 		}
 	}
 
@@ -157,7 +157,6 @@
 		});
 
 		// step 3: inject mouse up tracker
-
 		if (!isPublic) {
 			iframeWindow.document.addEventListener("mouseup", (event) => {
 				// if user is selecting, show tooltip
