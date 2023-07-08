@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import { Router } from "svelte-router-spa";
   import { Loading } from "carbon-components-svelte";
 
@@ -8,12 +9,15 @@
   import { getSessionProperties } from "frontend/stores/sessionProperties.js";
   let loaded = false;
 
-  // get user on first load so routes could determine if user is logged in
-  getCurrentUser().finally(() => {
+  onMount(() => {
     getSessionProperties().then(() => {
-      loaded = true;
+      getCurrentUser()
+        .finally(() => {
+          loaded=true;
+        });
     })
-  });
+  })
+  // get user on first load so routes could determine if user is logged in
 
 </script>
 
@@ -23,7 +27,7 @@
   <Router {routes}/>
 </Layout>
 {:else}
-  <Loading/>
+<Loading/>
 {/if}
 
 <style>

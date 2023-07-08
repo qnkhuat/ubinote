@@ -106,9 +106,9 @@
   (-> s str (.toUpperCase java.util.Locale/ENGLISH)))
 
 (sql/register-dialect!
- :h2
- (update (sql/get-dialect :ansi) :quote (fn [quote]
-                                          (comp english-upper-case quote))))
+  :h2
+  (update (sql/get-dialect :ansi) :quote (fn [quote]
+                                           (comp english-upper-case quote))))
 
 (def ^:dynamic *application-db*
   (db-details {:db-type (cfg/config-kw :db-type)

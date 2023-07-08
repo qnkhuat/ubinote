@@ -6,8 +6,9 @@ export const currentUser = writable(null);
 export function getCurrentUser() {
 	return api.getCurrentUser().then((resp) => {
 		currentUser.set(resp.data);
-	}).catch((_err) => {
+	}).catch((err) => {
 		currentUser.set(null);
+		throw err;
 	});
 }
 
