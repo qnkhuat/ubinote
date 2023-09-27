@@ -5,7 +5,7 @@ And also because it's so great, you want to create higlights, takes note on it t
 Ubinote will solve this for you! You could gives ubinote a link, and it'll save it for you, as long you keep ubinote, you could still access that blog post you love.
 
 ## Try it out?
-Use my demo website: https://ubinote.co and sign it with account: `test@ubinote.co / Test@123`
+Use my demo website: https://ubinote.space and sign it with account: `test@ubinote.co / Test@123`
 
 ## Install
 
