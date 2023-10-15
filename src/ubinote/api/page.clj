@@ -1,20 +1,20 @@
 (ns ubinote.api.page
   (:require
-    [compojure.coercions :refer [as-int]]
-    [compojure.core :refer [context defroutes DELETE POST GET]]
-    [malli.core :as mc]
-    [ring.util.response :as response]
-    [toucan2.core :as tc]
-    [ubinote.api.common :as api]
-    [ubinote.models.common.schema :as schema]
-    [ubinote.models.page :as page]))
+   [compojure.coercions :refer [as-int]]
+   [compojure.core :refer [context defroutes DELETE POST GET]]
+   [malli.core :as mc]
+   [ring.util.response :as response]
+   [toucan2.core :as tc]
+   [ubinote.api.common :as api]
+   [ubinote.models.common.schema :as schema]
+   [ubinote.models.page :as page]))
 
 (def NewPage
   (mc/schema
-    [:map
-     [:url schema/URL]
-     [:creator_id schema/IntegerGreaterThanZero]
-     [:tags       {:optional true} [:sequential :string]]]))
+   [:map
+    [:url schema/URL]
+    [:creator_id schema/IntegerGreaterThanZero]
+    [:tags       {:optional true} [:sequential :string]]]))
 
 (defn- add-page
   [{:keys [body] :as _req}]
@@ -25,7 +25,7 @@
 (defn- get-page
   [id _req]
   (-> (api/check-404 (tc/select-one :m/page :id id))
-      (tc/hydrate :user :annotations)))
+      (tc/hydrate :user [:annotations :comments])))
 
 (defn- list-pages
   [_req]

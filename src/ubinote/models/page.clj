@@ -1,33 +1,33 @@
 (ns ubinote.models.page
   (:require
-    [clojure.java.io :as io]
-    [clojure.string :as string]
-    [methodical.core :as m]
-    [net.cgrand.enlive-html :as html]
-    [toucan2.core :as tc]
-    [toucan2.tools.hydrate :as tc.hydrate]
-    [ubinote.api.common :as api]
-    [ubinote.cmd :as cmd]
-    [ubinote.config :as cfg]
-    [ubinote.util.b64 :as b64]
-    [ubinote.util.fs :as fs]))
+   [clojure.java.io :as io]
+   [clojure.string :as string]
+   [methodical.core :as m]
+   [net.cgrand.enlive-html :as html]
+   [toucan2.core :as tc]
+   [toucan2.tools.hydrate :as tc.hydrate]
+   [ubinote.api.common :as api]
+   [ubinote.cmd :as cmd]
+   [ubinote.config :as cfg]
+   [ubinote.util.b64 :as b64]
+   [ubinote.util.fs :as fs]))
 
 
 ;; ------------------------------- Toucan methods -------------------------------
 
 (m/defmethod tc/table-name :m/page
- [_model]
- "page")
+  [_model]
+  "page")
 
 (derive :m/page :hooks/timestamped)
 
 (m/defmethod tc.hydrate/model-for-automagic-hydration [:default :page]
   [_original-model _k]
- :m/page)
+  :m/page)
 
 (m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :page :default]
   [_original-model _dest-key _hydrating-model]
- [:page_id])
+  [:page_id])
 
 ;; ------------------------------- Create page fns -------------------------------
 
@@ -46,8 +46,8 @@
   "Inference document's extension from url"
   [url]
   (cond
-    (string/ends-with? url ".pdf") ".pdf"
-    :else                          ".html"))
+   (string/ends-with? url ".pdf") ".pdf"
+   :else                          ".html"))
 
 (defn format-filename
   "Generate filename for a given url with format {year}{month}{date}_{hour}{minute}{second}_{base64(url)}.{ext}"

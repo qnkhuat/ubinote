@@ -1,7 +1,7 @@
 (ns ubinote.models.session
   (:require
-    [methodical.core :as m]
-    [toucan2.core :as tc])
+   [methodical.core :as m]
+   [toucan2.core :as tc])
   (:import java.util.UUID))
 
 (m/defmethod tc/table-name :m/session

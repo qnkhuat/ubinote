@@ -1,9 +1,9 @@
 (ns ubinote.api.setup
   (:require
-    [compojure.core :refer [defroutes POST]]
-    [ubinote.api.session :as api.session]
-    [ubinote.api.user :as api.user]
-    [ubinote.config :as cfg]))
+   [compojure.core :refer [defroutes POST]]
+   [ubinote.api.session :as api.session]
+   [ubinote.api.user :as api.user]
+   [ubinote.config :as cfg]))
 
 (defn create-setup-user
   [req]

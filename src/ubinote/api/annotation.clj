@@ -1,10 +1,10 @@
 (ns ubinote.api.annotation
   (:require
-    [compojure.coercions :refer [as-int]]
-    [compojure.core :refer [context defroutes POST DELETE]]
-    [schema.core :as s]
-    [toucan2.core :as tc]
-    [ubinote.api.common :as api]))
+   [compojure.coercions :refer [as-int]]
+   [compojure.core :refer [context defroutes POST DELETE]]
+   [schema.core :as s]
+   [toucan2.core :as tc]
+   [ubinote.api.common :as api]))
 
 (def NewAnnotation
   {:page_id                s/Int

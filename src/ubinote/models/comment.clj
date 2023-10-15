@@ -1,8 +1,8 @@
 (ns ubinote.models.comment
   (:require
-    [methodical.core :as m]
-    [toucan2.core :as tc]
-    [toucan2.tools.hydrate :as tc.hydrate]))
+   [methodical.core :as m]
+   [toucan2.core :as tc]
+   [toucan2.tools.hydrate :as tc.hydrate]))
 
 (m/defmethod tc/table-name :m/comment
   [_model]

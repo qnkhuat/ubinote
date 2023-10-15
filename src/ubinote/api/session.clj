@@ -1,13 +1,13 @@
 (ns ubinote.api.session
   (:require
-    [compojure.core :refer [defroutes DELETE POST GET]]
-    [toucan2.core :as tc]
-    [ubinote.api.common :as api]
-    [ubinote.config :as cfg]
-    [ubinote.models.common.schema :as schema]
-    [ubinote.models.user :refer [default-user-columns]]
-    [ubinote.server.middleware.session :as mw.session]
-    [ubinote.util.password :as passwd]))
+   [compojure.core :refer [defroutes DELETE POST GET]]
+   [toucan2.core :as tc]
+   [ubinote.api.common :as api]
+   [ubinote.config :as cfg]
+   [ubinote.models.common.schema :as schema]
+   [ubinote.models.user :refer [default-user-columns]]
+   [ubinote.server.middleware.session :as mw.session]
+   [ubinote.util.password :as passwd]))
 
 (def NewSession
   [:map

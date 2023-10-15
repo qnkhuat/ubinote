@@ -1,11 +1,11 @@
 (ns ubinote.api.public
   (:require
-    [compojure.core :refer [context defroutes GET]]
-    [ring.util.response :as response]
-    [toucan2.core :as tc]
-    [ubinote.api.common :as api]
-    [ubinote.api.page]
-    [ubinote.models.page :as page]))
+   [compojure.core :refer [context defroutes GET]]
+   [ring.util.response :as response]
+   [toucan2.core :as tc]
+   [ubinote.api.common :as api]
+   [ubinote.api.page]
+   [ubinote.models.page :as page]))
 
 (defn get-public-page
   [uuid _req]

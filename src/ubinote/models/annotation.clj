@@ -1,9 +1,9 @@
 (ns ubinote.models.annotation
   (:require
-    [methodical.core :as m]
-    [toucan2.core :as tc]
-    [toucan2.tools.hydrate :as tc.hydrate]
-    [ubinote.models.interface :as mi]))
+   [methodical.core :as m]
+   [toucan2.core :as tc]
+   [toucan2.tools.hydrate :as tc.hydrate]
+   [ubinote.models.interface :as mi]))
 
 ;; --------------------------- Toucan methods  ---------------------------
 
@@ -14,8 +14,8 @@
 (derive :m/annotation :hooks/timestamped)
 
 (tc/deftransforms :m/annotation
- {:coordinate {:in  mi/json-in
-               :out mi/json-out}})
+  {:coordinate {:in  mi/json-in
+                :out mi/json-out}})
 
 ;; life cycles
 
