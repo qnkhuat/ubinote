@@ -34,6 +34,7 @@
         break;
       case "newComment":
         onNewComment(editingComment);
+        editingComment = "";
         break;
     }
   }

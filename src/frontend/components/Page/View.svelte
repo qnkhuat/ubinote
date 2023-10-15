@@ -120,7 +120,7 @@
     const annotation = page.annotations.find((annotation) => annotation.id === activeAnnotation.id);
     annotation.comments.push({content: comment, id: -1});
     return api.updateAnnotation(annotation.id, annotation).then((resp) => {
-      updateAnnotation(annotation.id, resp.data);
+      page.annotations = page.annotations.map((annotation) => resp.data.id == annotation.id ? resp.data : annotation);
     })}
 
   function rangeToToolTopPosition(event, range) {
@@ -220,7 +220,7 @@
     <div>
       <AnnotationToolTip
         {...annotationToolTipPosition}
-        comments={activeAnnotation?.comments}
+        comments={page.annotations.find((annotation) => annotation.id === activeAnnotation.id).comments}
         context={annotationToolTipContext}
         onAnnotate={onAnnotate}
         onNewComment={onNewComment}
