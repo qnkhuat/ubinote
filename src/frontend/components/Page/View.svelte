@@ -62,6 +62,7 @@
       ...annotation,
       remove: removeHighlight
     };
+    page.annotations = [...page.annotations || [], annotation];
   }
 
   // call API to add an annotation
@@ -118,7 +119,7 @@
 
   function onNewComment(comment) {
     const annotation = page.annotations.find((annotation) => annotation.id === activeAnnotation.id);
-    annotation.comments.push({content: comment, id: -1});
+    annotation.comments = [...annotation.comments || [], {content:comment, id: -1}];
     return api.updateAnnotation(annotation.id, annotation).then((resp) => {
       page.annotations = page.annotations.map((annotation) => resp.data.id == annotation.id ? resp.data : annotation);
     })}
@@ -220,7 +221,7 @@
     <div>
       <AnnotationToolTip
         {...annotationToolTipPosition}
-        comments={page.annotations.find((annotation) => annotation.id === activeAnnotation.id).comments}
+        comments={activeAnnotation ? page.annotations.find((annotation) => annotation.id === activeAnnotation.id).comments : null}
         context={annotationToolTipContext}
         onAnnotate={onAnnotate}
         onNewComment={onNewComment}
