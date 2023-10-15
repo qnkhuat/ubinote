@@ -2,8 +2,10 @@
   import AddComment from "carbon-icons-svelte/lib/AddComment.svelte";
   import PaintBrushAlt from "carbon-icons-svelte/lib/PaintBrushAlt.svelte";
   import TrashCan from "carbon-icons-svelte/lib/TrashCan.svelte";
+  import Send from "carbon-icons-svelte/lib/Send.svelte";
   import { Button, TextArea } from "carbon-components-svelte";
 
+  import { formatTime } from "frontend/lib/utils.js";
   import eventOutside from "frontend/lib/eventOutside.js";
 
   //------------------------ props  ------------------------//
@@ -15,6 +17,8 @@
 
 
   let editingComment = "";
+
+  const rtf1 = new Intl.RelativeTimeFormat('en', { style: 'short' });
 
   //------------------------ states  ------------------------//
 
@@ -38,6 +42,7 @@
         break;
     }
   }
+  console.log(comments);
 
 </script>
 
@@ -50,17 +55,27 @@
        {#if context === "new"}
          <Button on:click={() => handleClick("new")} size="small" icon={PaintBrushAlt} iconDescription="Highlight"></Button>
        {:else if context === "edit"}
-         <Button on:click={() => handleClick("delete")} size="small" icon={TrashCan} iconDescription="Delete"></Button>
-           {#each comments as comment}
-             <div class="comment">
-               <div class="comment-author">{comment.creator_email}</div>
-               <div class="comment-content">{comment.content}</div>
-             </div>
-           {/each}
-           <div id="ubinote-annotation-tooltip-comments">
-             <TextArea placeholder="Here is something interesting..." bind:value={editingComment}/>
-             <Button on:click={() => handleClick("newComment")} size="small" iconDescription="Add Comment">Submit</Button>
+         <div class="editing">
+           <div class="btn-delete">
+             <Button on:click={() => handleClick("delete")} size="small" icon={TrashCan} iconDescription="Delete"></Button>
            </div>
+
+             <div class="comments">
+               {#each comments as comment}
+                 <div class="comment">
+                   <div class="comment-header">
+                      <p class="comment-author">{comment.creator_email}</p>
+                      <p class="comment-updated-at">{formatTime(Date.now(), Date.parse(comment.updated_at))}</p>
+                   </div>
+                   <div class="comment-content">{comment.content}</div>
+                 </div>
+               {/each}
+               <TextArea placeholder="Here is something interesting..." bind:value={editingComment} style="resize:none;"/>
+               <div class="btn-new-comment">
+                <Button on:click={() => handleClick("newComment")} size="small" icon={Send} iconDescription="Add Comment"></Button>
+               </div>
+             </div>
+         </div>
        {/if}
      </div>
 </div>
@@ -74,14 +89,46 @@
     margin-top: 10px;
 
       .content {
-        background-color: black;
         position: relative;
       }
-
-      .comment {
-        background-color: white;
+      .editing {
+        display: flex;
+        flex-direction: column;
         padding: 10px;
-        border-bottom: 1px solid black;
+        background-color: white;
+        border-radius: 10px;
+        border: 1px solid black;
+        width: 400px;
+          .btn-delete {
+            display: flex;
+            justify-content: flex-end;
+            padding-bottom: 10px;
+            border-bottom: 1px solid black;
+          }
+
+          .comments {
+            position: relative;
+            .comment {
+              background-color: white;
+              padding: 10px;
+              border-bottom: 1px solid black;
+                .comment-header {
+                  display: flex;
+                  justify-content: space-between;
+                    p {
+                      font-size: 0.8rem;
+                      font-weight: bold;
+                      padding-bottom: 5px;
+                    }
+                }
+            }
+            .btn-new-comment {
+              position: absolute;
+              right: 5px;
+              bottom: 5px;
+
+            }
+          }
       }
   }
 

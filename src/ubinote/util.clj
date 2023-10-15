@@ -17,7 +17,6 @@
   :to-update is a list of maps that has ids in both `current-items` and `new-items`
   :to-delete is a list of maps that has ids only in `current-items`"
   [current-items new-items]
-  (def ins [current-items new-items])
   (let [[delete-ids create-ids update-ids] (diff (set (map :id current-items))
                                                  (set (map :id new-items)))]
     {:to-create (when (seq create-ids) (filter #(create-ids (:id %)) new-items))
