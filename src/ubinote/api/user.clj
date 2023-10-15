@@ -15,7 +15,7 @@
 
 (defn create-user
   [{:keys [body] :as _req}]
-  (api/validate-schema body NewUser)
+  (api/validate NewUser body)
   ;; TODO: catch exception when create duplicate users
   (tc/insert! :m/user body))
 

@@ -15,12 +15,11 @@
     [:coordinate             [:map {:closed true}
                               [:start number?]
                               [:end   number?]]]
-    [:color {:optional true} [:maybe :int]]]))
+    [:color {:optional true} [:maybe :string]]]))
 
 (defn- create
   [{:keys [body] :as _req}]
-  (api/check-400 (mc/validate NewAnnotation body))
-  (->> (assoc body :creator_id api/*current-user-id*)
+  (->> #p (assoc body :creator_id api/*current-user-id*)
        (api/validate NewAnnotation)
        (tc/insert-returning-instances! :m/annotation)
        first))
@@ -37,8 +36,8 @@
       (tc/update! :m/annotation id payload)))
   ;; Update annotation lomments if needed
   (when-let [comments (seq (:comments body))]
-    (let [{:keys [to-create to-delete to-update]} (u/classify-changes (tc/select :m/comment :annotation_id id)
-                                                                      comments)]
+    (let [{:keys [to-create to-delete to-update]} (u/classify-changes (tc/select [:m/comment :id :content] :annotation_id id)
+                                                                      (map #(select-keys % [:id :content]) comments))]
       (when (seq to-create)
         (tc/insert! :m/comment (->> to-create
                                     (map #(assoc %

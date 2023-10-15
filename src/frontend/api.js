@@ -70,16 +70,14 @@ export function createAnnotation(body) {
   return api.post(`/api/annotation`, body)
 };
 
+export function updateAnnotation(id, body) {
+  return api.put(`/api/annotation/${id}`, body)
+};
+
+
 export function deleteAnnotation(id) {
   return api.delete(`/api/annotation/${id}`)
 }
-
-
-// ---------------------------- Annotation ---------------------------- //
-
-export function createComment(body) {
-  return api.post(`/api/comment`, body)
-};
 
 // ---------------------------- Public ---------------------------- //
 

@@ -19,7 +19,7 @@
 (defn- add-page
   [{:keys [body] :as _req}]
   (-> (assoc body :creator_id api/*current-user-id*)
-      (api/validate-schema NewPage)
+      (api/validate NewPage)
       page/create-page))
 
 (defn- get-page

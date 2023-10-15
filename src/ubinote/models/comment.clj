@@ -15,6 +15,10 @@
 (m/defmethod tc.hydrate/batched-hydrate [:m/annotation :comments]
   [_model _k annotations]
   (let [annotation-id->comments (when (seq annotations)
-                                  (->> (tc/select :m/comment :annotation_id [:in (map :id annotations)])
-                                       (group-by :annotation_id)))]
+                                  (group-by :annotation_id
+                                            (tc/query :default :m/comment
+                                                      {:select [:c.content :c.id :c.annotation_id [:u.email :creator_email]]
+                                                       :from   [[:comment :c]]
+                                                       :left-join [[:core_user :u] [:= :c.creator_id :u.id]]
+                                                       :where  [:in :c.annotation_id (map :id annotations)]})))]
     (map #(assoc % :comments (get annotation-id->comments (:id %) [])) annotations)))

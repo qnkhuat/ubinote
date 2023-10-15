@@ -28,6 +28,14 @@
 (def app
   (middleware/apply-middleware routes/routes middleware/middlewares))
 
+(when cfg/is-dev?
+  (doseq [varr  (cons #'routes/routes middleware/middlewares)
+          :when (instance? clojure.lang.IRef varr)]
+    (add-watch varr ::reload
+               (fn [_ _ _ _]
+                 (println "Deteced middleware changes, reloading middleware.")
+                 (alter-var-root #'app (constantly (middleware/apply-middleware routes/routes middleware/middlewares)))))))
+
 (defn start!
   [app]
   (log/infof "Starting server at http://localhost:%d" (cfg/config-int :port))

@@ -6,38 +6,22 @@
   or other specified types of error."
   [handler]
   (fn [request]
-    #p [:get-request request]
     (try
-      (handler request)
-      (catch Exception e
-        ;; TODO: mask the value for schemas error, because it mays contain user's password
-        (let [{:keys [status-code errors], :as info} (ex-data e)
-              body                                   (cond
-                                                       ;;;; If status code was specified but other data wasn't, it's something like a
-                                                       ;;;; 404. Return message as the (plain-text) body.
-                                                       ;;(= [:status-code] (keys errors))
-                                                       ;;(.getMessage e)
+     (handler request)
+     (catch Exception e
+       ;; TODO: mask the value for schemas error, because it mays contain user's password
+       (let [{:keys [status-code error-message error-data]} (ex-data e)
+             body                                   (cond
+                                                     (and status-code (or error-message error-data))
+                                                     {:error_message (or error-message "Unknown error")
+                                                      :error_data    (or error-data nil)}
 
-                                                       ;; sometimes we throw like {:status-code 400 :errors "Failed to fetch"}
-                                                       (and status-code errors)
-                                                       {:message (.getMessage e)
-                                                        :errors  errors}
-
-                                                       ;; invalid API schema
-                                                       (and status-code (:schema/error info))
-                                                       {:message  (:schema/error info)
-                                                        :describe (:describe info)}
-
-                                                       ;; Otherwise return the full `Throwable->map` representation with Stacktrace
-                                                       ;; and ex-data
-                                                       :else
-                                                       (do
-                                                         (log/error e)
-                                                         {:errors (merge
-                                                                    (Throwable->map e)
-                                                                    {:message (.getMessage e)}
-                                                                    info)}))
-              status-code (or status-code
-                              500)]
-          {:status status-code
-           :body   body})))))
+                                                     :else
+                                                     (do
+                                                      (log/error "Unknown exception in api" e)
+                                                      {:error_messsage "Internal error"
+                                                       :error_data     nil}))
+             status-code (or status-code
+                             500)]
+         {:status status-code
+          :body   body})))))

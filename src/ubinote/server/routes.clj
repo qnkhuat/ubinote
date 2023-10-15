@@ -2,8 +2,7 @@
   (:require
     [compojure.core :refer [context defroutes GET]]
     [ring.util.response :refer [resource-response]]
-    [ubinote.api :as api]
-    [ubinote.config :as cfg]))
+    [ubinote.api :as api]))
 
 (defroutes routes
   (GET "/health" [_req] "fine 😁")
