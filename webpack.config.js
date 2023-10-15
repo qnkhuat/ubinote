@@ -79,7 +79,7 @@ module.exports = {
 		})
 
 	],
-	devtool: prod ? false : 'source-map',
+	devtool: prod ? false : 'inline-source-map',
 	devServer: {
 		static: "resources/frontend",
 		hot: true,
