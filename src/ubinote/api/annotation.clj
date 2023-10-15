@@ -3,6 +3,7 @@
    [compojure.coercions :refer [as-int]]
    [compojure.core :refer [context defroutes PUT POST DELETE]]
    [malli.core :as mc]
+   [medley.core :as m]
    [toucan2.core :as tc]
    [ubinote.api.common :as api]
    [ubinote.util :as u]))
@@ -36,7 +37,9 @@
       (tc/update! :m/annotation id payload)))
   ;; Update annotation lomments if needed
   (when-let [comments (seq (:comments body))]
-    (let [{:keys [to-create to-delete to-update]} (u/classify-changes (tc/select [:m/comment :id :content] :annotation_id id)
+    (let [current-comments                        (tc/select [:m/comment :id :content] :annotation_id id)
+          id->comment                             (m/index-by :id current-comments)
+          {:keys [to-create to-delete to-update]} (u/classify-changes current-comments
                                                                       (map #(select-keys % [:id :content]) comments))]
       (when (seq to-create)
         (tc/insert! :m/comment (->> to-create
@@ -44,9 +47,11 @@
                                                  :annotation_id id
                                                  :creator_id api/*current-user-id*))
                                     (map #(dissoc % :id)))))
+      ;; TODO: this does update every time
       (when (seq to-update)
         (doseq [update-item to-update]
-          (tc/update! :m/comment (:id update-item) {:content (:content update-item)})))
+          (when-not (= (:content update-item) (:content (get id->comment (:id update-item))))
+            (tc/update! :m/comment (:id update-item) {:content (:content update-item)}))))
       (when (seq to-delete)
         (tc/delete! :m/comment :id [:in (map :id to-delete)]))))
   (tc/hydrate (tc/select-one :m/annotation id) :comments))

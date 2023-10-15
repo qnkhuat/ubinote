@@ -10,6 +10,7 @@
   org.mindrot/jbcrypt                       {:mvn/version "0.4"}      ; Crypto library
   org.clojure/core.memoize                  {:mvn/version "1.0.257"}  ; Memoize functions
   clojure.java-time/clojure.java-time       {:mvn/version "1.2.0"}    ; time utils
+  dev.weavejester/medley                    {:mvn/version "1.7.0"}    ; utils function to deal with map, arrays
 
   ;; webserver+routing
   compojure/compojure                       {:mvn/version "1.6.2"}
