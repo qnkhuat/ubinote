@@ -15,7 +15,7 @@
   Where:
   :to-create is a list of maps that ids in `new-items`
   :to-update is a list of maps that has ids in both `current-items` and `new-items`
-  :to delete is a list of maps that has ids only in `current-items`"
+  :to-delete is a list of maps that has ids only in `current-items`"
   [current-items new-items]
   (let [[delete-ids create-ids update-ids] (diff (set (map :id current-items))
                                                  (set (map :id new-items)))]

@@ -79,7 +79,7 @@
                      :m/session
                      {:select [:id]
                       :from  [:core_user]
-                      :where [:= :id {:select [:creator_id]
+                      :where [:= :id {:select [:user_id]
                                       :from   [:session]
                                       ;; TODO: add expired time here
                                       :where  [:= :id session-id]}]}))))
@@ -90,11 +90,17 @@
              :from   [:core_user]
              :where  [:= :id id]}))
 
+(defmacro with-current-user
+  [user-id & body]
+  `(let [user-id# ~user-id]
+     (binding [api/*current-user-id* user-id#
+               api/*current-user*    (delay (find-user user-id#))]
+       ~@body)))
+
 (defn wrap-current-user-info
   "Add `:current-user-id` and `:current-user` to the request if a valid session token was passed."
   [handler]
   (fn [{:keys [ubinote-session-id] :as request}]
     (let [user-id (:id (current-user-id-for-session ubinote-session-id))]
-      (binding [api/*current-user-id* user-id
-                api/*current-user*    (delay (find-user user-id))]
-       (handler request)))))
+      (with-current-user user-id
+        (handler request)))))

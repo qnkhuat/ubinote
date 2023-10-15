@@ -23,9 +23,9 @@
 
 (defn create-session
   [{:keys [body] :as req}]
-  (schema/validate-schema body NewSession)
+  (api/validate-schema body NewSession)
   (let [user    (api/check-401 (verify-user (:email body) (:password body)))
-        session {:id (first (tc/insert-returning-pks! :m/session {:creator_id (:id user)}))}]
+        session {:id (first (tc/insert-returning-pks! :m/session {:user_id (:id user)}))}]
     (mw.session/set-session-cookie req {:body   session
                                         :status 200}
                                    session)))

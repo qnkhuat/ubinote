@@ -6,6 +6,7 @@
   or other specified types of error."
   [handler]
   (fn [request]
+    #p [:get-request request]
     (try
       (handler request)
       (catch Exception e

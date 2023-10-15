@@ -12,14 +12,14 @@
 (def NewPage
   (mc/schema
    [:map
-    [:url schema/URL]
-    [:creator_id schema/IntegerGreaterThanZero]
+    [:url                         schema/URL]
+    [:creator_id                  schema/IntegerGreaterThanZero]
     [:tags       {:optional true} [:sequential :string]]]))
 
 (defn- add-page
   [{:keys [body] :as _req}]
   (-> (assoc body :creator_id api/*current-user-id*)
-      (schema/validate-schema NewPage)
+      (api/validate-schema NewPage)
       page/create-page))
 
 (defn- get-page

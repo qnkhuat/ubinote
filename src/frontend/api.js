@@ -74,6 +74,13 @@ export function deleteAnnotation(id) {
   return api.delete(`/api/annotation/${id}`)
 }
 
+
+// ---------------------------- Annotation ---------------------------- //
+
+export function createComment(body) {
+  return api.post(`/api/comment`, body)
+};
+
 // ---------------------------- Public ---------------------------- //
 
 export function getPublicPage(uuid) {

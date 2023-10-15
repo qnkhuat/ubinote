@@ -1,19 +1,7 @@
 (ns ubinote.models.common.schema
-  (:require [clojure.string :as str]
-            [malli.core :as mc]
-            [malli.error :as me]
-            [malli.experimental.describe :as md]))
-
-;; -------------------------------- Utils --------------------------------
-
-(defn validate-schema
-  "Throw an error if value does not match schema, else returns value."
-  [value schema]
-  (if-let [error (me/humanize (mc/explain schema value))]
-    (throw (ex-info "Invalid value" {:status-code  400
-                                     :schema/error error
-                                     :describe     (md/describe schema)}))
-    value))
+  (:require
+   [clojure.string :as str]
+   [malli.core :as mc]))
 
 ;; ------------------------------- Schemas -------------------------------
 

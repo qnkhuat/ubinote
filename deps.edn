@@ -5,7 +5,6 @@
   org.clojure/clojure                       {:mvn/version "1.11.0"}
   ;; util
   metosin/malli                             {:mvn/version "0.10.1"}   ; schema
-  prismatic/schema                          {:mvn/version "1.2.0"}    ; schema validator
   cheshire/cheshire                         {:mvn/version "5.10.2"}   ; fast JSON encoding (used by Ring JSON middleware)
   potemkin/potemkin                         {:mvn/version "0.4.5"}    ; utility macros & fns
   org.mindrot/jbcrypt                       {:mvn/version "0.4"}      ; Crypto library

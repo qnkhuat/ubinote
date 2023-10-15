@@ -1,4 +1,8 @@
-(ns ubinote.api.common)
+(ns ubinote.api.common
+  (:require
+   [malli.core :as mc]
+   [malli.error :as me]
+   [malli.experimental.describe :as md]))
 
 ;; the value of these dynamics var will be bind by [[ubinote.server.middleware.session/wrap-current-user-info]]
 (def ^:dynamic *current-user-id* nil)
@@ -43,6 +47,15 @@
                                          (when errors
                                            {:errors errors})))))
    x))
+
+(defn validate-schema
+  "Throw an error if value does not match schema, else returns value."
+  [value schema]
+  (if-let [error (me/humanize (mc/explain schema value))]
+    (throw (ex-info "Invalid value" {:status-code  400
+                                     :schema/error error
+                                     :describe     (md/describe schema)}))
+    value))
 
 (def generic-204-response
   {:status 204 :body nil})

@@ -2,7 +2,6 @@
   (:require
     [compojure.core :refer [defroutes GET context]]
     [ubinote.api.annotation :as ant]
-    [ubinote.api.comment :as comment]
     [ubinote.api.page :as page]
     [ubinote.api.public :as public]
     [ubinote.api.session :as session]
@@ -15,7 +14,6 @@
   (context "/page" []       (+auth page/routes))
   (context "/user" []       (+auth user/routes))
   (context "/annotation" [] (+auth ant/routes))
-  (context "/comment" []    (+auth comment/routes))
   (context "/public" []     public/routes)
   (context "/session" []    session/routes)
   (context "/setup" []      setup/routes))
