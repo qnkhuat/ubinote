@@ -20,6 +20,8 @@
   const rtf1 = new Intl.RelativeTimeFormat('en', { style: 'short' });
 
   //------------------------ states  ------------------------//
+  // BUG: there is a bug if you select text on an annotated range, you'll see the edit tool tip
+  // but what you should see is a new button
 
   function handleClickOutside(_e) {
     onClose();
@@ -46,15 +48,14 @@
   function calcXPosition(xFromProp) {
     if (context == "edit") {
       const haflModalWidth =  editingModalWidth * 0.5;
-
-      // ensure the modal doesn't go out  of sight on the left
+      // ensure the modal doesn't go overlfow on the left
       if ((xFromProp - haflModalWidth) < 0) {
         return haflModalWidth;
-      // ensure the modal doesn't go out of sight on the rigth
-      } else if ((xFromProp + haflModalWidth) > window.innerWidth){
+      // ensure the modal doesn't go overlfow on the right
+      } else if ((xFromProp + haflModalWidth + 15) > window.innerWidth){
         return window.innerWidth - haflModalWidth - 15; // 15px is the size of the scroll bar if any
       } else {
-        return xFromProp
+        return xFromProp;
       }
     } else {
       return xFromProp;
