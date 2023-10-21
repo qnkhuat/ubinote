@@ -9,7 +9,5 @@
   (context "/api" [] api/routes)
   (GET "/build/bundle.js" [_req] (resource-response "frontend/build/bundle.js"))
   (GET "/build/bundle.css" [_req] (resource-response "frontend/build/bundle.css"))
-  #_(GET "/build/bundle.js.map" [_req] (resource-response "frontend/build/bundle.js.map"))
-  #_(GET "/build/bundle.css.map" [_req] (resource-response "frontend/build/bundle.css.map"))
-  ;; let svelte handles it from here
+    ;; let svelte handles it from here
   (GET "*" [] (resource-response "frontend/index.html")))

@@ -15,7 +15,6 @@
   export let comments = [];
   export let onClose, onAnnotate, onNewComment, onDelete;
 
-
   let editingComment = "";
 
   const rtf1 = new Intl.RelativeTimeFormat('en', { style: 'short' });
@@ -42,12 +41,30 @@
         break;
     }
   }
-  console.log(comments);
+
+  const editingModalWidth = 400; // in pixel
+  function calcXPosition(xFromProp) {
+    if (context == "edit") {
+      const haflModalWidth =  editingModalWidth * 0.5;
+
+      // ensure the modal doesn't go out  of sight on the left
+      if ((xFromProp - haflModalWidth) < 0) {
+        return haflModalWidth;
+      // ensure the modal doesn't go out of sight on the rigth
+      } else if ((xFromProp + haflModalWidth) > window.innerWidth){
+        return window.innerWidth - haflModalWidth - 15; // 15px is the size of the scroll bar if any
+      } else {
+        return xFromProp
+      }
+    } else {
+      return xFromProp;
+    }
+  }
 
 </script>
 
 <div id="ubinote-annotation-tooltip"
-     style="left: {x}px; top: {y}px;"
+     style="left: {calcXPosition(x)}px; top: {y}px;"
      >
      <div class="content"
           use:eventOutside={"mousedown"}
@@ -55,7 +72,7 @@
        {#if context === "new"}
          <Button on:click={() => handleClick("new")} size="small" icon={PaintBrushAlt} iconDescription="Highlight"></Button>
        {:else if context === "edit"}
-         <div class="editing">
+         <div class="editing" style={`width: ${editingModalWidth}px`}>
            <div class="btn-delete">
              <Button on:click={() => handleClick("delete")} size="small" icon={TrashCan} iconDescription="Delete"></Button>
            </div>
