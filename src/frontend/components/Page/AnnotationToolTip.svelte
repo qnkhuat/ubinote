@@ -13,7 +13,7 @@
   export let x, y;
   export let context; // enum: new, edit
   export let comments = [];
-  export let onClose, onAnnotate, onNewComment, onDelete;
+  export let onClose, onAnnotate, onNewComment, onDelete, onDeleteComment;
 
   let editingComment = "";
 
@@ -51,7 +51,7 @@
       // ensure the modal doesn't go overlfow on the left
       if ((xFromProp - haflModalWidth) < 0) {
         return haflModalWidth;
-      // ensure the modal doesn't go overlfow on the right
+        // ensure the modal doesn't go overlfow on the right
       } else if ((xFromProp + haflModalWidth + 15) > window.innerWidth){
         return window.innerWidth - haflModalWidth - 15; // 15px is the size of the scroll bar if any
       } else {
@@ -78,21 +78,24 @@
              <Button on:click={() => handleClick("delete")} size="small" icon={TrashCan} iconDescription="Delete"></Button>
            </div>
 
-             <div class="comments">
-               {#each comments as comment}
-                 <div class="comment">
-                   <div class="comment-header">
-                      <p class="comment-author">{comment.creator_email}</p>
-                      <p class="comment-updated-at">{formatTime(Date.now(), Date.parse(comment.updated_at))}</p>
+           <div class="comments">
+             {#each comments as comment}
+               <div class="comment">
+                 <div class="comment-header">
+                   <p class="comment-author">{comment.creator_email}</p>
+                   <p class="comment-updated-at">{formatTime(Date.now(), Date.parse(comment.updated_at))}</p>
+                   <div class="btn-delete-comment">
+                    <Button on:click={() => onDeleteComment(comment.id)} size="small" icon={TrashCan} iconDescription="Delete"></Button>
                    </div>
-                   <div class="comment-content">{comment.content}</div>
                  </div>
-               {/each}
-               <TextArea placeholder="Here is something interesting..." bind:value={editingComment} style="resize:none;"/>
-               <div class="btn-new-comment">
-                <Button on:click={() => handleClick("newComment")} size="small" icon={Send} iconDescription="Add Comment"></Button>
+                 <div class="comment-content">{comment.content}</div>
                </div>
+             {/each}
+             <TextArea placeholder="Here is something interesting..." bind:value={editingComment} style="resize:none;"/>
+             <div class="btn-new-comment">
+               <Button on:click={() => handleClick("newComment")} size="small" icon={Send} iconDescription="Add Comment"></Button>
              </div>
+           </div>
          </div>
        {/if}
      </div>
@@ -126,26 +129,26 @@
 
           .comments {
             position: relative;
-            .comment {
-              background-color: white;
-              padding: 10px;
-              border-bottom: 1px solid black;
-                .comment-header {
-                  display: flex;
-                  justify-content: space-between;
-                    p {
-                      font-size: 0.8rem;
-                      font-weight: bold;
-                      padding-bottom: 5px;
-                    }
-                }
-            }
-            .btn-new-comment {
-              position: absolute;
-              right: 5px;
-              bottom: 5px;
+              .comment {
+                background-color: white;
+                padding: 10px;
+                border-bottom: 1px solid black;
+                  .comment-header {
+                    display: flex;
+                    justify-content: space-between;
+                      p {
+                        font-size: 0.8rem;
+                        font-weight: bold;
+                        padding-bottom: 5px;
+                      }
+                  }
+              }
+              .btn-new-comment {
+                position: absolute;
+                right: 5px;
+                bottom: 5px;
 
-            }
+              }
           }
       }
   }

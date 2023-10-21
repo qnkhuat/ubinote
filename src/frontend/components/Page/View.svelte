@@ -117,12 +117,20 @@
     page = page;
   }
 
-  function onNewComment(comment) {
-    const annotation = page.annotations.find((annotation) => annotation.id === activeAnnotation.id);
+  function onNewComment(annotationId, comment) {
+    const annotation = page.annotations.find((annotation) => annotation.id === annotationId);
     annotation.comments = [...annotation.comments || [], {content:comment, id: -1}];
     return api.updateAnnotation(annotation.id, annotation).then((resp) => {
       page.annotations = page.annotations.map((annotation) => resp.data.id == annotation.id ? resp.data : annotation);
     })}
+
+  function onDeleteComment(annotationId, commentId) {
+    const annotation = page.annotations.find((annotation) => annotation.id === annotationId);
+    annotation.comments = annotation.comments.filter((comment) => comment.id != commentId);
+    return api.updateAnnotation(annotation.id, annotation).then((resp) => {
+      page.annotations = page.annotations.map((annotation) => resp.data.id == annotation.id ? resp.data : annotation);
+    })
+  }
 
   function rangeToToolTopPosition(event, range) {
     const boundingRect = range.getBoundingClientRect()
@@ -224,7 +232,8 @@
         comments={activeAnnotation ? page.annotations.find((annotation) => annotation.id === activeAnnotation.id).comments : null}
         context={annotationToolTipContext}
         onAnnotate={onAnnotate}
-        onNewComment={onNewComment}
+        onNewComment={(comment) => onNewComment(activeAnnotation.id, comment)}
+        onDeleteComment={(commentId) => onDeleteComment(activeAnnotation.id, commentId)}
         onDelete={() => deleteAnnotation(activeAnnotation.id)}
         onClose={() => annotationToolTipContext = null}
         />

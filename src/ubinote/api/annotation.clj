@@ -20,7 +20,7 @@
 
 (defn- create
   [{:keys [body] :as _req}]
-  (->> #p (assoc body :creator_id api/*current-user-id*)
+  (->> (assoc body :creator_id api/*current-user-id*)
        (api/validate NewAnnotation)
        (tc/insert-returning-instances! :m/annotation)
        first))
@@ -35,25 +35,25 @@
   (let [payload (select-keys body [:color :coordinate])]
     (when (seq payload)
       (tc/update! :m/annotation id payload)))
-  ;; Update annotation lomments if needed
-  (when-let [comments (seq (:comments body))]
-    (let [current-comments                        (tc/select [:m/comment :id :content] :annotation_id id)
-          id->comment                             (m/index-by :id current-comments)
-          {:keys [to-create to-delete to-update]} (u/classify-changes current-comments
-                                                                      (map #(select-keys % [:id :content]) comments))]
-      (when (seq to-create)
-        (tc/insert! :m/comment (->> to-create
-                                    (map #(assoc %
-                                                 :annotation_id id
-                                                 :creator_id api/*current-user-id*))
-                                    (map #(dissoc % :id)))))
-      ;; TODO: this does update every time
-      (when (seq to-update)
-        (doseq [update-item to-update]
-          (when-not (= (:content update-item) (:content (get id->comment (:id update-item))))
-            (tc/update! :m/comment (:id update-item) {:content (:content update-item)}))))
-      (when (seq to-delete)
-        (tc/delete! :m/comment :id [:in (map :id to-delete)]))))
+  ;; Update annotation comments if needed
+  (let [update-comments                         (:comments body)
+        current-comments                        (tc/select [:m/comment :id :content] :annotation_id id)
+        id->comment                             (m/index-by :id current-comments)
+        {:keys [to-create to-delete to-update]} (u/classify-changes current-comments
+                                                                    (map #(select-keys % [:id :content]) update-comments))]
+    (when (seq to-create)
+      (tc/insert! :m/comment (->> to-create
+                                  (map #(assoc %
+                                               :annotation_id id
+                                               :creator_id api/*current-user-id*))
+                                  (map #(dissoc % :id)))))
+    ;; TODO: this does update every time
+    (when (seq to-update)
+      (doseq [update-item to-update]
+        (when-not (= (:content update-item) (:content (get id->comment (:id update-item))))
+          (tc/update! :m/comment (:id update-item) {:content (:content update-item)}))))
+    (when (seq to-delete)
+      (tc/delete! :m/comment :id [:in (map :id to-delete)])))
   (tc/hydrate (tc/select-one :m/annotation id) :comments))
 
 (defn- delete-annotation
