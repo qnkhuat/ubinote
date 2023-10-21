@@ -83,9 +83,11 @@
                <div class="comment">
                  <div class="comment-header">
                    <p class="comment-author">{comment.creator_email}</p>
-                   <p class="comment-updated-at">{formatTime(Date.now(), Date.parse(comment.updated_at))}</p>
-                   <div class="btn-delete-comment">
-                    <Button on:click={() => onDeleteComment(comment.id)} size="small" icon={TrashCan} iconDescription="Delete"></Button>
+                   <div class="comment-right-side">
+                     <p>{formatTime(Date.now(), Date.parse(comment.updated_at))}</p>
+                     <div class="btn-delete-comment">
+                       <Button on:click={() => onDeleteComment(comment.id)} size="small" icon={TrashCan} iconDescription="Delete"></Button>
+                     </div>
                    </div>
                  </div>
                  <div class="comment-content">{comment.content}</div>
@@ -131,7 +133,7 @@
             position: relative;
               .comment {
                 background-color: white;
-                padding: 10px;
+                padding: 10px 0;
                 border-bottom: 1px solid black;
                   .comment-header {
                     display: flex;
@@ -141,6 +143,14 @@
                         font-weight: bold;
                         padding-bottom: 5px;
                       }
+                  }
+                  .comment-right-side {
+                    display: flex;
+                    flex-direction: row;
+                      .btn-delete-comment {
+                        margin-left: 10px;
+                      }
+
                   }
               }
               .btn-new-comment {
