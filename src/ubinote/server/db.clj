@@ -50,11 +50,11 @@
 
 ;; ------------------------------------------- DB connections -------------------------------------------
 (defn- connection-pool
-  [{:keys [subprotocol subname classname] :as spec}]
+  [{:keys [connection-url classname] :as spec}]
   ;; https://github.com/metabase/toucan/blob/29a921750f3051dce350255cfbd33512428bc3f8/docs/connection-pools.md#creating-the-connection-pool
   {:datasource (doto (ComboPooledDataSource.)
                  (.setDriverClass                  classname)
-                 (.setJdbcUrl                      (str "jdbc:" subprotocol ":" subname))
+                 (.setJdbcUrl                      connection-url #_(str "jdbc:" subprotocol ":" subname))
                  (.setMaxIdleTimeExcessConnections (* 30 60))   ; 30 seconds
                  (.setMaxIdleTime                  (* 3 60 60)) ; 3 minutes
                  (.setInitialPoolSize              3)
@@ -71,30 +71,29 @@
                                                      properties)))})
 
 (def ^:private db-type->dialect-name
-  {:postgres :ansi
-   :h2       :h2
-   ;; not really sure it works on mysql...
-   :mysql    :mysql})
+  {:postgresql :ansi
+   :h2         :h2})
+
+(defn db-type
+  "Return the db type based on connection-url"
+  ([]
+   (db-type (cfg/config-str :db-connection-url)))
+  ([connection-url]
+   (keyword (second (re-find #"jdbc:([^:]+):" connection-url)))))
 
 (defn- db-details
-  [{:keys [db-type db-host db-port db-name]}]
+  [connection-url]
   (connection-pool
-    (case db-type
-      :h2       {:classname       "org.h2.Driver"
-                 :subprotocol     "h2:file"
-                 :subname         (.getAbsolutePath (io/file db-name))
-                 "MVCC"           "TRUE"
-                 "DB_CLOSE_DELAY" "-1"
-                 "DEFRAG_ALWAYS"  "TRUE"}
-      :postgres {:classname       "org.postgresql.Driver"
-                 :subprotocol     "postgresql"
-                 :subname         (format "//%s:%s/%s"
-                                          db-host
-                                          db-port
-                                          db-name)
-                 "MVCC"           "TRUE"
-                 "DB_CLOSE_DELAY" "-1"
-                 "DEFRAG_ALWAYS"  "TRUE"})))
+   (merge
+    {"MVCC"           "TRUE"
+     "DB_CLOSE_DELAY" "-1"
+     "DEFRAG_ALWAYS"  "TRUE"
+     :connection-url  connection-url}
+    (case (db-type connection-url)
+      :h2         {:classname       "org.h2.Driver"
+                   :subprotocol     "h2:file"}
+      :postgresql {:classname       "org.postgresql.Driver"
+                   :subprotocol     "postgresql"}))))
 
 (defn- english-upper-case
   "Use this function when you need to upper-case an identifier or table name. Similar to `clojure.string/upper-case`
@@ -111,10 +110,7 @@
                                            (comp english-upper-case quote))))
 
 (def ^:dynamic *application-db*
-  (db-details {:db-type (cfg/config-kw :db-type)
-               :db-host (cfg/config-str :db-host)
-               :db-port (cfg/config-str :db-port)
-               :db-name (cfg/config-str :db-name)}))
+  (db-details (cfg/config-str :db-connection-url)))
 
 (m/defmethod tc.pipeline/build :around :default
   "Normally, our Honey SQL 2 `:dialect` is set to `::application-db`; however, Toucan 2 does need to know the actual
@@ -122,7 +118,7 @@
   *actual* dialect for the application database."
   [query-type model parsed-args resolved-query]
   (binding [t2.honeysql/*options* (assoc t2.honeysql/*options*
-                                         :dialect (db-type->dialect-name (cfg/config-kw :db-type)))]
+                                         :dialect (db-type->dialect-name (db-type)))]
     (next-method query-type model parsed-args resolved-query)))
 
 (m/defmethod tc/do-with-connection :default
@@ -131,5 +127,5 @@
 
 (reset! t2.honeysql/global-options
         {:quoted       true
-         :dialect      (:dialect (sql/get-dialect (db-type->dialect-name (cfg/config-kw :db-type))))
+         :dialect      (-> (db-type) db-type->dialect-name sql/get-dialect :dialect)
          :quoted-snake false})

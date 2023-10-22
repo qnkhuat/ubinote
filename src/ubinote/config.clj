@@ -1,12 +1,13 @@
 (ns ubinote.config
   (:require
-    [clojure.string :as string]
-    [toucan2.core :as tc]))
+   [clojure.java.io :as io]
+   [clojure.string :as str]
+   [toucan2.core :as tc]))
 
 (defn- keywordize [s]
-  (-> (string/lower-case s)
-      (string/replace "_" "-")
-      (string/replace "." "-")
+  (-> (str/lower-case s)
+      (str/replace "_" "-")
+      (str/replace "." "-")
       (keyword)))
 
 (defn- read-system-props []
@@ -27,15 +28,14 @@
 
 ;; TODO: validate config with spec
 (def default
-  {:un-run-mode         "prod"
-   :un-db-type          "h2"         ;; #{h2, postgres}
-   :un-db-name          "ubinote"
-   :un-db-host          "localhost"  ;; postgres
-   :un-db-port          "5432"       ;; postgres
-   :un-port             "8000"
-   :un-max-session-age  "20160"      ;; session length in minutes (14 days)
-   :un-single-file-bin  nil          ;; path to single-file binary
-   :un-root             ".ubinote"}) ;; root to store and serve archived files
+  {:un-run-mode          "prod"
+   :un-db-connection-url (format "jdbc:h2:file:%s" (.getAbsolutePath (io/file "ubinote")))
+   :un-port              "8000"
+   :un-max-session-age   "20160"      ;; session length in minutes (14 days)
+   :un-single-file-bin   nil          ;; path to single-file binary
+   :un-root              ".ubinote"}) ;; root to store and serve archived files
+
+;; MB_DB_CONNECTION_URI=jdbc:postgresql://localhost:5432/metabase-test?user=postgres
 
 (def env (merge default (read-env)))
 
@@ -59,8 +59,8 @@
 
 (defn config-int
   "Retrieve a config and returns the value as a integer.
-  (config-kw :db-port)
-  ;; => 5432"
+  (config-kw :port)
+  ;; => 8000"
   [k]
   (some-> k
           config-str

@@ -5,12 +5,11 @@
    [clojure.tools.logging :as log]
    [next.jdbc :as jdbc]
    [toucan2.core :as tc]
-   [ubinote.config :as cfg]
    [ubinote.server.db :as db]))
 
 (def migrations (atom []))
 
-(def postgres? (= :postgres (cfg/config-kw :db-type)))
+(def postgres? (= :postgresql (db/db-type)))
 
 (defn- create-migrations-table-if-needed! []
   (log/info "Creating migration table if needed...")
@@ -34,9 +33,7 @@
         (tc/with-transaction [conn]
           (log/info "Running migration" migration-name)
           (try
-           (with-open [stmt (jdbc/prepare conn [(if (map? statement-or-map)
-                                                  ((cfg/config-kw :db-type) statement-or-map)
-                                                  statement-or-map)])]
+           (with-open [stmt (jdbc/prepare conn [statement-or-map])]
              (jdbc/execute! stmt)
              (tc/insert! :conn conn :m/migration :name migration-name))
            (catch Exception e
