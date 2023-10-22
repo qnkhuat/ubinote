@@ -25,6 +25,7 @@
   </svelte:fragment>
   <HeaderUtilities>
     {#if currentUserValue}
+      <HeaderNavItem on:click={(e) => navigateTo("/user")} text="User" />
       <HeaderNavItem on:click={(e) => onLogout(e)} text="Logout" />
     {/if}
   </HeaderUtilities>

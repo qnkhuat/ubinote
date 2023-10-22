@@ -2,6 +2,7 @@ import Home from "frontend/routes/index.svelte";
 import Login from "frontend/routes/login.svelte"
 import Setup from "frontend/routes/setup.svelte";
 import PageId from "frontend/routes/page/[id].svelte";
+import User from "frontend/routes/user.svelte";
 import PublicPageId from "frontend/routes/public/page/[id].svelte";
 import NotFound from "frontend/routes/404.svelte";
 import { currentUser } from "frontend/stores/user.js";
@@ -47,6 +48,10 @@ const privateRoutes = [
 				component: PageId
 			}
 		]
+	},
+	{
+		name: "/user",
+		component: User,
 	}
 ]
 

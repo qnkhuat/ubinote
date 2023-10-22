@@ -10,7 +10,7 @@
      (handler request)
      (catch Exception e
        ;; TODO: mask the value for schemas error, because it mays contain user's password
-       (let [{:keys [status-code error-message error-data]} #p (ex-data e)
+       (let [{:keys [status-code error-message error-data]} (ex-data e)
              body                                   (cond
                                                      (and status-code (or error-message error-data))
                                                      {:error_message (or error-message "Unknown error")
