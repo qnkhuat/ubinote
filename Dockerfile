@@ -1,15 +1,14 @@
 ###################
 # STAGE 1: builder
 ###################
-FROM node:16-slim as builder
+FROM node:18-bullseye as builder
 
-WORKDIR /home/node/app
+WORKDIR /home/node
 
-# install java 11
-RUN apt-get update && apt-get install -y git curl openjdk-11-jdk \
-      && curl -O https://download.clojure.org/install/linux-install-1.11.1.1208.sh \
-      && chmod +x linux-install-1.11.1.1208.sh \
-      && ./linux-install-1.11.1.1208.sh
+RUN apt-get update && apt-get upgrade -y && apt-get install openjdk-11-jdk curl git -y \
+    && curl -O https://download.clojure.org/install/linux-install-1.11.1.1262.sh \
+    && chmod +x linux-install-1.11.1.1262.sh \
+    && ./linux-install-1.11.1.1262.sh
 
 COPY . .
 RUN clojure -T:build uberjar

@@ -60,7 +60,7 @@
    :exec-fn     dev.h2-shell/shell
    :java-opts   ["-Dfile.encoding=UTF-8"]}
 
-  ; clj -T:build uber
+  ; clj -T:build uberjar
   :build
   {:deps       {io.github.clojure/tools.build {:git/tag "v0.9.2" :git/sha "fe6b140"}}
    :ns-default build}}}
