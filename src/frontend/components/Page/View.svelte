@@ -194,6 +194,7 @@
       })
     }
 
+
     // step 4: inject click on annotation tracker
     function onClickAnnotation(annotationId) {
       const annotation = annotations[annotationId];
@@ -205,9 +206,7 @@
 
     // maybe we should allow click to see comments though
     // but that's story for later day
-    if (!isPublic) {
-      iframeWindow.onClickAnnotation = onClickAnnotation;
-    }
+    iframeWindow.onClickAnnotation = onClickAnnotation;
   }
 
   onMount(function loadContent() {
@@ -215,7 +214,7 @@
     iframe.onload = onIframeLoad;
   });
 
-  </script>
+</script>
 
 <iframe
   id="ubinote-iframe-content"
@@ -229,6 +228,7 @@
     <div>
       <AnnotationToolTip
         {...annotationToolTipPosition}
+        isPublic={isPublic}
         comments={activeAnnotation ? page.annotations.find((annotation) => annotation.id === activeAnnotation.id).comments : null}
         context={annotationToolTipContext}
         onAnnotate={onAnnotate}

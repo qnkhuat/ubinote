@@ -10,7 +10,7 @@
 (defn get-public-page
   [uuid _req]
   (-> (api/check-404 (tc/select-one :m/page :public_uuid uuid))
-      (tc/hydrate :annotations)))
+      (tc/hydrate [:annotations :comments])))
 
 (defn- get-public-page-content
   "Returns the static file of the page"

@@ -12,6 +12,7 @@
   // position of the bottom left of user's selection
   export let x, y;
   export let context; // enum: new, edit
+  export let isPublic;
   export let comments = [];
   export let onClose, onAnnotate, onNewComment, onDelete, onDeleteComment;
 
@@ -64,7 +65,7 @@
 
 </script>
 
-<div id="ubinote-annotation-tooltip"
+<div id="ubinote-annotation-tooltip"k
      style="left: {calcXPosition(x)}px; top: {y}px;"
      >
      <div class="content"
@@ -74,29 +75,39 @@
          <Button on:click={() => handleClick("new")} size="small" icon={PaintBrushAlt} iconDescription="Highlight"></Button>
        {:else if context === "edit"}
          <div class="editing" style={`width: ${editingModalWidth}px`}>
-           <div class="btn-delete">
-             <Button on:click={() => handleClick("delete")} size="small" icon={TrashCan} iconDescription="Delete"></Button>
-           </div>
+           {#if !isPublic}
+             <div class="btn-delete">
+               <Button on:click={() => handleClick("delete")} size="small" icon={TrashCan} iconDescription="Delete"></Button>
+             </div>
+           {/if}
 
            <div class="comments">
-             {#each comments as comment}
-               <div class="comment">
-                 <div class="comment-header">
-                   <p class="comment-author">{comment.creator_email}</p>
-                   <div class="comment-right-side">
-                     <p>{formatTime(Date.now(), Date.parse(comment.updated_at))}</p>
-                     <div class="btn-delete-comment">
-                       <Button on:click={() => onDeleteComment(comment.id)} size="small" icon={TrashCan} iconDescription="Delete"></Button>
+             {#if Array.isArray(comments) && comments.length > 0  }
+               {#each comments as comment}
+                 <div class="comment">
+                   <div class="comment-header">
+                     <p class="comment-author">{comment.creator_email}</p>
+                     <div class="comment-right-side">
+                       <p>{formatTime(Date.now(), Date.parse(comment.updated_at))}</p>
+                       {#if !isPublic}
+                         <div class="btn-delete-comment">
+                           <Button on:click={() => onDeleteComment(comment.id)} size="small" icon={TrashCan} iconDescription="Delete"></Button>
+                         </div>
+                         #{/if}
                      </div>
                    </div>
+                   <div class="comment-content">{comment.content}</div>
                  </div>
-                 <div class="comment-content">{comment.content}</div>
+               {/each}
+             {:else}
+               <p>No comments</p>
+             {/if}
+             {#if !isPublic}
+               <TextArea placeholder="Here is something interesting..." bind:value={editingComment} style="resize:none;"/>
+               <div class="btn-new-comment">
+                 <Button on:click={() => handleClick("newComment")} size="small" icon={Send} iconDescription="Add Comment"></Button>
                </div>
-             {/each}
-             <TextArea placeholder="Here is something interesting..." bind:value={editingComment} style="resize:none;"/>
-             <div class="btn-new-comment">
-               <Button on:click={() => handleClick("newComment")} size="small" icon={Send} iconDescription="Add Comment"></Button>
-             </div>
+             {/if}
            </div>
          </div>
        {/if}
