@@ -11,7 +11,7 @@ Use my demo website: https://ubinote.space and sign it with account: `test@ubino
 
 Prerequisites:
 - nodejs
-- single-file-cli -- I recommend follow the install instruciton on [their page](https://github.com/gildas-lormeau/single-file-cli)
+- single-file-cli -- I recommend follow the install instruciton on [their page](https://github.com/gildas-lormeau/single-file-cli) or run `npm install -g "single-file-cli"`
 - java
 
 Download the latest jar file of ubinote from our release [page](https://github.com/qnkhuat/ubinote/releases)
