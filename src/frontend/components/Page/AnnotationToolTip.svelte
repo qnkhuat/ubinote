@@ -93,13 +93,13 @@
                          <div class="btn-delete-comment">
                            <Button on:click={() => onDeleteComment(comment.id)} size="small" icon={TrashCan} iconDescription="Delete"></Button>
                          </div>
-                         #{/if}
+                       {/if}
                      </div>
                    </div>
                    <div class="comment-content">{comment.content}</div>
                  </div>
                {/each}
-             {:else}
+             {:else if isPublic}
                <p>No comments</p>
              {/if}
              {#if !isPublic}
