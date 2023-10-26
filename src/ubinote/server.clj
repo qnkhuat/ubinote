@@ -43,4 +43,5 @@
   (migration/migrate!)
   (run-jetty app
              {:port  (cfg/config-int :port)
-              :join? false}))
+              :join? false})
+  (log/infof "Ubinote is ready at: http://localhost:%d" (cfg/config-int :port)))
