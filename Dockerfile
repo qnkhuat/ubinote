@@ -35,6 +35,7 @@ RUN apk add --no-cache \
 
 RUN npm install -g "single-file-cli"
 
+WORKDIR /app
 COPY --from=builder /home/node/target/ubinote.jar /app/
 
 CMD ["java", "-jar", "/app/ubinote.jar"]
