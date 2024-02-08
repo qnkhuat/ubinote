@@ -1,8 +1,8 @@
 (ns ubinote.util.password
   (:require
-    [ubinote.util :as u])
+   [ubinote.util :as u])
   (:import
-    (org.mindrot.jbcrypt BCrypt)))
+   (org.mindrot.jbcrypt BCrypt)))
 
 ;; copied from cemerick.friend.credentials EPL v1.0 license
 (defn hash-bcrypt
@@ -27,4 +27,4 @@
   ^Boolean [password salt hashed-password]
   ;; we wrap the friend/bcrypt-verify with this function specifically to avoid unintended exceptions getting out
   (boolean (u/ignore-exceptions
-             (bcrypt-verify (str salt password) hashed-password))))
+            (bcrypt-verify (str salt password) hashed-password))))

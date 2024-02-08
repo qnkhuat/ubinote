@@ -1,19 +1,19 @@
 (ns ubinote.server
   (:require
-    [clojure.tools.logging :as log]
-    [ring.adapter.jetty :refer [run-jetty]]
-    [ubinote.config :as cfg]
-    [ubinote.migration :as migration]
-    [ubinote.models :as models]
-    [ubinote.models.page :as page]
-    [ubinote.server.db :as db]
-    [ubinote.server.middleware :as middleware]
-    [ubinote.server.routes :as routes]))
+   [clojure.tools.logging :as log]
+   [ring.adapter.jetty :refer [run-jetty]]
+   [ubinote.config :as cfg]
+   [ubinote.migration :as migration]
+   [ubinote.models :as models]
+   [ubinote.models.page :as page]
+   [ubinote.server.db :as db]
+   [ubinote.server.middleware :as middleware]
+   [ubinote.server.routes :as routes]))
 
 (comment
-  ;; make sure all models are loaded
-  models/keepme
-  db/keepme)
+ ;; make sure all models are loaded
+ models/keepme
+ db/keepme)
 
 ;; ensure we use a `BasicContextSelector` instead of a `ClassLoaderContextSelector` for log4j2. Ensures there is only
 ;; one LoggerContext instead of one per classpath root. Practical effect is that now `(LogManager/getContext true)`

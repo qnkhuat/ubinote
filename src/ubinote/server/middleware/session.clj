@@ -1,9 +1,9 @@
 (ns ubinote.server.middleware.session
   (:require
-    [clojure.string :as str]
-    [ring.util.response :as response]
-    [toucan2.core :as tc]
-    [ubinote.api.common :as api]))
+   [clojure.string :as str]
+   [ring.util.response :as response]
+   [toucan2.core :as tc]
+   [ubinote.api.common :as api]))
 
 (defn https?
   "True if the original request made by the frontend client (i.e., browser) was made over HTTPS.
@@ -13,26 +13,26 @@
   [{{:strs [x-forwarded-proto x-forwarded-protocol x-url-scheme x-forwarded-ssl front-end-https origin]} :headers
     :keys                                                                                                [scheme]}]
   (cond
-    ;; If `X-Forwarded-Proto` is present use that. There are several alternate headers that mean the same thing. See
-    ;; https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto
-    (or x-forwarded-proto x-forwarded-protocol x-url-scheme)
-    (= "https" (str/lower-case (or x-forwarded-proto x-forwarded-protocol x-url-scheme)))
+   ;; If `X-Forwarded-Proto` is present use that. There are several alternate headers that mean the same thing. See
+   ;; https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto
+   (or x-forwarded-proto x-forwarded-protocol x-url-scheme)
+   (= "https" (str/lower-case (or x-forwarded-proto x-forwarded-protocol x-url-scheme)))
 
-    ;; If none of those headers are present, look for presence of `X-Forwarded-Ssl` or `Frontend-End-Https`, which
-    ;; will be set to `on` if the original request was over HTTPS.
-    (or x-forwarded-ssl front-end-https)
-    (= "on" (str/lower-case (or x-forwarded-ssl front-end-https)))
+   ;; If none of those headers are present, look for presence of `X-Forwarded-Ssl` or `Frontend-End-Https`, which
+   ;; will be set to `on` if the original request was over HTTPS.
+   (or x-forwarded-ssl front-end-https)
+   (= "on" (str/lower-case (or x-forwarded-ssl front-end-https)))
 
-    ;; If none of the above are present, we are most not likely being accessed over a reverse proxy. Still, there's a
-    ;; good chance `Origin` will be present because it should be sent with `POST` requests, and most auth requests are
-    ;; `POST`. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Origin
-    origin
-    (str/starts-with? (str/lower-case origin) "https")
+   ;; If none of the above are present, we are most not likely being accessed over a reverse proxy. Still, there's a
+   ;; good chance `Origin` will be present because it should be sent with `POST` requests, and most auth requests are
+   ;; `POST`. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Origin
+   origin
+   (str/starts-with? (str/lower-case origin) "https")
 
-    ;; Last but not least, if none of the above are set (meaning there are no proxy servers such as ELBs or nginx in
-    ;; front of us), we can look directly at the scheme of the request sent to Jetty.
-    scheme
-    (= scheme :https)))
+   ;; Last but not least, if none of the above are set (meaning there are no proxy servers such as ELBs or nginx in
+   ;; front of us), we can look directly at the scheme of the request sent to Jetty.
+   scheme
+   (= scheme :https)))
 
 ;; How do authenticated API requests work? Ubinote first looks for a cookie called `ubinote.SESSION`. This is the
 ;; normal way of doing things; this cookie gets set automatically upon login. `ubinote.SESSION` is an HttpOnly
@@ -55,12 +55,12 @@
   [req response session]
   (let [is-https?      (https? req)
         cookie-options (merge
-                         {:http-only true
-                          :same-site :lax
-                          :path      "/"}
-                         ;; TODO: we will want to set a max age here
-                         (when is-https?
-                           {:secure true}))]
+                        {:http-only true
+                         :same-site :lax
+                         :path      "/"}
+                        ;; TODO: we will want to set a max age here
+                        (when is-https?
+                          {:secure true}))]
     (response/set-cookie response ubinote-session-cookie (str (:id session)) cookie-options)))
 
 (defn- clear-cookie [response cookie-name]

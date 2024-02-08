@@ -1,5 +1,6 @@
 (ns ubinote.server.middleware.auth
-  (:require [ubinote.api.common :as api]))
+  (:require
+   [ubinote.api.common :as api]))
 
 (defn +auth
   "Enforce a route to be authenticated"

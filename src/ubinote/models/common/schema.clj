@@ -15,11 +15,11 @@
 (def Username
   "Schema for username and it's require to be at least 3 chars."
   (mc/schema
-    [:and
-     :string
-     [:fn (fn [s]
-            (and (>= (count s) 3)
-                 (re-matches (re-pattern username-regex) s)))]]))
+   [:and
+    :string
+    [:fn (fn [s]
+           (and (>= (count s) 3)
+                (re-matches (re-pattern username-regex) s)))]]))
 
 
 (def Password
@@ -40,7 +40,7 @@
 
 (def IntegerGreaterThanZero
   (mc/schema
-    [:int {:min 1}]))
+   [:int {:min 1}]))
 
 (def ^:private email-regex-domain "@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
 (def ^:private email-regex (re-pattern (str username-regex email-regex-domain)))
@@ -48,10 +48,10 @@
 (def EmailAddress
   "schema for email address"
   (mc/schema
-    [:and
-     :string
-     [:fn (fn [s] (and (seq s)
-                       (re-matches email-regex (str/lower-case s))))]]))
+   [:and
+    :string
+    [:fn (fn [s] (and (seq s)
+                      (re-matches email-regex (str/lower-case s))))]]))
 
 ;; https://urlregex.com
 (def url-regex #"^https?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")

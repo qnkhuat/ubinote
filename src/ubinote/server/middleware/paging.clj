@@ -27,9 +27,9 @@
   (fn [{:keys [params] :as request}]
     (if (paged? params)
       (let [paging-params (try
-                            (parse-paging-params params)
-                            (catch Throwable e
-                              e))]
+                           (parse-paging-params params)
+                           (catch Throwable e
+                             e))]
         (if (instance? Throwable paging-params)
           (throw (ex-info "Failed to parse paging params" {:status-code 400
                                                            :body        {:message (ex-message paging-params)}}))

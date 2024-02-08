@@ -1,13 +1,13 @@
 (ns ubinote.server.routes
   (:require
-    [compojure.core :refer [context defroutes GET]]
-    [ring.util.response :refer [resource-response]]
-    [ubinote.api :as api]))
+   [compojure.core :refer [context defroutes GET]]
+   [ring.util.response :refer [resource-response]]
+   [ubinote.api :as api]))
 
 (defroutes routes
   (GET "/health" [_req] "fine 😁")
   (context "/api" [] api/routes)
   (GET "/build/bundle.js" [_req] (resource-response "frontend/build/bundle.js"))
   (GET "/build/bundle.css" [_req] (resource-response "frontend/build/bundle.css"))
-    ;; let svelte handles it from here
+  ;; let svelte handles it from here
   (GET "*" [] (resource-response "frontend/index.html")))

@@ -12,6 +12,9 @@
   onMount(() => {
     getSessionProperties().then(() => {
       getCurrentUser()
+        .catch((err) => {
+          console.log("User not found");
+        })
         .finally(() => {
           loaded=true;
         });

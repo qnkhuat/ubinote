@@ -4,8 +4,8 @@
 (defn resp->log-level
   [{:keys [status]}]
   (cond
-    (< 400 status) :info
-    :else :info))
+   (< 400 status) :info
+   :else :info))
 
 (defn format-nanoseconds
   "Format a time interval in nanoseconds to something more readable. (¬µs/ms/etc.)"

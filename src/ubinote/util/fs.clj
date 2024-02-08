@@ -1,8 +1,8 @@
 (ns ubinote.util.fs
   (:require
-    [clojure.java.io :as io])
+   [clojure.java.io :as io])
   (:import
-    java.nio.file.Files))
+   java.nio.file.Files))
 
 (defn env-path [] (System/getenv "PATH"))
 (def path-separator (System/getProperty "path.separator"))

@@ -1,18 +1,17 @@
 (ns ubinote.server.db
   (:require
-    [clojure.java.io :as io]
-    [clojure.java.jdbc :as jdbc]
-    [clojure.string :as string]
-    [honey.sql :as sql]
-    [methodical.core :as m]
-    [toucan2.core :as tc]
-    [toucan2.map-backend.honeysql2 :as t2.honeysql]
-    [toucan2.pipeline :as tc.pipeline]
-    [ubinote.config :as cfg])
+   [clojure.java.jdbc :as jdbc]
+   [clojure.string :as string]
+   [honey.sql :as sql]
+   [methodical.core :as m]
+   [toucan2.core :as tc]
+   [toucan2.map-backend.honeysql2 :as t2.honeysql]
+   [toucan2.pipeline :as tc.pipeline]
+   [ubinote.config :as cfg])
   (:import
-    java.util.Properties
-    java.io.BufferedReader
-    com.mchange.v2.c3p0.ComboPooledDataSource))
+   java.util.Properties
+   java.io.BufferedReader
+   com.mchange.v2.c3p0.ComboPooledDataSource))
 
 (def supported-dbms
   "List of dbms we support."
@@ -105,9 +104,9 @@
   (-> s str (.toUpperCase java.util.Locale/ENGLISH)))
 
 (sql/register-dialect!
-  :h2
-  (update (sql/get-dialect :ansi) :quote (fn [quote]
-                                           (comp english-upper-case quote))))
+ :h2
+ (update (sql/get-dialect :ansi) :quote (fn [quote]
+                                          (comp english-upper-case quote))))
 
 (def ^:dynamic *application-db*
   (db-details (cfg/config-str :db-connection-url)))
