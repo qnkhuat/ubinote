@@ -10,17 +10,18 @@
      (handler request)
      (catch Exception e
        ;; TODO: mask the value for schemas error, because it mays contain user's password
-       (let [{:keys [status-code error-message error-data]} (ex-data e)
-             body                                   (cond
-                                                     (and status-code (or error-message error-data))
-                                                     {:error_message (or error-message "Unknown error")
-                                                      :error_data    (or error-data nil)}
+       (let [{:keys [status-code error-data]} (ex-data e)
+             error-message                    (ex-message e)
+             body                             (cond
+                                               (and status-code (or error-message error-data))
+                                               {:error_message (or error-message "Unknown error")
+                                                :error_data    (or error-data nil)}
 
-                                                     :else
-                                                     (do
-                                                      (log/error "Unknown exception in api" e)
-                                                      {:error_messsage "Internal error"
-                                                       :error_data     nil}))
+                                               :else
+                                               (do
+                                                (log/error "Unknown exception in api" e)
+                                                {:error_messsage "Internal error"
+                                                 :error_data     nil}))
              status-code (or status-code
                              500)]
          {:status status-code

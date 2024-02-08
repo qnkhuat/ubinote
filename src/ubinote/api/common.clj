@@ -19,32 +19,27 @@
   "Return Invalid Request if test failed."
   ([x]
    (check-400 x nil))
-  ([x errors]
+  ([x e-msg]
    (when-not x
-     (throw (ex-info "Invalid request." (merge {:status-code 400}
-                                               (when errors
-                                                 {:error-message errors})))))))
+     (throw (ex-info (or "Invalid request." e-msg) {:status-code 400})))
+   x))
 
 (defn check-401
   "Return Unauthorized if test failed."
   ([x]
    (check-401 x nil))
-  ([x errors]
+  ([x e-msg]
    (when-not x
-     (throw (ex-info "Unauthorized." (merge {:status-code 401}
-                                            (when errors
-                                              {:error_message errors})))))
+     (throw (ex-info (or e-msg "Unauthorized") {:status-code 401})))
    x))
 
 (defn check-404
   "Return Not found if test failed."
   ([x]
    (check-404 x nil))
-  ([x errors]
+  ([x e-msg]
    (when-not x
-     (throw (ex-info "Not found." (merge {:status-code 404}
-                                         (when errors
-                                           {:error-message errors})))))
+     (throw (ex-info (or "Not found." e-msg) {:status-code 404})))
    x))
 
 (defn validate

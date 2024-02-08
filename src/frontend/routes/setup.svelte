@@ -19,7 +19,9 @@
 	function submit() {
 		api.setup({first_name, last_name, email, password}).then(() => {
 			getSessionProperties().then(() => {
-				getCurrentUser().finally(() => {
+        getCurrentUser().catch((e) => {
+          console.error("Failed to setup", e);
+        }).finally(() => {
 					navigateTo("/");
 				})
 			});
