@@ -3,5 +3,7 @@
 
   :consistent-alias
   {:aliases
-   {ubinote.ui.template                                template
-    ubinote.api.common                                 api.common}}}}
+   {ubinote.ui.core                                    ui
+    ubinote.ui.page.core                               ui.page
+    ubinote.ui.template.core                           template
+    ubinote.api.util                                   api.u}}}}

@@ -1,4 +1,4 @@
-(ns ubinote.api.common
+(ns ubinote.api.util
   (:require
    [hiccup2.core :as h]
    [malli.core :as mc]

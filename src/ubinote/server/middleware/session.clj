@@ -3,7 +3,7 @@
    [clojure.string :as str]
    [ring.util.response :as response]
    [toucan2.core :as tc]
-   [ubinote.api.common :as api]))
+   [ubinote.api.util :as api.u]))
 
 (defn https?
   "True if the original request made by the frontend client (i.e., browser) was made over HTTPS.
@@ -95,8 +95,8 @@
 (defmacro with-current-user
   [user-id & body]
   `(let [user-id# ~user-id]
-     (binding [api/*current-user-id* user-id#
-               api/*current-user*    (delay (find-user user-id#))]
+     (binding [api.u/*current-user-id* user-id#
+               api.u/*current-user*    (delay (find-user user-id#))]
        ~@body)))
 
 (defn wrap-current-user-info

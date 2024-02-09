@@ -6,7 +6,7 @@
    [net.cgrand.enlive-html :as html]
    [toucan2.core :as tc]
    [toucan2.tools.hydrate :as tc.hydrate]
-   [ubinote.api.common :as api]
+   [ubinote.api.util :as api.u]
    [ubinote.cmd :as cmd]
    [ubinote.config :as cfg]
    [ubinote.util.b64 :as b64]
@@ -71,7 +71,7 @@
         dir      (fs/path-join root domain)
         rel-path (fs/path-join domain fname)
         abs-path (fs/path-join dir fname)]
-    (api/check-400 (some? domain) "Domain not found")
+    (api.u/check-400 (some? domain) "Domain not found")
     (fs/make-dirs dir)
     (when (fs/exists? abs-path)
       (throw (ex-info "Path already existed" {:path abs-path})))
@@ -99,7 +99,7 @@
   (let [{:keys [relative absolute]} (out-path url)
         domain                      (get-domain url)
         {:keys [err]}               (cmd/single-file url absolute)
-        _                           (api/check-400 (= err "") {:errors (format "Failed to archive %s" err)})
+        _                           (api.u/check-400 (= err "") {:errors (format "Failed to archive %s" err)})
         {:keys [title]}             (extract-html absolute)]
     ;; TODO: move the file after download to name with title
     (first (tc/insert-returning-instances! :m/page (assoc new-page

@@ -2,7 +2,7 @@
   (:require
    [compojure.core :refer [defroutes DELETE POST GET]]
    [toucan2.core :as tc]
-   [ubinote.api.common :as api]
+   [ubinote.api.util :as api.u]
    [ubinote.config :as cfg]
    [ubinote.models.common.schema :as schema]
    [ubinote.models.user :refer [default-user-columns]]
@@ -17,14 +17,14 @@
 (defn verify-user
   [email password]
   (let [user (tc/select-one [:m/user :id :email :password :password_salt] :email email)]
-    (api/check-404 user {:message "User not found"})
-    (api/check-401 (passwd/verify-password password (:password_salt user) (:password user)))
+    (api.u/check-404 user {:message "User not found"})
+    (api.u/check-401 (passwd/verify-password password (:password_salt user) (:password user)))
     (select-keys user default-user-columns)))
 
 (defn create-session
   [{:keys [body] :as req}]
-  (api/validate NewSession body)
-  (let [user    (api/check-401 (verify-user (:email body) (:password body)))
+  (api.u/validate NewSession body)
+  (let [user    (api.u/check-401 (verify-user (:email body) (:password body)))
         session {:id (first (tc/insert-returning-pks! :m/session {:user_id (:id user)}))}]
     (mw.session/set-session-cookie req {:body   session
                                         :status 200}
@@ -33,9 +33,9 @@
 (defn delete-session
   [req]
   (let [session-id (:ubinote-session-id req)]
-    (api/check-404 (tc/select-one :m/session :id session-id))
+    (api.u/check-404 (tc/select-one :m/session :id session-id))
     (tc/delete! :m/session :id session-id)
-    (mw.session/clear-session-cookie api/generic-204-response)))
+    (mw.session/clear-session-cookie api.u/generic-204-response)))
 
 (defn session-properties
   [_req]

@@ -5,7 +5,7 @@
    [malli.core :as mc]
    [medley.core :as m]
    [toucan2.core :as tc]
-   [ubinote.api.common :as api]
+   [ubinote.api.util :as api.u]
    [ubinote.util :as u]))
 
 (def NewAnnotation
@@ -20,8 +20,8 @@
 
 (defn- create
   [{:keys [body] :as _req}]
-  (->> (assoc body :creator_id api/*current-user-id*)
-       (api/validate NewAnnotation)
+  (->> (assoc body :creator_id api.u/*current-user-id*)
+       (api.u/validate NewAnnotation)
        (tc/insert-returning-instances! :m/annotation)
        first))
 
@@ -45,7 +45,7 @@
       (tc/insert! :m/comment (->> to-create
                                   (map #(assoc %
                                                :annotation_id id
-                                               :creator_id api/*current-user-id*))
+                                               :creator_id api.u/*current-user-id*))
                                   (map #(dissoc % :id)))))
     ;; TODO: this does update every time
     (when (seq to-update)
@@ -58,9 +58,9 @@
 
 (defn- delete-annotation
   [id _req]
-  (api/check-404 (tc/select-one :m/annotation :id id))
+  (api.u/check-404 (tc/select-one :m/annotation :id id))
   (tc/delete! :m/annotation :id id)
-  api/generic-204-response)
+  api.u/generic-204-response)
 
 (defroutes routes
   (POST "/" [] create)

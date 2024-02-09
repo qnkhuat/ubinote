@@ -3,7 +3,7 @@
    [compojure.coercions :refer [as-int]]
    [compojure.core :refer [context defroutes GET POST]]
    [toucan2.core :as tc]
-   [ubinote.api.common :as api]
+   [ubinote.api.util :as api.u]
    [ubinote.models.common.schema :as schema]))
 
 (def NewUser
@@ -15,14 +15,14 @@
 
 (defn create-user
   [{:keys [body] :as _req}]
-  (api/validate NewUser body)
+  (api.u/validate NewUser body)
   ;; TODO: catch exception when create duplicate users
   (first (tc/insert-returning-instances! :m/user body)))
 
 (defn get-user
   [id _req]
   (-> (tc/select-one :m/user :id id)
-      api/check-404))
+      api.u/check-404))
 
 (defn list-users
   [_req]
@@ -30,7 +30,7 @@
 
 (defn current-user
   [_req]
-  (api/check-404 @api/*current-user*))
+  (api.u/check-404 @api.u/*current-user*))
 
 (defroutes routes
   (GET "/" [] list-users)
