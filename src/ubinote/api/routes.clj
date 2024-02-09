@@ -1,4 +1,4 @@
-(ns ubinote.api
+(ns ubinote.api.routes
   (:require
    [compojure.core :refer [defroutes GET context]]
    [ubinote.api.annotation :as ant]

@@ -41,7 +41,9 @@
 ;; Finally we'll check for the presence of a `X-Ubinote-Session` header. If that isn't present, you don't have a
 ;; Session ID and thus are definitely not authenticated
 
-(def ^:private ^String ubinote-session-cookie "ubinote.SESSION")
+(def ^String ubinote-session-cookie
+  "The name of the cookie used to store the Ubinote session ID."
+  "ubinote.SESSION")
 (def ^:private ^String ubinote-session-header "x-ubinote-session")
 
 (defn wrap-session-id

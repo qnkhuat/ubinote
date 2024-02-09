@@ -8,7 +8,7 @@
    [ubinote.api.common :as api]
    [ubinote.models.common.schema :as schema]
    [ubinote.models.page :as page]
-   [ubinote.ui :as ui]))
+   [ubinote.ui.core :as ui]))
 
 (def NewPage
   (mc/schema

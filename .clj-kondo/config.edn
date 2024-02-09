@@ -1,2 +1,7 @@
 {:linters
- {:unsorted-required-namespaces {:level :warning}}}
+ {:unsorted-required-namespaces {:level :warning}
+
+  :consistent-alias
+  {:aliases
+   {ubinote.ui.template                                template
+    ubinote.api.common                                 api.common}}}}
