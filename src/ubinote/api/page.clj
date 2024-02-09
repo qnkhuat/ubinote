@@ -7,7 +7,8 @@
    [toucan2.core :as tc]
    [ubinote.api.common :as api]
    [ubinote.models.common.schema :as schema]
-   [ubinote.models.page :as page]))
+   [ubinote.models.page :as page]
+   [ubinote.ui :as ui]))
 
 (def NewPage
   (mc/schema
@@ -29,8 +30,41 @@
 
 (defn- list-pages
   [_req]
+  (tc/select :m/page))
+
+(defmethod ui/render :pages-table
+  [data _component-name]
+  (def data data)
+  [:table {:class "table table-hover"}
+   [:thead
+    [:tr
+     [:th [:b "Title"]]
+     [:th [:b "Domain"]]
+     [:th [:b "URL"]]
+     [:th [:b "Last Updated"]]
+     [:th [:b "Delete"]]]]
+   [:tbody {:hx-confirm "Are you sure?"
+            :hx-swap    "outerHTML swap:1s"
+            :hx-target  "closet tr"}
+    (for [page data]
+      [:tr
+       [:td [:a {:href (format "/page/%d" (:id page))} (:title page)]]
+       [:td (:domain page)]
+       [:td [:a {:href (:url page)} (:title page)]]
+       [:td (str (:updated_at page))]
+       [:td [:button {:hx-delete (format "/api/page/%d" (:id page))}
+             "DELETE"]]])]])
+
+#_(ui/render
+   (-> (tc/select :m/page)
+       (tc/hydrate :user))
+   :pages-table)
+
+(defn- list-pages-html
+  [_req]
   (-> (tc/select :m/page)
-      (tc/hydrate :user)))
+      (ui/render :pages-table)
+      api/html))
 
 (defn- get-page-content
   "Returns the static file of the page"
@@ -66,6 +100,7 @@
 (defroutes routes
   (POST "/" [] add-page)
   (GET "/" [] list-pages)
+  (GET "/html" [] list-pages-html)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-page id))
            (DELETE "/" [] (partial delete-page id))

@@ -24,6 +24,7 @@
 	//------------------------ states  ------------------------//
 	let newPageURL = null;
 	let pages = [];
+  let pagesHTML = "";
 	let addingPage = false;
 	let notificationState = null;
 	let toDeletePage = null;
@@ -91,6 +92,9 @@
 
 	onMount(() => {
 		loadPages();
+    api.listPagesHTML().then(resp => {
+      pagesHTML = resp.data;
+    });
 	});
 
 </script>
@@ -107,6 +111,13 @@
 			{/if}
 		</Button>
 	</Form>
+
+  <button hx-post="/clicked"
+    hx-trigger="click"
+    hx-target="#parent-div"
+    hx-swap="outerHTML">
+    Click Me!
+  </button>
 
 	<DataTable
 		sortable
@@ -132,6 +143,7 @@
 				</ToolbarContent>
 			</Toolbar>
 	</DataTable>
+  {@html pagesHTML}
 
 <Modal
 	bind:open={toDeletePage}

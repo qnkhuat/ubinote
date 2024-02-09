@@ -35,6 +35,7 @@
   io.github.camsaul/toucan2                 {:mvn/version "1.0.519"}
 
   ;; hickory/hickory                           {:mvn/version "0.7.1"} ; seems like a fater parser than enlive, but using enlive for now bc it has DOM selector
+  hiccup/hiccup                             {:mvn/version "2.0.0-RC2"}; html rendering
   enlive/enlive                             {:mvn/version "1.1.6"}}   ; html parser
 
  :aliases

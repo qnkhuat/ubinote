@@ -1,7 +1,9 @@
 (ns ubinote.api.common
   (:require
+   [hiccup2.core :as h]
    [malli.core :as mc]
-   [malli.error :as me]))
+   [malli.error :as me]
+   [ring.util.response :as response]))
 
 ;; the value of these dynamics var will be bind by [[ubinote.server.middleware.session/wrap-current-user-info]]
 (def ^:dynamic *current-user-id* nil)
@@ -53,3 +55,12 @@
 
 (def generic-204-response
   {:status 204 :body nil})
+
+(defn html
+  "Render a hiccup html response."
+  [resp]
+  (-> (h/html {} resp)
+      str
+      response/response
+      (response/content-type "text/html")))
+

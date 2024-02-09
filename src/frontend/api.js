@@ -56,6 +56,11 @@ export function listPages() {
   return api.get("/api/page");
 };
 
+export function listPagesHTML() {
+  return api.get("/api/page/html");
+};
+
+
 export function createPage(body) {
   return api.post("/api/page", body);
 };

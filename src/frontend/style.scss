@@ -7,3 +7,8 @@ body {
     font-family: Lato, "Helvetica Neue", Helvetica, sans-serif;
   }
 }
+
+tr.htmx-swapping td {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
