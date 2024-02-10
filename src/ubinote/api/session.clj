@@ -22,13 +22,13 @@
     (select-keys user default-user-columns)))
 
 (defn create-session
-  [{:keys [body] :as req}]
-  (api.u/validate NewSession body)
-  (let [user    (api.u/check-401 (verify-user (:email body) (:password body)))
+  [{:keys [params] :as req}]
+  (api.u/validate NewSession params)
+  (let [user    (api.u/check-401 (verify-user (:email params) (:password params)))
         session {:id (first (tc/insert-returning-pks! :m/session {:user_id (:id user)}))}]
-    (mw.session/set-session-cookie req {:body   session
-                                        :status 200}
-                                   session)))
+    (-> req
+        (mw.session/set-session-cookie {} session)
+        (api.u/htmx-redirect "/"))))
 
 (defn delete-session
   [req]

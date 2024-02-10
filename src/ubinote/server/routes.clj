@@ -22,7 +22,9 @@
   (GET "/build/bundle.js" [_req] (resource-response "frontend/build/bundle.js"))
   (GET "/build/bundle.css" [_req] (resource-response "frontend/build/bundle.css"))
   ;; let svelte handles it from here
-  (GET "old/*" [] (resource-response "frontend/index.html"))
+  (GET "/old" [] (resource-response "frontend/index.html"))
+
+  ;; new page system
   (GET "/" [req] (require-login ui.page/index req))
   (GET "/login" [_req] ui.page/login)
   (route/not-found ui.page/not-found))

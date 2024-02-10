@@ -11,9 +11,14 @@
 
 (def login
   (ui/layout
-   [:div
-    [:h1 "Login"]
-    [:p "Please login to continue."]]))
+   [:div {:id "login-page"}
+    [:h1 "Login page"]
+    [:form {:hx-post "/api/session"}
+     [:label {:for "email"} "Email: "]
+     [:input {:type "email" :name "email"}]
+     [:label {:for "password"} "Password: "]
+     [:input {:type "password" :name "password"}]
+     [:button {:type "submit"} "Login"]]]))
 
 (def not-found
   (template/html-response [:p "Not found :("]))

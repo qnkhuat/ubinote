@@ -65,6 +65,7 @@
       (response/content-type "text/html")))
 
 (defn htmx-redirect
-  [url]
-  (response/response {:status  303
-                      :headers {"HX-Redirect" url}}))
+  [resp url]
+  (-> resp
+      (response/status 303)
+      (response/header "HX-Redirect" url)))

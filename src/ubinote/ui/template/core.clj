@@ -12,7 +12,7 @@
       (response/content-type "text/html")))
 
 (defn ^:private bare-html
-  [children & {:keys [htmx? bootstrap?]}]
+  [children {:keys [htmx? bootstrap?]}]
   [:html {:lang "en"}
    [:head
     [:meta {:charset "utf-8"}]
