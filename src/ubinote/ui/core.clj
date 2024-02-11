@@ -6,6 +6,7 @@
 (p/import-vars
  [template
   html-response
+  hiccup->html-response
   layout])
 
 (defmulti render

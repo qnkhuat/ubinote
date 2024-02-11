@@ -4,13 +4,13 @@
    [compojure.route :as route]
    [ring.util.response :refer [resource-response]]
    [ubinote.api.routes :as api.routes]
-   [ubinote.server.middleware.session :as mw.session]
+   [ubinote.api.util :as api.u]
    [ubinote.ui.page.core :as ui.page]))
 
 ;; TODO: should be a middleware
 (defn require-login
   [handler req]
-  (if (nil? (get-in req [:cookies mw.session/ubinote-session-cookie]))
+  (if (nil? api.u/*current-user-id*)
     ui.page/unauthorized
     (if (fn? handler)
       (handler req)
@@ -22,7 +22,7 @@
   (GET "/build/bundle.js" _req (resource-response "frontend/build/bundle.js"))
   (GET "/build/bundle.css" _req (resource-response "frontend/build/bundle.css"))
   ;; let svelte handles it from here
-  (GET "/old" _req (resource-response "frontend/index.html"))
+  #_(GET "*" _req (resource-response "frontend/index.html"))
 
   ;; new page system
   (GET "/" req (require-login ui.page/index req))

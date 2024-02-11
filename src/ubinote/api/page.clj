@@ -38,33 +38,28 @@
   [:table {:class "table table-hover"}
    [:thead
     [:tr
-     [:th [:b "Title"]]
-     [:th [:b "Domain"]]
-     [:th [:b "URL"]]
-     [:th [:b "Last Updated"]]
-     [:th [:b "Delete"]]]]
-   [:tbody {:hx-confirm "Are you sure?"
-            :hx-swap    "outerHTML swap:1s"
-            :hx-target  "closet tr"}
+     [:th "Title"]
+     [:th "Domain"]
+     [:th "URL"]
+     [:th "Last Updated"]
+     [:th "Delete"]]]
+   [:tbody {:hx-confirm "Are you sure?"}
     (for [page data]
       [:tr
        [:td [:a {:href (format "/page/%d" (:id page))} (:title page)]]
        [:td (:domain page)]
        [:td [:a {:href (:url page)} (:title page)]]
        [:td (str (:updated_at page))]
-       [:td [:button {:hx-delete (format "/api.u/page/%d" (:id page))}
+       [:td [:button {:hx-delete (format "/api/page/%d" (:id page))
+                      :class     "btn btn-danger"
+                      :hx-swap   "delete"}
              "DELETE"]]])]])
-
-#_(ui/render
-   (-> (tc/select :m/page)
-       (tc/hydrate :user))
-   :pages-table)
 
 (defn- list-pages-html
   [_req]
   (-> (tc/select :m/page)
-      (ui/render :pages-table)))
-
+      (ui/render :pages-table)
+      ui/hiccup->html-response))
 
 (defn- get-page-content
   "Returns the static file of the page"

@@ -112,13 +112,6 @@
 		</Button>
 	</Form>
 
-  <button hx-post="/clicked"
-    hx-trigger="click"
-    hx-target="#parent-div"
-    hx-swap="outerHTML">
-    Click Me!
-  </button>
-
 	<DataTable
 		sortable
 		on:click:cell={onCellClick}

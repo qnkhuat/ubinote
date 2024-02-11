@@ -3,7 +3,8 @@
 
   :consistent-alias
   {:aliases
-   {ubinote.ui.core                                    ui
+   {hiccup2.core                                       h
+    ubinote.ui.core                                    ui
     ubinote.ui.page.core                               ui.page
     ubinote.ui.template.core                           template
     ubinote.api.util                                   api.u}}}}

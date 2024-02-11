@@ -6,8 +6,18 @@
 (def index
   (ui/layout
    [:div
-    [:h1 "Hello, world!"]
-    [:p "Welcome to this new world!"]]))
+    [:nav {:class "navbar navbar-expand-lg bg-dark"}
+     [:div {:class "container-fluid"}
+      [:a {:class "navbar-brand text-light"
+           :href  "/"}
+       "Ubinote"]
+      [:div {:class "d-flex"}
+       [:a {:class "text-light text-decoration-none"
+            :href  "/user"} "User"]]]]
+    [:div {:class "container"}
+     [:div {:hx-trigger "load"
+            :hx-get     "/api/page/html"}
+      "sup"]]]))
 
 (def login
   (ui/layout
