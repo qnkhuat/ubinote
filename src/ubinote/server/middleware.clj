@@ -31,7 +31,7 @@
 (extend-protocol Renderable
   nil
   (render [_ _]
-    {:status 204 :body nil})
+    {:status 200 :body nil})
 
   clojure.lang.IPersistentMap
   (render [x _request]

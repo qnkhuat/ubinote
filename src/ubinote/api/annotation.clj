@@ -60,7 +60,7 @@
   [id _req]
   (api.u/check-404 (tc/select-one :m/annotation :id id))
   (tc/delete! :m/annotation :id id)
-  api.u/generic-204-response)
+  api.u/generic-200-response)
 
 (defroutes routes
   (POST "/" [] create)

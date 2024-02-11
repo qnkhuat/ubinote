@@ -35,7 +35,7 @@
   (let [session-id (:ubinote-session-id req)]
     (api.u/check-404 (tc/select-one :m/session :id session-id))
     (tc/delete! :m/session :id session-id)
-    (mw.session/clear-session-cookie api.u/generic-204-response)))
+    (mw.session/clear-session-cookie api.u/generic-200-response)))
 
 (defn session-properties
   [_req]
