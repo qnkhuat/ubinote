@@ -7,7 +7,7 @@
  [template
   html-response
   hiccup->html-response
-  layout])
+  with-nav-bar])
 
 (defmulti render
   (fn [_data component-name]

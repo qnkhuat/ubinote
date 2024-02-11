@@ -4,34 +4,44 @@
    [ubinote.ui.template.core :as template]))
 
 (def index
-  (ui/layout
+  (ui/html-response
    [:div
-    [:nav {:class "navbar navbar-expand-lg bg-dark"}
-     [:div {:class "container-fluid"}
-      [:a {:class "navbar-brand text-light"
-           :href  "/"}
-       "Ubinote"]
-      [:div {:class "d-flex"}
-       [:a {:class "text-light text-decoration-none"
-            :href  "/user"} "User"]]]]
-    [:div {:class "container"}
-     [:form {:id      "add-page"
-             :hx-swap "none"
-             :hx-post "/api/page"
-             (keyword "hx-on::after-swap") "this.reset()"}
-      [:input {:type        "text"
-               :placeholder " Archive a page"
-               :name        "url"}]
-      [:button {:class   "btn btn-primary"
-                :type    "submit"
-                :hx-swap "none"}
-       "New"]]
-     [:div {:id         "page-table"
-            :hx-trigger "load, trigger-list-page from:body"
-            :hx-get     "/api/page/html"}]]]))
+    [:form {:id      "add-page"
+            :hx-swap "none"
+            :hx-post "/api/page"
+            (keyword "hx-on::after-swap") "this.reset()"}
+     [:input {:type        "text"
+              :placeholder " Archive a page"
+              :name        "url"}]
+     [:button {:class   "btn btn-primary"
+               :type    "submit"
+               :hx-swap "none"}
+      "New"]]
+    [:div {:id         "page-table"
+           :hx-trigger "load, trigger-list-page from:body"
+           :hx-get     "/api/page/html"}]]))
+
+(defn view-page
+  [page-id]
+  (ui/html-response
+   [:div
+    [:form {:id      "add-page"
+            :hx-swap "none"
+            :hx-post "/api/page"
+            (keyword "hx-on::after-swap") "this.reset()"}
+     [:input {:type        "text"
+              :placeholder " Archive a page"
+              :name        "url"}]
+     [:button {:class   "btn btn-primary"
+               :type    "submit"
+               :hx-swap "none"}
+      "New"]]
+    [:div {:id         "page-table"
+           :hx-trigger "load, trigger-list-page from:body"
+           :hx-get     "/api/page/html"}]]))
 
 (def login
-  (ui/layout
+  (ui/html-response
    [:div {:id "login-page"}
     [:h1 "Login page"]
     [:form {:hx-post "/api/session"}
@@ -39,7 +49,9 @@
      [:input {:type "email" :name "email"}]
      [:label {:for "password"} "Password: "]
      [:input {:type "password" :name "password"}]
-     [:button {:type "submit"} "Login"]]]))
+     [:button {:type "submit"} "Login"]]]
+   :navbar? false
+   :scripts false))
 
 (def not-found
   (template/html-response [:p "Not found :("]))
@@ -48,4 +60,6 @@
   (template/html-response
    [:div
     [:h1 "Unauthorized"]
-    [:a {:href "/login"} "Login"]]))
+    [:a {:href "/login"} "Login"]]
+   :navbar? false
+   :scripts false))
