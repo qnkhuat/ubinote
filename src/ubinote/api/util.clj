@@ -57,6 +57,9 @@
 (def generic-204-response
   {:status 204 :body nil})
 
+(def generic-200-response
+  {:status 200 :body nil})
+
 (defn response?
   [x]
   (and (map? x)

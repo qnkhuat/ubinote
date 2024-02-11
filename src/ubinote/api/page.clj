@@ -22,7 +22,7 @@
   (let [page (->> (assoc params :creator_id api.u/*current-user-id*)
                   (api.u/validate NewPage)
                   page/create-page!)]
-    (api.u/htmx-trigger page "trigger-new-page")))
+    (api.u/htmx-trigger page "trigger-list-page")))
 
 (defn- get-page
   [id _req]
@@ -44,16 +44,17 @@
      [:th "URL"]
      [:th "Last Updated"]
      [:th "Delete"]]]
-   [:tbody {:hx-confirm "Are you sure?"}
+   [:tbody {:hx-confirm "Are you sure?"
+            :hx-swap    "outerHTML"
+            :hx-target  "closest tr"}
     (for [page data]
-      [:tr
+      [:tr {:class "page-row"}
        [:td [:a {:href (format "/page/%d" (:id page))} (:title page)]]
        [:td (:domain page)]
        [:td [:a {:href (:url page)} (:url page)]]
        [:td (str (:updated_at page))]
        [:td [:button {:hx-delete (format "/api/page/%d" (:id page))
-                      :class     "btn btn-danger"
-                      :hx-swap   "delete"}
+                      :class     "btn btn-danger"}
              "DELETE"]]])]])
 
 (defn- list-pages-html
@@ -85,13 +86,13 @@
     (when-not (:public_uuid page)
       (throw (ex-info "Page is not public" {:status-code 400})))
     (tc/update! :m/page id {:public_uuid nil})
-    api.u/generic-204-response))
+    api.u/generic-200-response))
 
 (defn- delete-page
   [id _req]
   (-> (api.u/check-404 (tc/select-one :m/page :id id))
       (page/delete-page))
-  api.u/generic-204-response)
+  api.u/generic-200-response)
 
 (defroutes routes
   (POST "/" [] add-page)

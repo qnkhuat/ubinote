@@ -25,7 +25,7 @@
                 :hx-swap "none"}
        "New"]]
      [:div {:id         "page-table"
-            :hx-trigger "load, trigger-new-page from:body"
+            :hx-trigger "load, trigger-list-page from:body"
             :hx-get     "/api/page/html"}
       "sup"]]]))
 
