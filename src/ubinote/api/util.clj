@@ -1,5 +1,6 @@
 (ns ubinote.api.util
   (:require
+   [clojure.string :as str]
    [hiccup2.core :as h]
    [malli.core :as mc]
    [malli.error :as me]
@@ -56,10 +57,25 @@
 (def generic-204-response
   {:status 204 :body nil})
 
+(defn response?
+  [x]
+  (and (map? x)
+       (contains? x :status)
+       (int? (:status x))))
+
+(defn ->response
+  ([x]
+   (->response x 200))
+  ([x status]
+   (if-not (response? x)
+     {:status status
+      :body   x}
+     (assoc x :status status))))
+
 (defn html
   "Render a hiccup html response."
   [resp]
-  (-> (h/html {} resp)
+  (-> (h/html {} (->response resp))
       str
       response/response
       (response/content-type "text/html")))
@@ -67,5 +83,12 @@
 (defn htmx-redirect
   [resp url]
   (-> resp
-      (response/status 303)
+      (->response 303)
       (response/header "HX-Redirect" url)))
+
+(defn htmx-trigger
+  [resp trigger]
+  (assert (str/starts-with? trigger "trigger-") "trigger should start with trigger-")
+  (-> resp
+      ->response
+      (response/header "HX-Trigger" trigger)))

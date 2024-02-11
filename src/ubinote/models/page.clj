@@ -93,7 +93,7 @@
                        first)]
     {:title title}))
 
-(defn create-page
+(defn create-page!
   "Detect file type and page file"
   [{:keys [url] :as new-page}]
   (let [{:keys [relative absolute]} (out-path url)
@@ -102,11 +102,11 @@
         _                           (api.u/check-400 (= err "") {:errors (format "Failed to archive %s" err)})
         {:keys [title]}             (extract-html absolute)]
     ;; TODO: move the file after download to name with title
-    (first (tc/insert-returning-instances! :m/page (assoc new-page
-                                                          :domain domain
-                                                          :path relative
-                                                          :title title
-                                                          :status "archived")))))
+    (tc/insert-returning-instance! :m/page (assoc new-page
+                                                  :domain domain
+                                                  :path relative
+                                                  :title title
+                                                  :status "archived"))))
 
 (defn delete-page
   "Delete a page and its static files."

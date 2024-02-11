@@ -5,7 +5,7 @@
    [honey.sql :as sql]
    [methodical.core :as m]
    [toucan2.core :as tc]
-   [toucan2.map-backend.honeysql2 :as t2.honeysql]
+   [toucan2.honeysql2 :as t2.honeysql]
    [toucan2.pipeline :as tc.pipeline]
    [ubinote.config :as cfg])
   (:import

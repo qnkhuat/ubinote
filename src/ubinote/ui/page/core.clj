@@ -15,7 +15,17 @@
        [:a {:class "text-light text-decoration-none"
             :href  "/user"} "User"]]]]
     [:div {:class "container"}
-     [:div {:hx-trigger "load"
+     [:form {:id      "add-page"
+             :hx-swap "none"
+             :hx-post "/api/page"}
+      [:input {:type "text"
+               :name "url"}]
+      [:button {:class   "btn btn-primary"
+                :type    "submit"
+                :hx-swap "none"}
+       "New"]]
+     [:div {:id         "page-table"
+            :hx-trigger "load, trigger-new-page from:body"
             :hx-get     "/api/page/html"}
       "sup"]]]))
 

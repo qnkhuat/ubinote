@@ -18,10 +18,11 @@
     [:tags       {:optional true} [:sequential :string]]]))
 
 (defn- add-page
-  [{:keys [body] :as _req}]
-  (->> (assoc body :creator_id api.u/*current-user-id*)
-       (api.u/validate NewPage)
-       page/create-page))
+  [{:keys [params] :as _req}]
+  (let [page (->> (assoc params :creator_id api.u/*current-user-id*)
+                  (api.u/validate NewPage)
+                  page/create-page!)]
+    (api.u/htmx-trigger page "trigger-new-page")))
 
 (defn- get-page
   [id _req]
@@ -48,7 +49,7 @@
       [:tr
        [:td [:a {:href (format "/page/%d" (:id page))} (:title page)]]
        [:td (:domain page)]
-       [:td [:a {:href (:url page)} (:title page)]]
+       [:td [:a {:href (:url page)} (:url page)]]
        [:td (str (:updated_at page))]
        [:td [:button {:hx-delete (format "/api/page/%d" (:id page))
                       :class     "btn btn-danger"
@@ -57,7 +58,7 @@
 
 (defn- list-pages-html
   [_req]
-  (-> (tc/select :m/page)
+  (-> (tc/select :m/page {:order-by [[:created_at :desc]]})
       (ui/render :pages-table)
       ui/hiccup->html-response))
 

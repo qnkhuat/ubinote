@@ -23,7 +23,7 @@
   " Enable endpoint to be able to just return an object or nil
   it'll wrap the response in a proper ring's response"
   [resp]
-  (if (:status resp)
+  (if (and (:status resp) (int? (:status resp)))
     resp
     {:status 200
      :body   resp}))
