@@ -17,17 +17,18 @@
     [:div {:class "container"}
      [:form {:id      "add-page"
              :hx-swap "none"
-             :hx-post "/api/page"}
-      [:input {:type "text"
-               :name "url"}]
+             :hx-post "/api/page"
+             (keyword "hx-on::after-swap") "this.reset()"}
+      [:input {:type        "text"
+               :placeholder " Archive a page"
+               :name        "url"}]
       [:button {:class   "btn btn-primary"
                 :type    "submit"
                 :hx-swap "none"}
        "New"]]
      [:div {:id         "page-table"
             :hx-trigger "load, trigger-list-page from:body"
-            :hx-get     "/api/page/html"}
-      "sup"]]]))
+            :hx-get     "/api/page/html"}]]]))
 
 (def login
   (ui/layout
