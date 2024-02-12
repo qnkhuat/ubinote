@@ -23,8 +23,7 @@
      [:div {:class "d-flex"}
       [:a {:class "text-light text-decoration-none"
            :href  "/user"} "User"]]]]
-   [:div {:class "container"}
-    children]])
+   children])
 
 (defn ^:private bare-html
   [children & {:keys [scripts? navbar?]
@@ -35,13 +34,15 @@
    [:head
     [:meta {:charset "utf-8"}]
     [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
+
     (when scripts?
       [:link {:crossorigin "anonymous"
               :rel         "stylesheet"
               :integrity   "sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
               :href        "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"}])
     (when scripts?
-      [:script {:src "https://unpkg.com/htmx.org@1.9.10"}])]
+      [:script {:src "https://unpkg.com/htmx.org@1.9.10"}])
+    [:script {:src "/static/app.js"}]]
    [:body
     (cond-> children
       navbar?
@@ -57,3 +58,5 @@
   By defaul the rendered page will have htmx, bootstrap and a navbar."
   [children & options]
   (hiccup->html-response (apply bare-html children options)))
+
+(html-response [:div 1] :scripts? false :navbar? false)

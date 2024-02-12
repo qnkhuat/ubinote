@@ -21,24 +21,19 @@
            :hx-trigger "load, trigger-list-page from:body"
            :hx-get     "/api/page/html"}]]))
 
+
 (defn view-page
   [page-id]
   (ui/html-response
    [:div
-    [:form {:id      "add-page"
-            :hx-swap "none"
-            :hx-post "/api/page"
-            (keyword "hx-on::after-swap") "this.reset()"}
-     [:input {:type        "text"
-              :placeholder " Archive a page"
-              :name        "url"}]
-     [:button {:class   "btn btn-primary"
-               :type    "submit"
-               :hx-swap "none"}
-      "New"]]
-    [:div {:id         "page-table"
-           :hx-trigger "load, trigger-list-page from:body"
-           :hx-get     "/api/page/html"}]]))
+    [:iframe {:id          "ubinote-page-content"
+              :title       "Ubinote page content"
+              :scrolling   "no"
+              :frameborder "0"
+              :style       "width: 100%; display: flex;"
+              :src         (format "/api/page/%d/content" page-id)
+              :onload      "onIframeLoad(this)"}]
+    [:div {}]]))
 
 (def login
   (ui/html-response
