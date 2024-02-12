@@ -108,7 +108,7 @@ function removeHighlight(highlightElement) {
 
 function isSelecting(selection) {
   const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
-  return !selection.isCollapsed && boundingRect.width > 2;
+  return !selection.isCollapsed && boundingRect.width > 1;
 }
 
 function resizeIframe(obj) {
@@ -117,15 +117,17 @@ function resizeIframe(obj) {
   obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
 }
 
-function rangeToToolTopPosition(event, range, iframe) {
+function rangeToToolTopPosition(event, range) {
   const boundingRect = range.getBoundingClientRect()
   return {
-    x: Math.min(event.clientX, boundingRect.right),
-    y: boundingRect.bottom + iframe.offsetTop,
+    // - 18 to make the button left-aligned with the cursor
+    x: Math.min(event.clientX, boundingRect.right) - 18,
+    // + 10 to shift the tooltop down a bit
+    y: boundingRect.bottom + 10,
   }
 }
 
-function onIframeLoad(iframe) {
+function onIframeLoad(iframe, tooltipId) {
   // step 0: update iframe Document state
   resizeIframe(iframe);
 
@@ -158,12 +160,21 @@ function onIframeLoad(iframe) {
   // step 3: inject mouse up tracker
   iframeWindow.document.addEventListener("mouseup", (event) => {
     // if user is selecting, show tooltip
-    const selection = iframeWindow?.getSelection();
-    if (isSelecting(selection)) {
-      console.log("MOUSE UP");
+    const selection = iframeWindow.getSelection();
+    const tooltip = document.getElementById(tooltipId);
+    if (isSelecting(selection) ) {
+      const {x, y} = rangeToToolTopPosition(event, selection.getRangeAt(0));
+      console.log("GOT", x, y);
+      tooltip.style.display = "flex";
+      tooltip.style.top = `${y}px`;
+      tooltip.style.left = `${x}px`;
+      console.log("UP");
+    } else {
+      tooltip.style.display = "none";
+      console.log("DOWN");
     }
   })
-
 }
 
-//htmx.logAll();
+const IS_DEV = window.location.hostname == "localhost";
+if (IS_DEV) htmx.logAll();

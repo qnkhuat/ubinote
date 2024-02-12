@@ -26,15 +26,18 @@
 (defn view-page
   [page-id]
   (ui/html-response
-   [:div
+   [:div {:class "position-relative"}
     [:iframe {:id          "ubinote-page-content"
               :title       "Ubinote page content"
               :scrolling   "no"
               :frameborder "0"
               :style       "width: 100%; display: flex;"
               :src         (format "/api/page/%d/content" page-id)
-              :onload      "onIframeLoad(this)"}]
-    [:div {:id annotation-tooltip-id}]]))
+              :onload      (format "onIframeLoad(this, \"%s\")" annotation-tooltip-id)}]
+    [:div {:id    annotation-tooltip-id
+           :class "position-absolute z-3 bg-primary text-white"
+           :style "padding: 3px 8px;"}
+     [:i {:class "bi bi-pencil"}]]]))
 
 (def login
   (ui/html-response
