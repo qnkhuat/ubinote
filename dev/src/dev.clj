@@ -2,11 +2,11 @@
   (:require
    [cheshire.core :as json]
    [clojure.string :as str]
+   [hashp.core :as hashp]
    [ring.util.codec :as codec]
    [toucan2.core :as tc]
    [ubinote.server :as server]
    [ubinote.server.middleware.session :as mw.session]))
-
 
 (defonce ^:private instance* (atom nil))
 
@@ -62,7 +62,7 @@
    (user-http-request user-id method url query nil))
   ([user-id method url query body]
    (let [session-id (or (tc/select-one-pk :m/session :user_id user-id)
-                        (first (tc/insert-returning-pks! :m/session {:user_id user-id})))]
+                        (tc/insert-returning-pk! :m/session {:user_id user-id}))]
      (-> (build-mock-request {:url        url
                               :method     method
                               :query      query
@@ -71,6 +71,13 @@
          server/app
          :body
          (json/parse-string keyword)))))
+
+(defmacro p
+  "#p, but to use in pipelines like `(-> 1 inc dev/p inc)`.
+
+  See https://github.com/weavejester/hashp"
+  [form]
+  (hashp/p* form))
 
 (defn -main []
   (start!))

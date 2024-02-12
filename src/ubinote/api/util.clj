@@ -60,8 +60,9 @@
 (defn response?
   [x]
   (and (map? x)
-       (contains? x :status)
-       (int? (:status x))))
+       (or (and (contains? x :status) (int? (:status x)))
+           (contains? x :cookies)
+           (contains? x :headers))))
 
 (defn ->response
   ([x]

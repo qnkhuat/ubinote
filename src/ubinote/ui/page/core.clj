@@ -21,6 +21,7 @@
            :hx-trigger "load, trigger-list-page from:body"
            :hx-get     "/api/page/html"}]]))
 
+(def ^:private annotation-tooltip-id "ubinote-annotation-tooltip")
 
 (defn view-page
   [page-id]
@@ -33,7 +34,7 @@
               :style       "width: 100%; display: flex;"
               :src         (format "/api/page/%d/content" page-id)
               :onload      "onIframeLoad(this)"}]
-    [:div {}]]))
+    [:div {:id annotation-tooltip-id}]]))
 
 (def login
   (ui/html-response

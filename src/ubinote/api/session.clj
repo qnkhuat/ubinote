@@ -25,7 +25,7 @@
   [{:keys [params] :as req}]
   (api.u/validate NewSession params)
   (let [user    (api.u/check-401 (verify-user (:email params) (:password params)))
-        session {:id (first (tc/insert-returning-pks! :m/session {:user_id (:id user)}))}]
+        session {:id (tc/insert-returning-pk! :m/session {:user_id (:id user)})}]
     (-> req
         (mw.session/set-session-cookie {} session)
         (api.u/htmx-redirect "/"))))

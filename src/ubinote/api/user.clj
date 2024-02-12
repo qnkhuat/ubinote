@@ -17,7 +17,7 @@
   [{:keys [body] :as _req}]
   (api.u/validate NewUser body)
   ;; TODO: catch exception when create duplicate users
-  (first (tc/insert-returning-instances! :m/user body)))
+  (tc/insert-returning-instance! :m/user body))
 
 (defn get-user
   [id _req]
