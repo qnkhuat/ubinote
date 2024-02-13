@@ -22,6 +22,7 @@
            :hx-get     "/api/page/html"}]]))
 
 (def ^:private annotation-tooltip-id "ubinote-annotation-tooltip")
+(def ^:private page-iframe-id "ubinote-page-content")
 
 (defn view-page
   [page-id]
@@ -34,9 +35,19 @@
               :style       "width: 100%; display: flex;"
               :src         (format "/api/page/%d/content" page-id)
               :onload      (format "onIframeLoad(this, \"%s\")" annotation-tooltip-id)}]
-    [:div {:id    annotation-tooltip-id
-           :class "position-absolute z-3 bg-primary text-white"
-           :style "padding: 3px 8px;"}
+    [:div {:id         annotation-tooltip-id
+           :class      "position-absolute z-3 bg-primary text-white"
+           :style      "padding: 3px 8px; cursor: pointer;"
+           :hx-post    "/api/annotation"
+           :hx-vals    (format "js:{coordinate: %s,
+                               page_id: %d}"
+                               (format "fromRange(document.getElementById(\"%s\").contentWindow.document.body,
+                                       document.getElementById(\"%s\").contentWindow.getSelection().getRangeAt(0))"
+                                       page-iframe-id
+                                       page-iframe-id)
+                               page-id)
+           :hx-swap    "none"
+           :hx-trigger "click"}
      [:i {:class "bi bi-pencil"}]]]))
 
 (def login

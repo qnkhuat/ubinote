@@ -1,5 +1,6 @@
 (ns ubinote.api.annotation
   (:require
+   [cheshire.core :as json]
    [compojure.coercions :refer [as-int]]
    [compojure.core :refer [context defroutes PUT POST DELETE]]
    [malli.core :as mc]
@@ -19,8 +20,11 @@
     [:color {:optional true} [:maybe :string]]]))
 
 (defn- create
-  [{:keys [body] :as _req}]
-  (->> (assoc body :creator_id api.u/*current-user-id*)
+  [{:keys [params] :as _req}]
+  (->> (-> params
+           (assoc :creator_id api.u/*current-user-id*)
+           (update :page_id parse-long)
+           (update :coordinate #(json/parse-string % keyword)))
        (api.u/validate NewAnnotation)
        (tc/insert-returning-instances! :m/annotation)
        first))

@@ -194,7 +194,6 @@
       })
     }
 
-
     // step 4: inject click on annotation tracker
     function onClickAnnotation(annotationId) {
       const annotation = annotations[annotationId];
