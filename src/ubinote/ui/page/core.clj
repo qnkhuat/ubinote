@@ -6,9 +6,9 @@
 (def index
   (ui/html-response
    [:div
-    [:form {:id      "add-page"
-            :hx-swap "none"
-            :hx-post "/api/page"
+    [:form {:id                           "new-page"
+            :hx-swap                      "none"
+            :hx-post                      "/api/page"
             (keyword "hx-on::after-swap") "this.reset()"}
      [:input {:type        "text"
               :placeholder " Archive a page"
@@ -28,6 +28,9 @@
   [page-id]
   (ui/html-response
    [:div {:class "position-relative"}
+    [:div {:hx-get      (format "/api/page/%d/annotation" page-id)
+           :hx-trigger  "load"
+           :hx-ext      "ubinote-swap-response"}]
     [:iframe {:id          "ubinote-page-content"
               :title       "Ubinote page content"
               :scrolling   "no"

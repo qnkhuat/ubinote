@@ -53,7 +53,7 @@
 
   // highlight on DOM
   function annotateOnDOM(range, annotation) {
-    const [_, removeHighlight] =  highlightRange(range, 'span',
+    const [_, removeHighlight] = highlightRange(range, 'span',
       {
         class: colorToCSS[annotation.color],
         onclick: `onClickAnnotation(${annotation.id})`,

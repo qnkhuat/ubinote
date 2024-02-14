@@ -290,17 +290,35 @@ function onIframeLoad(iframe, tooltipId) {
     const tooltip = document.getElementById(tooltipId);
     if (isSelecting(selection) ) {
       const {x, y} = rangeToToolTopPosition(event, selection.getRangeAt(0));
-      console.log("GOT", x, y);
       tooltip.style.display = "flex";
       tooltip.style.top = `${y}px`;
       tooltip.style.left = `${x}px`;
-      console.log("UP");
     } else {
       tooltip.style.display = "none";
-      console.log("DOWN");
     }
   })
 }
 
 const IS_DEV = window.location.hostname == "localhost";
-if (IS_DEV) htmx.logAll();
+//if (IS_DEV) htmx.logAll();
+
+
+htmx.defineExtension("ubinote-swap-response", {
+  onEvent : function(name, evt) {
+    console.log("onEvent: ", name, evt);
+    return true;
+  },
+  transformResponse : function(text, xhr, elt) {
+    console.log("transformResponse", text, xhr, elt);
+    return text;
+  },
+  isInlineSwap : function(swapStyle) {return false;},
+  handleSwap : function(swapStyle, target, fragment, settleInfo) {
+    console.log("handleSwap", swapStyle, target, fragment, settleInfo);
+    return false;
+  },
+  encodeParameters : function(xhr, parameters, elt) {
+    console.log("encodeParameters", xhr, parameters, elt);
+    return null;
+  }
+})

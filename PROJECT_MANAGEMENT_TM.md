@@ -29,7 +29,16 @@ Some note on design
 
 
 
+# Feature requests:
+- page tagging
+- archive a folder
+- highlight / comments count
+- read count
+- click on link will show an option to whether or not archive it instead of go-to link
+- highlight map
 
+# bugs:
+- this page got croped down at the end in archive https://hypermedia.systems/hypermedia-reintroduction/
 
 Some thoughts on what todo :
 - need to test if the new migration with password salt works backward

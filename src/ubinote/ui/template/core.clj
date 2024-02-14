@@ -1,16 +1,29 @@
 (ns ubinote.ui.template.core
   (:require
+   [clojure.string :as str]
    [hiccup.page :as h.page]
    [hiccup2.core :as h]
    [ring.util.response :as response]))
 
+(defn- multi-html-response?
+  "Is x of this form
+  [[:p 1]
+   [:p 2]]"
+  [x]
+  (and (coll? x)
+       (pos? (count x))
+       (coll? (first x))))
+
 (defn hiccup->html-response
   "Render a hiccup html response."
-  [resp]
-  (-> (h/html {} (h.page/doctype :html5) resp)
-      str
-      response/response
-      (response/content-type "text/html")))
+  ([form]
+   (hiccup->html-response form nil))
+  ([resp doctype]
+   (-> (if (multi-html-response? resp)
+         (str/join (map #(h/html {} doctype %) resp))
+         (str (h/html {} doctype resp)))
+       response/response
+       (response/content-type "text/html"))))
 
 (defn with-nav-bar
   [children]
@@ -45,7 +58,7 @@
     (when scripts?
       [:script {:src "https://unpkg.com/htmx.org@1.9.10"}])
     [:script {:src "/static/app.js"}]]
-   [:body
+   [:body {:hx-boosted "true"}
     (cond-> children
       navbar?
       with-nav-bar)
@@ -59,6 +72,4 @@
 
   By defaul the rendered page will have htmx, bootstrap and a navbar."
   [children & options]
-  (hiccup->html-response (apply bare-html children options)))
-
-(html-response [:div 1] :scripts? false :navbar? false)
+  (hiccup->html-response (apply bare-html children options) (h.page/doctype :html5)))

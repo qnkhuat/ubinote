@@ -29,13 +29,17 @@
   (-> (api.u/check-404 (tc/select-one :m/page :id id))
       (tc/hydrate :user [:annotations :comments])))
 
+(defn- get-page-annotation
+  [id _req]
+  (ui/hiccup->html-response [[:div 1] [:div 2]])
+  #_(tc/hydrate (tc/select :m/annotation :page_id id) :comments))
+
 (defn- list-pages
   [_req]
   (tc/select :m/page))
 
 (defmethod ui/render :pages-table
   [data _component-name]
-  (def data data)
   [:table {:class "table table-hover"}
    [:thead
     [:tr
@@ -100,6 +104,7 @@
   (GET "/html" [] list-pages-html)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-page id))
+           (GET "/annotation" [] (partial get-page-annotation id))
            (DELETE "/" [] (partial delete-page id))
            (POST "/public" [] (partial public-page id))
            (DELETE "/public" [] (partial disable-public id))
