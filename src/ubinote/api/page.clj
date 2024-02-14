@@ -34,6 +34,12 @@
   (ui/hiccup->html-response [[:div 1] [:div 2]])
   #_(tc/hydrate (tc/select :m/annotation :page_id id) :comments))
 
+(defmethod ui/render :annotation
+  [{:keys [coordinate]}]
+  [:span {:ubinote-coordinate coordinate}])
+
+#_(tc/select :m/annotation :page_id 18)
+
 (defn- list-pages
   [_req]
   (tc/select :m/page))

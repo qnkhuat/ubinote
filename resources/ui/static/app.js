@@ -305,20 +305,26 @@ const IS_DEV = window.location.hostname == "localhost";
 
 htmx.defineExtension("ubinote-swap-response", {
   onEvent : function(name, evt) {
-    console.log("onEvent: ", name, evt);
+    //console.log("onEvent: ", name, evt);
     return true;
   },
   transformResponse : function(text, xhr, elt) {
-    console.log("transformResponse", text, xhr, elt);
+    //console.log("transformResponse", text, xhr, elt);
     return text;
   },
   isInlineSwap : function(swapStyle) {return false;},
   handleSwap : function(swapStyle, target, fragment, settleInfo) {
-    console.log("handleSwap", swapStyle, target, fragment, settleInfo);
-    return false;
+    //console.log("handleSwap", swapStyle, "target", target, "fragment", fragment, "info", settleInfo);
+    //for (let child in fragment.childNodes) {
+    //  console.log("CHILD", child)
+    //}
+    fragment.childNodes.forEach(function(node) {
+      console.log("NODe", node);
+    })
+    return true;
   },
   encodeParameters : function(xhr, parameters, elt) {
-    console.log("encodeParameters", xhr, parameters, elt);
+    //console.log("encodeParameters", xhr, parameters, elt);
     return null;
   }
 })
