@@ -1,5 +1,6 @@
 (ns ubinote.api.page
   (:require
+   [cheshire.core :as json]
    [compojure.coercions :refer [as-int]]
    [compojure.core :refer [context defroutes DELETE POST GET]]
    [malli.core :as mc]
@@ -31,14 +32,15 @@
 
 (defn- get-page-annotation
   [id _req]
-  (ui/hiccup->html-response [[:div 1] [:div 2]])
-  #_(tc/hydrate (tc/select :m/annotation :page_id id) :comments))
+  (->> (tc/select :m/annotation :page_id id)
+       (map #(ui/render % :annotation))
+       ui/hiccup->html-response))
 
 (defmethod ui/render :annotation
-  [{:keys [coordinate]}]
-  [:span {:ubinote-coordinate coordinate}])
-
-#_(tc/select :m/annotation :page_id 18)
+  [{:keys [coordinate color] :as _annotation} _component-name]
+  [:span
+   {:ubinote-annotation-coordinate (json/generate-string coordinate)
+    :ubinote-annotation-color      color}])
 
 (defn- list-pages
   [_req]

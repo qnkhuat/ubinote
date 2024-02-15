@@ -6,6 +6,7 @@
    {cheshire.core                                      json
     toucan2.core                                       tc
     hiccup2.core                                       h
+    ubinote.config                                     cfg
     ubinote.ui.core                                    ui
     ubinote.ui.page.core                               ui.page
     ubinote.ui.template.core                           template

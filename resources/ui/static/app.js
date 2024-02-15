@@ -77,7 +77,7 @@ function textNodesInRange(range) {
   const nodes = [];
   if (walker.currentNode.nodeType === Node.TEXT_NODE)
     nodes.push(walker.currentNode);
-  while (walker.nextNode() && range.comparePoint(walker.cukrentNode, 0) !== 1)
+  while (walker.nextNode() && range.comparePoint(walker.currentNode, 0) !== 1)
     nodes.push(walker.currentNode);
   return nodes;
 }
@@ -108,7 +108,98 @@ function removeHighlight(highlightElement) {
 }
 
 // ---------------------- END EXTERNAL LIB: dom-highlight-range ----------------------
-// ---------------------- START EXTERNAL LIB: dom-anchor-text-position  ----------------------
+// ---------------------- START EXTERNAL LIB: dom-seek ----------------------
+const E_END = 'Iterator exhausted before seek ended.'
+const E_SHOW = 'Argument 1 of seek must use filter NodeFilter.SHOW_TEXT.'
+const E_WHERE = 'Argument 2 of seek must be an integer or a Text Node.'
+
+const DOCUMENT_POSITION_PRECEDING = 2
+const SHOW_TEXT = 4
+const TEXT_NODE = 3
+
+function seek(iter, where) {
+  if (iter.whatToShow !== SHOW_TEXT) {
+    let error
+
+    // istanbul ignore next
+    try {
+      error = new DOMException(E_SHOW, 'InvalidStateError')
+    } catch {
+      error = new Error(E_SHOW);
+      error.code = 11
+      error.name = 'InvalidStateError'
+      error.toString = () => `InvalidStateError: ${E_SHOW}`
+    }
+
+    throw error
+  }
+
+  let count = 0
+  let node = iter.referenceNode
+  let predicates = null
+
+  if (isInteger(where)) {
+    predicates = {
+      forward: () => count < where,
+      backward: () => count > where || !iter.pointerBeforeReferenceNode,
+    }
+  } else if (isText(where)) {
+    let forward = before(node, where) ? () => false : () => node !== where
+    let backward = () => node !== where || !iter.pointerBeforeReferenceNode
+    predicates = {forward, backward}
+  } else {
+    throw new TypeError(E_WHERE)
+  }
+
+  while (predicates.forward()) {
+    node = iter.nextNode()
+
+    if (node === null) {
+      throw new RangeError(E_END)
+    }
+
+    count += node.nodeValue.length
+  }
+
+  if (iter.nextNode()) {
+    node = iter.previousNode()
+  }
+
+  while (predicates.backward()) {
+    node = iter.previousNode()
+
+    if (node === null) {
+      throw new RangeError(E_END)
+    }
+
+    count -= node.nodeValue.length
+  }
+
+  if (!isText(iter.referenceNode)) {
+    throw new RangeError(E_END);
+  }
+
+  return count
+}
+
+
+function isInteger(n) {
+  if (typeof n !== 'number') return false;
+  return isFinite(n) && Math.floor(n) === n;
+}
+
+
+function isText(node) {
+  return node.nodeType === TEXT_NODE
+}
+
+
+function before(ref, node) {
+  return ref.compareDocumentPosition(node) & DOCUMENT_POSITION_PRECEDING
+}
+// ---------------------- END EXTERNAL LIB: dom-seek ----------------------
+// ---------------------- START EXTERNAL LIB: dom-anchor-text-position ----------------------
+
 /**
  * Return the next node after `node` in a tree order traversal of the document.
  */
@@ -175,8 +266,6 @@ function rangeToString(range) {
   return text
 }
 
-const SHOW_TEXT = 4
-
 function fromRange(root, range) {
   if (root === undefined) {
     throw new Error('missing required parameter "root"')
@@ -202,7 +291,6 @@ function fromRange(root, range) {
     end: end,
   }
 }
-
 
 function toRange(root, selector = {}) {
   if (root === undefined) {
@@ -230,7 +318,7 @@ function toRange(root, selector = {}) {
   return range
 }
 
-// ---------------------- END EXTERNAL LIB: dom-anchor-text-position  ----------------------
+// ---------------------- END EXTERNAL LIB: dom-anchor-text-position ----------------------
 
 function isSelecting(selection) {
   const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
@@ -314,12 +402,14 @@ htmx.defineExtension("ubinote-swap-response", {
   },
   isInlineSwap : function(swapStyle) {return false;},
   handleSwap : function(swapStyle, target, fragment, settleInfo) {
-    //console.log("handleSwap", swapStyle, "target", target, "fragment", fragment, "info", settleInfo);
-    //for (let child in fragment.childNodes) {
-    //  console.log("CHILD", child)
-    //}
+    // hack so that this is called after the iframe is loaded.
+    const iframeBody = document.getElementById("ubinote-page-content").contentWindow.document.body;
     fragment.childNodes.forEach(function(node) {
-      console.log("NODe", node);
+      const attributes = node["attributes"];
+      const coordinate = JSON.parse(attributes["ubinote-annotation-coordinate"].value);
+      const color = attributes["ubinote-annotation-color"].value;
+      const range = toRange(iframeBody, coordinate);
+      highlightRange(range, "span", {class: "highlight-yellow"});
     })
     return true;
   },

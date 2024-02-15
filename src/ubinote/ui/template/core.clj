@@ -3,7 +3,8 @@
    [clojure.string :as str]
    [hiccup.page :as h.page]
    [hiccup2.core :as h]
-   [ring.util.response :as response]))
+   [ring.util.response :as response]
+   [ubinote.config :as cfg]))
 
 (defn- multi-html-response?
   "Is x of this form
@@ -55,6 +56,8 @@
     (when scripts?
       [:link {:rel  "stylesheet"
               :href "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"}])
+    (when cfg/is-dev?
+      [:script {:src "/static/termlog.js"}])
     (when scripts?
       [:script {:src "https://unpkg.com/htmx.org@1.9.10"}])
     [:script {:src "/static/app.js"}]]

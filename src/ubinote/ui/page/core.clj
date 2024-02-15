@@ -5,7 +5,7 @@
 
 (def index
   (ui/html-response
-   [:div
+   [:div {:class "container-fluid"}
     [:form {:id                           "new-page"
             :hx-swap                      "none"
             :hx-post                      "/api/page"
@@ -28,9 +28,6 @@
   [page-id]
   (ui/html-response
    [:div {:class "position-relative"}
-    [:div {:hx-get      (format "/api/page/%d/annotation" page-id)
-           :hx-trigger  "load"
-           :hx-ext      "ubinote-swap-response"}]
     [:iframe {:id          "ubinote-page-content"
               :title       "Ubinote page content"
               :scrolling   "no"
@@ -38,6 +35,10 @@
               :style       "width: 100%; display: flex;"
               :src         (format "/api/page/%d/content" page-id)
               :onload      (format "onIframeLoad(this, \"%s\")" annotation-tooltip-id)}]
+    [:div {:hx-get      (format "/api/page/%d/annotation" page-id)
+           ;; HACK, TODO: to get the annotation load after the page got loaded
+           :hx-trigger  "load delay:500ms"
+           :hx-ext      "ubinote-swap-response"}]
     [:div {:id         annotation-tooltip-id
            :class      "position-absolute z-3 bg-primary text-white"
            :style      "padding: 3px 8px; cursor: pointer;"

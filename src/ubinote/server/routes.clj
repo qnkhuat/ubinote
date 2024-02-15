@@ -31,5 +31,3 @@
   (GET "/page/:id" [id :<< as-int] (require-login (partial ui.page/view-page id)))
   (GET "/login" _req ui.page/login)
   (route/not-found ui.page/not-found))
-
-(response/content-type (resource-response (format "ui/static/%s" "app.js")))
