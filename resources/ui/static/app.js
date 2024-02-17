@@ -392,29 +392,26 @@ const IS_DEV = window.location.hostname == "localhost";
 
 
 htmx.defineExtension("ubinote-swap-response", {
-  onEvent : function(name, evt) {
-    //console.log("onEvent: ", name, evt);
-    return true;
-  },
-  transformResponse : function(text, xhr, elt) {
-    //console.log("transformResponse", text, xhr, elt);
-    return text;
-  },
-  isInlineSwap : function(swapStyle) {return false;},
-  handleSwap : function(swapStyle, target, fragment, settleInfo) {
-    // hack so that this is called after the iframe is loaded.
+  //onEvent: function(name, evt) {
+  //  return true;
+  //},
+  //transformResponse: function(text, xhr, elt) {
+  //  return text;
+  //},
+  //isInlineSwap: function(swapStyle) {return false;},
+  handleSwap: function(swapStyle, target, fragment, settleInfo) {
     const iframeBody = document.getElementById("ubinote-page-content").contentWindow.document.body;
     fragment.childNodes.forEach(function(node) {
-      const attributes = node["attributes"];
-      const coordinate = JSON.parse(attributes["ubinote-annotation-coordinate"].value);
-      const color = attributes["ubinote-annotation-color"].value;
+      const attrs = node.getAttributeNames().reduce((acc, name) => {
+        return {...acc, [name]: node.getAttribute(name)};
+      }, {});
+      const coordinate = JSON.parse(attrs["ubinote-annotation-coordinate"]);
       const range = toRange(iframeBody, coordinate);
-      highlightRange(range, "span", {class: "highlight-yellow"});
+      highlightRange(range, node.nodeName, attrs);
     })
     return true;
   },
-  encodeParameters : function(xhr, parameters, elt) {
-    //console.log("encodeParameters", xhr, parameters, elt);
-    return null;
-  }
+  //encodeParameters: function(xhr, parameters, elt) {
+  //  return null;
+  //}
 })
