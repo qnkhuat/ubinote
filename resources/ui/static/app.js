@@ -385,6 +385,18 @@ function onIframeLoad(iframe, tooltipId) {
       tooltip.style.display = "none";
     }
   })
+
+  // step 4: inject click on annotation tracker
+  function onClickAnnotation(targetId, start, end) {
+    const range = toRange(iframeWindow.document.body, {start, end});
+    console.log("RANGE", range);
+    const position = rangeToToolTopPosition(iframeWindow.event, range);
+    const targetElement = iframeWindow.document.getElementById(targetId);
+    targetElement.style.top = position.y + "px";
+    targetElement.style.left = position.x + "px";
+  }
+  iframeWindow.onClickAnnotation = onClickAnnotation;
+
 }
 
 const IS_DEV = window.location.hostname == "localhost";
@@ -400,14 +412,25 @@ htmx.defineExtension("ubinote-swap-response", {
   //},
   //isInlineSwap: function(swapStyle) {return false;},
   handleSwap: function(swapStyle, target, fragment, settleInfo) {
-    const iframeBody = document.getElementById("ubinote-page-content").contentWindow.document.body;
+    const iframeDocument = document.getElementById("ubinote-page-content").contentWindow.document;
+    const iframeBody = iframeDocument.body;
     fragment.childNodes.forEach(function(node) {
       const attrs = node.getAttributeNames().reduce((acc, name) => {
         return {...acc, [name]: node.getAttribute(name)};
       }, {});
       const coordinate = JSON.parse(attrs["ubinote-annotation-coordinate"]);
       const range = toRange(iframeBody, coordinate);
-      highlightRange(range, node.nodeName, attrs);
+      const tooltipId = "ubinote-tooltip-" + Date.now();
+      highlightRange(range, node.nodeName, {...attrs, onclick: `onClickAnnotation("${tooltipId}", ${coordinate.start}, ${coordinate.end})`});
+      // next we will create a div to show the children of node.
+      // this will be show on click on the wrapper node
+      const tooltipNode = iframeDocument.createElement("div");
+      node.childNodes.forEach((child) => {
+        tooltipNode.appendChild(child);
+      });
+      tooltipNode.id = tooltipId;
+      tooltipNode.style.position = "absolute";
+      iframeBody.appendChild(tooltipNode);
     })
     return true;
   },

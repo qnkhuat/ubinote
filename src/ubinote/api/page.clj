@@ -39,10 +39,13 @@
 (defmethod ui/render :annotation
   [{:keys [coordinate color] :as _annotation} _component-name]
   [:span
-   ;; these attributes are for `ubinote-swap-response` extension
-   {:ubinote-annotation-coordinate (json/generate-string coordinate)
-    :class                         (case color
-                                     "yellow" "highlight-yellow")}])
+   {;; custom attribute handled by `ubinote-swap-response` extension
+    :ubinote-annotation-coordinate (json/generate-string coordinate)
+    :class                         (str (case color
+                                          "yellow" "highlight-yellow")
+                                        " relative")}
+   [:div {:class "absolute"}
+    "HI"]])
 
 (defn- list-pages
   [_req]
