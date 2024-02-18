@@ -48,6 +48,7 @@
           :style "width: 400px;"}
     (map #(ui/render :comment %) comments)
     [:form {:hx-post    (format "/api/annotation/%d/comment" id)
+            (keyword "hx-on::after-request") "this.reset()"
             :hx-target  "this"
             :hx-swap    "beforebegin"
             :hx-trigger "submit"}
