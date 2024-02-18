@@ -319,6 +319,27 @@ function toRange(root, selector = {}) {
 }
 
 // ---------------------- END EXTERNAL LIB: dom-anchor-text-position ----------------------
+// handle clickoutside a node, call the callback when it's clicked outside the node
+// by default remove the listener after the first click outside
+function withClickOutside(targetElement, callback, theDocument = document, once=true) {
+  function handleClick(event) {
+    let clickedEl = event.target;
+    do {
+      if (clickedEl === targetElement) {
+        // This is a click inside, does nothing, just return.
+        return;
+      }
+      // Go up the DOM
+      clickedEl = clickedEl.parentNode;
+    } while (clickedEl);
+    // This is a click outside.
+    callback();
+    // remove event listener if only trigger once
+    if (once) theDocument.removeEventListener("click", handleClick);
+  }
+  theDocument.addEventListener("click", handleClick);
+}
+
 
 function isSelecting(selection) {
   const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
@@ -388,41 +409,39 @@ function onIframeLoad(iframe, newAnnotationBtnId) {
 
   // step 4: inject click on annotation tracker
   function onClickAnnotation(popoverId, start, end) {
+    const event = iframeWindow.event;
+    event.stopPropagation();
     const range = toRange(iframeWindow.document.body, {start, end});
-    const position = rangeToToolTopPosition(iframeWindow.event, range);
+    const position = rangeToToolTopPosition(event, range);
     const iframeDistantToTop = window.pageYOffset + iframe.getBoundingClientRect().top;
     const targetElement = document.getElementById(popoverId);
     targetElement.style.top = iframeDistantToTop + position.y + "px";
     targetElement.style.left = position.x + "px";
-    document.addEventListener("click", (function (ev) {
-
-    }))
+    targetElement.style.visibility = "visible";
+    withClickOutside(targetElement, () => {targetElement.style.visibility = "hidden";}, iframeWindow.document);
+    //iframeWindow.document.addEventListener("click", (function (ev) {
+    //  console.log("click outside", ev.target, targetElement)
+    //  let clickedEl = ev.target;
+    //  do {
+    //    if (clickedEl == targetElement) {
+    //      // This is a click inside, does nothing, just return.
+    //      return;
+    //    }
+    //    // Go up the DOM
+    //    clickedEl = clickedEl.parentNode;
+    //  } while (clickedEl);
+    //  // This is a click outside.
+    //  targetElement.style.visibility = "hidden";
+    //  // remove event listener
+    //  iframeWindow.document.removeEventListener("click", this);
+    //}))
   }
   iframeWindow.onClickAnnotation = onClickAnnotation;
-
 }
 
 const IS_DEV = window.location.hostname == "localhost";
 //if (IS_DEV) htmx.logAll();
-//
-function onClickOutside(el, callback) {
-  document.addEventListener("click", function(evt) {
-        let flyoutEl = document.getElementById('flyout-example'),
-          targetEl = evt.target; // clicked element
-        do {
-          if(targetEl == flyoutEl) {
-            // This is a click inside, does nothing, just return.
-            document.getElementById("flyout-debug").textContent = "Clicked inside!";
-            return;
-          }
-          // Go up the DOM
-          targetEl = targetEl.parentNode;
-        } while (targetEl);
-        // This is a click outside.
-        document.getElementById("flyout-debug").textContent = "Clicked outside!";
-      });
 
-}
 
 htmx.defineExtension("ubinote-swap-response", {
   //onEvent: function(name, evt) {

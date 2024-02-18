@@ -55,7 +55,6 @@
             :hx-trigger "submit"}
      [:textarea {:name "content" :placeholder "Comment"}]
      [:button {:type "submit"} "Comment"]]
-    [:button {:_ "on click from elsewhere add .d-none to me"}]
     [:button {:hx-delete  (format "/api/annotation/%d" id)
               :hx-trigger "click"
               :class      "btn btn-danger"}
