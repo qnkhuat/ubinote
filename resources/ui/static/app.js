@@ -341,7 +341,7 @@ function rangeToToolTopPosition(event, range) {
   }
 }
 
-function onIframeLoad(iframe, tooltipId) {
+function onIframeLoad(iframe, newAnnotationBtnId) {
   // step 0: update iframe Document state
   resizeIframe(iframe);
 
@@ -349,22 +349,22 @@ function onIframeLoad(iframe, tooltipId) {
   iframeWindow = iframe.contentWindow;
   const style = iframeWindow.document.createElement("style");
   style.textContent = `
-.highlight-yellow {
+.ubinote-highlight-yellow {
   background-color: #FACD5AA6;
   cursor:pointer;
 }
 
-.highlight-green {
+.ubinote-highlight-green {
   background-color: #7CC868A6;
   cursor:pointer;
 }
 
-.highlight-pink {
+.ubinote-highlight-pink {
   background-color: #FB5C89A6;
   cursor:pointer;
 }
 
-.highlight-blue {
+.ubinote-highlight-blue {
   background-color: #69AFF0A6;
   cursor:pointer;
 }
@@ -375,7 +375,7 @@ function onIframeLoad(iframe, tooltipId) {
   iframeWindow.document.addEventListener("mouseup", (event) => {
     // if user is selecting, show tooltip
     const selection = iframeWindow.getSelection();
-    const tooltip = document.getElementById(tooltipId);
+    const tooltip = document.getElementById(newAnnotationBtnId);
     if (isSelecting(selection) ) {
       const {x, y} = rangeToToolTopPosition(event, selection.getRangeAt(0));
       tooltip.style.display = "flex";
@@ -387,13 +387,16 @@ function onIframeLoad(iframe, tooltipId) {
   })
 
   // step 4: inject click on annotation tracker
-  function onClickAnnotation(annotationDomID, start, end) {
+  function onClickAnnotation(popoverId, start, end) {
     const range = toRange(iframeWindow.document.body, {start, end});
     const position = rangeToToolTopPosition(iframeWindow.event, range);
     const iframeDistantToTop = window.pageYOffset + iframe.getBoundingClientRect().top;
-    const targetElement = document.getElementById(annotationDomID);
+    const targetElement = document.getElementById(popoverId);
     targetElement.style.top = iframeDistantToTop + position.y + "px";
     targetElement.style.left = position.x + "px";
+    document.addEventListener("click", (function (ev) {
+
+    }))
   }
   iframeWindow.onClickAnnotation = onClickAnnotation;
 
@@ -401,6 +404,25 @@ function onIframeLoad(iframe, tooltipId) {
 
 const IS_DEV = window.location.hostname == "localhost";
 //if (IS_DEV) htmx.logAll();
+//
+function onClickOutside(el, callback) {
+  document.addEventListener("click", function(evt) {
+        let flyoutEl = document.getElementById('flyout-example'),
+          targetEl = evt.target; // clicked element
+        do {
+          if(targetEl == flyoutEl) {
+            // This is a click inside, does nothing, just return.
+            document.getElementById("flyout-debug").textContent = "Clicked inside!";
+            return;
+          }
+          // Go up the DOM
+          targetEl = targetEl.parentNode;
+        } while (targetEl);
+        // This is a click outside.
+        document.getElementById("flyout-debug").textContent = "Clicked outside!";
+      });
+
+}
 
 htmx.defineExtension("ubinote-swap-response", {
   //onEvent: function(name, evt) {
@@ -420,19 +442,19 @@ htmx.defineExtension("ubinote-swap-response", {
       }, {});
       const coordinate = JSON.parse(attrs["ubinote-annotation-coordinate"]);
       const range = toRange(iframeBody, coordinate);
-      const tooltipId = "ubinote-tooltip-" + Math.floor(Math.random() * 1000000);
-      highlightRange(range, node.nodeName, {...attrs, onclick: `onClickAnnotation("${tooltipId}", ${coordinate.start}, ${coordinate.end})`});
+      const popoverId = "ubinote-popover-" + Math.floor(Math.random() * 1000000);
+      highlightRange(range, node.nodeName, {...attrs, onclick: `onClickAnnotation("${popoverId}", ${coordinate.start}, ${coordinate.end})`});
       // these divs are apppend to the document, not iframedocument because it's easier to manage
       // bootstrap, htmx will works on it
-      const tooltipNode = document.createElement("div");
+      const popoverNode = document.createElement("div");
       //htmx.swap()
       node.childNodes.forEach((child) => {
-        tooltipNode.appendChild(child);
+        popoverNode.appendChild(child);
       });
-      tooltipNode.id = tooltipId;
-      tooltipNode.style.position = "absolute";
-      document.body.appendChild(tooltipNode);
-      newNodes.push(tooltipNode);
+      popoverNode.id = popoverId;
+      popoverNode.style.position = "absolute";
+      document.body.appendChild(popoverNode);
+      newNodes.push(popoverNode);
     })
     // return the new nodes so htmx can manage them
     return newNodes;

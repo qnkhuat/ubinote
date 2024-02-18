@@ -42,18 +42,20 @@
    {;; custom attribute handled by `ubinote-swap-response` extension
     :ubinote-annotation-coordinate (json/generate-string coordinate)
     :class                         (case color
-                                     "yellow" "highlight-yellow")}
+                                     "yellow" "ubinote-highlight-yellow")}
    ;; the popover when click on highlight
    [:div {:class "border border-black rounded bg-white p-2 position-relative"
           :style "width: 400px;"}
-    (map #(ui/render :comment %) comments)
+    [:div {:class "comments"}
+     (map #(ui/render :comment %) comments)]
     [:form {:hx-post    (format "/api/annotation/%d/comment" id)
             (keyword "hx-on::after-request") "this.reset()"
-            :hx-target  "this"
+            :hx-target  "previous .comments"
             :hx-swap    "beforebegin"
             :hx-trigger "submit"}
      [:textarea {:name "content" :placeholder "Comment"}]
      [:button {:type "submit"} "Comment"]]
+    [:button {:_ "on click from elsewhere add .d-none to me"}]
     [:button {:hx-delete  (format "/api/annotation/%d" id)
               :hx-trigger "click"
               :class      "btn btn-danger"}

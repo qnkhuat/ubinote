@@ -21,7 +21,7 @@
            :hx-trigger "load, trigger-list-page from:body"
            :hx-get     "/api/page/html"}]]))
 
-(def ^:private annotation-tooltip-id "ubinote-annotation-tooltip")
+(def ^:private new-annotation-btn-id "ubinote-new-annotation-btn")
 (def ^:private page-iframe-id "ubinote-page-content")
 
 (defn view-page
@@ -34,12 +34,12 @@
               :frameborder "0"
               :style       "width: 100%; display: flex;"
               :src         (format "/api/page/%d/content" page-id)
-              :onload      (format "onIframeLoad(this, \"%s\")" annotation-tooltip-id)}]
+              :onload      (format "onIframeLoad(this, \"%s\")" new-annotation-btn-id)}]
     [:div {:hx-get      (format "/api/page/%d/annotation" page-id)
            ;; HACK, TODO: to get the annotation load after the page got loaded
            :hx-ext      "ubinote-swap-response"
            :hx-trigger  "load delay:500ms"}]
-    [:div {:id         annotation-tooltip-id
+    [:div {:id         new-annotation-btn-id
            :class      "position-absolute z-3 bg-primary text-white"
            :style      "padding: 3px 8px; cursor: pointer;"
            :hx-ext     "ubinote-swap-response"
