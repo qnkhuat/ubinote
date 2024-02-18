@@ -80,6 +80,7 @@
               :annotation_id id
               :creator_id    api.u/*current-user-id*)
        (api.u/validate NewComment)
+       (tc/insert-returning-instance! :m/comment)
        (merge {:creator_email (:email @api.u/*current-user*)})
        (ui/render :comment)
        ui/hiccup->html-response))
