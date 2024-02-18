@@ -48,8 +48,8 @@
           :style "width: 400px;"}
     (map #(ui/render :comment %) comments)
     [:form {:hx-post    (format "/api/annotation/%d/comment" id)
-            :hx-target  "previous"
-            :hx-swap    "afterend"
+            :hx-target  "this"
+            :hx-swap    "beforebegin"
             :hx-trigger "submit"}
      [:textarea {:name "content" :placeholder "Comment"}]
      [:button {:type "submit"} "Comment"]]
