@@ -32,6 +32,10 @@
   [_original-model _dest-key _hydrating-model]
   [:creator_id])
 
+(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:m/comment :user :default]
+  [_original-model _dest-key _hydrating-model]
+  [:creator_id])
+
 ;; life cycles
 
 (defn- hash-password

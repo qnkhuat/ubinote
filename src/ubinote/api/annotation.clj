@@ -68,17 +68,19 @@
    [:content       :string]])
 
 (defmethod ui/render :comment
-  [_component {:keys [id content creator_id] :as _comment}]
-  [:div {:id (format "ubinote-comment-%d" id)}
-   [:span content]
-   [:span (str " - " creator_id)]])
+  [_component {:keys [id content creator_email] :as _comment}]
+  [:div {:id    (format "ubinote-comment-%d" id)
+         :class "bg-white my-1"}
+   [:p content]
+   [:p (str " - " creator_email)]])
 
 (defn create-comment
   [id {:keys [params] :as _req}]
-  (->> (assoc params :annotation_id id
-                            :creator_id    api.u/*current-user-id*)
+  (->> (assoc (dissoc params :id)
+              :annotation_id id
+              :creator_id    api.u/*current-user-id*)
        (api.u/validate NewComment)
-       (tc/insert! :m/comment)
+       (merge {:creator_email (:email @api.u/*current-user*)})
        (ui/render :comment)
        ui/hiccup->html-response))
 

@@ -17,8 +17,9 @@
   (let [annotation-id->comments (when (seq annotations)
                                   (group-by :annotation_id
                                             (tc/query :default :m/comment
-                                                      {:select [:c.content :c.id :c.annotation_id :c.updated_at [:u.email :creator_email]]
-                                                       :from   [[:comment :c]]
+                                                      {:select    [:c.content :c.id :c.annotation_id :c.created_at [:u.email :creator_email]]
+                                                       :from      [[:comment :c]]
                                                        :left-join [[:core_user :u] [:= :c.creator_id :u.id]]
-                                                       :where  [:in :c.annotation_id (map :id annotations)]})))]
+                                                       :where     [:in :c.annotation_id (map :id annotations)]
+                                                       :order-by  [[:c.created_at :asc]]})))]
     (map #(assoc % :comments (get annotation-id->comments (:id %) [])) annotations)))

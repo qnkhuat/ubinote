@@ -86,11 +86,12 @@
                                       ;; TODO: add expired time here
                                       :where  [:= :id session-id]}]}))))
 
-(defn find-user
+(defn- find-user
   [id]
-  (tc/query {:select [:*]
-             :from   [:core_user]
-             :where  [:= :id id]}))
+  (first (tc/query {:select [:*]
+                    :from   [:core_user]
+                    :where  [:= :id id]
+                    :limit 1})))
 
 (defmacro with-current-user
   [user-id & body]

@@ -32,22 +32,27 @@
 
 (defn- get-page-annotation
   [id _req]
-  (->> (tc/select :m/annotation :page_id id)
+  (->> (tc/hydrate (tc/select :m/annotation :page_id id) :comments)
        (map #(ui/render :annotation %))
        ui/hiccup->html-response))
 
 (defmethod ui/render :annotation
-  [_component {:keys [id coordinate color] :as _annotation}]
+  [_component {:keys [id coordinate color comments] :as _annotation}]
   [:span
    {;; custom attribute handled by `ubinote-swap-response` extension
     :ubinote-annotation-coordinate (json/generate-string coordinate)
     :class                         (case color
                                      "yellow" "highlight-yellow")}
-   [:div #_{:style "width: 400px; margin: 0 auto;"}
-    [:form {:hx-post    (format "api/annotation/%d/comment" id)
+   ;; the popover when click on highlight
+   [:div {:class "border border-black rounded bg-white p-2 position-relative"
+          :style "width: 400px;"}
+    (map #(ui/render :comment %) comments)
+    [:form {:hx-post    (format "/api/annotation/%d/comment" id)
+            :hx-target  "previous"
+            :hx-swap    "afterend"
             :hx-trigger "submit"}
-     [:textarea {:name "comment" :placeholder "Comment"}]
-     [:button {:type "submit"} "Save"]]
+     [:textarea {:name "content" :placeholder "Comment"}]
+     [:button {:type "submit"} "Comment"]]
     [:button {:hx-delete  (format "/api/annotation/%d" id)
               :hx-trigger "click"
               :class      "btn btn-danger"}
