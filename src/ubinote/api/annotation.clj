@@ -7,6 +7,7 @@
    [medley.core :as m]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
+   [ubinote.ui.core :as ui]
    [ubinote.util :as u]))
 
 (def NewAnnotation
@@ -60,6 +61,27 @@
       (tc/delete! :m/comment :id [:in (map :id to-delete)])))
   (tc/hydrate (tc/select-one :m/annotation id) :comments))
 
+(def NewComment
+  [:map
+   [:annotation_id :int]
+   [:creator_id    :int]
+   [:content       :string]])
+
+(defmethod ui/render :comment
+  [_component {:keys [id content creator_id] :as _comment}]
+  [:div {:id (format "ubinote-comment-%d" id)}
+   [:span content]
+   [:span (str " - " creator_id)]])
+
+(defn create-comment
+  [id {:keys [params] :as _req}]
+  (->> (assoc params :annotation_id id
+                            :creator_id    api.u/*current-user-id*)
+       (api.u/validate NewComment)
+       (tc/insert! :m/comment)
+       (ui/render :comment)
+       ui/hiccup->html-response))
+
 (defn- delete-annotation
   [id _req]
   (api.u/check-404 (tc/select-one :m/annotation :id id))
@@ -69,5 +91,6 @@
 (defroutes routes
   (POST "/" [] create)
   (context "/:id" [id :<< as-int]
+           (POST  "/comment" [] (partial create-comment id))
            (PUT "/" [] (partial update-annotation id))
            (DELETE "/" [] (partial delete-annotation id))))

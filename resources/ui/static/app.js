@@ -387,12 +387,12 @@ function onIframeLoad(iframe, tooltipId) {
   })
 
   // step 4: inject click on annotation tracker
-  function onClickAnnotation(targetId, start, end) {
+  function onClickAnnotation(annotationDomID, start, end) {
     const range = toRange(iframeWindow.document.body, {start, end});
-    console.log("RANGE", range);
     const position = rangeToToolTopPosition(iframeWindow.event, range);
-    const targetElement = iframeWindow.document.getElementById(targetId);
-    targetElement.style.top = position.y + "px";
+    const iframeDistantToTop = window.pageYOffset + iframe.getBoundingClientRect().top;
+    const targetElement = document.getElementById(annotationDomID);
+    targetElement.style.top = iframeDistantToTop + position.y + "px";
     targetElement.style.left = position.x + "px";
   }
   iframeWindow.onClickAnnotation = onClickAnnotation;
@@ -401,7 +401,6 @@ function onIframeLoad(iframe, tooltipId) {
 
 const IS_DEV = window.location.hostname == "localhost";
 //if (IS_DEV) htmx.logAll();
-
 
 htmx.defineExtension("ubinote-swap-response", {
   //onEvent: function(name, evt) {
@@ -414,25 +413,29 @@ htmx.defineExtension("ubinote-swap-response", {
   handleSwap: function(swapStyle, target, fragment, settleInfo) {
     const iframeDocument = document.getElementById("ubinote-page-content").contentWindow.document;
     const iframeBody = iframeDocument.body;
+    const newNodes = []
     fragment.childNodes.forEach(function(node) {
       const attrs = node.getAttributeNames().reduce((acc, name) => {
         return {...acc, [name]: node.getAttribute(name)};
       }, {});
       const coordinate = JSON.parse(attrs["ubinote-annotation-coordinate"]);
       const range = toRange(iframeBody, coordinate);
-      const tooltipId = "ubinote-tooltip-" + Date.now();
+      const tooltipId = "ubinote-tooltip-" + Math.floor(Math.random() * 1000000);
       highlightRange(range, node.nodeName, {...attrs, onclick: `onClickAnnotation("${tooltipId}", ${coordinate.start}, ${coordinate.end})`});
-      // next we will create a div to show the children of node.
-      // this will be show on click on the wrapper node
-      const tooltipNode = iframeDocument.createElement("div");
+      // these divs are apppend to the document, not iframedocument because it's easier to manage
+      // bootstrap, htmx will works on it
+      const tooltipNode = document.createElement("div");
+      //htmx.swap()
       node.childNodes.forEach((child) => {
         tooltipNode.appendChild(child);
       });
       tooltipNode.id = tooltipId;
       tooltipNode.style.position = "absolute";
-      iframeBody.appendChild(tooltipNode);
+      document.body.appendChild(tooltipNode);
+      newNodes.push(tooltipNode);
     })
-    return true;
+    // return the new nodes so htmx can manage them
+    return newNodes;
   },
   //encodeParameters: function(xhr, parameters, elt) {
   //  return null;

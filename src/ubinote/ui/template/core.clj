@@ -59,7 +59,9 @@
     (when cfg/is-dev?
       [:script {:src "/static/termlog.js"}])
     (when scripts?
-      [:script {:src "https://unpkg.com/htmx.org@1.9.10"}])
+      (if cfg/is-dev?
+        [:script {:src "/static/htmx_1.9.10.js"}]
+        [:script {:src "https://unpkg.com/htmx.org@1.9.10"}]))
     [:script {:src "/static/app.js"}]]
    [:body {:hx-boosted "true"}
     (cond-> children

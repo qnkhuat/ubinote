@@ -33,26 +33,32 @@
 (defn- get-page-annotation
   [id _req]
   (->> (tc/select :m/annotation :page_id id)
-       (map #(ui/render % :annotation))
+       (map #(ui/render :annotation %))
        ui/hiccup->html-response))
 
 (defmethod ui/render :annotation
-  [{:keys [coordinate color] :as _annotation} _component-name]
+  [_component {:keys [id coordinate color] :as _annotation}]
   [:span
    {;; custom attribute handled by `ubinote-swap-response` extension
     :ubinote-annotation-coordinate (json/generate-string coordinate)
-    :class                         (str (case color
-                                          "yellow" "highlight-yellow")
-                                        " relative")}
-   [:div {:class "absolute"}
-    "HI"]])
+    :class                         (case color
+                                     "yellow" "highlight-yellow")}
+   [:div #_{:style "width: 400px; margin: 0 auto;"}
+    [:form {:hx-post    (format "api/annotation/%d/comment" id)
+            :hx-trigger "submit"}
+     [:textarea {:name "comment" :placeholder "Comment"}]
+     [:button {:type "submit"} "Save"]]
+    [:button {:hx-delete  (format "/api/annotation/%d" id)
+              :hx-trigger "click"
+              :class      "btn btn-danger"}
+     "DELETE"]]])
 
 (defn- list-pages
   [_req]
   (tc/select :m/page))
 
 (defmethod ui/render :pages-table
-  [data _component-name]
+  [_component data]
   [:table {:class "table table-hover"}
    [:thead
     [:tr
@@ -76,9 +82,9 @@
 
 (defn- list-pages-html
   [_req]
-  (-> (tc/select :m/page {:order-by [[:created_at :desc]]})
-      (ui/render :pages-table)
-      ui/hiccup->html-response))
+  (->> (tc/select :m/page {:order-by [[:created_at :desc]]})
+       (ui/render :pages-table)
+       ui/hiccup->html-response))
 
 (defn- get-page-content
   "Returns the static file of the page"
