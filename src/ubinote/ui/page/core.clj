@@ -44,6 +44,9 @@
            :style      "padding: 3px 8px; cursor: pointer;"
            :hx-ext     "ubinote-swap-response"
            :hx-post    "/api/annotation"
+           (keyword "hx-on::after-request")
+           (format "this.style.visibility = 'hidden'; document.getElementById(\"%s\").contentWindow.getSelection().empty()"
+                   page-iframe-id)
            :hx-vals    (format "js:{coordinate: %s,
                                page_id: %d}"
                                (format "fromRange(document.getElementById(\"%s\").contentWindow.document.body,

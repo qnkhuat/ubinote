@@ -399,11 +399,11 @@ function onIframeLoad(iframe, newAnnotationBtnId) {
     const tooltip = document.getElementById(newAnnotationBtnId);
     if (isSelecting(selection) ) {
       const {x, y} = rangeToToolTopPosition(event, selection.getRangeAt(0));
-      tooltip.style.display = "flex";
+      tooltip.style.visibility = "visible";
       tooltip.style.top = `${y}px`;
       tooltip.style.left = `${x}px`;
     } else {
-      tooltip.style.display = "none";
+      tooltip.style.visibility = "hidden";
     }
   })
 
@@ -419,22 +419,6 @@ function onIframeLoad(iframe, newAnnotationBtnId) {
     targetElement.style.left = position.x + "px";
     targetElement.style.visibility = "visible";
     withClickOutside(targetElement, () => {targetElement.style.visibility = "hidden";}, iframeWindow.document);
-    //iframeWindow.document.addEventListener("click", (function (ev) {
-    //  console.log("click outside", ev.target, targetElement)
-    //  let clickedEl = ev.target;
-    //  do {
-    //    if (clickedEl == targetElement) {
-    //      // This is a click inside, does nothing, just return.
-    //      return;
-    //    }
-    //    // Go up the DOM
-    //    clickedEl = clickedEl.parentNode;
-    //  } while (clickedEl);
-    //  // This is a click outside.
-    //  targetElement.style.visibility = "hidden";
-    //  // remove event listener
-    //  iframeWindow.document.removeEventListener("click", this);
-    //}))
   }
   iframeWindow.onClickAnnotation = onClickAnnotation;
 }
