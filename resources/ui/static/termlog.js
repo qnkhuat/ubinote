@@ -88,4 +88,4 @@ const sendWhenConnected = (ws, msg, defaultConsole, n = 0, maxTries = 100) => {
   }, 10); // wait 10 milisecond for the connection...
 }
 
-termlog();
+//termlog();

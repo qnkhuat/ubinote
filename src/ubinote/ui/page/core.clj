@@ -37,11 +37,12 @@
               :onload      (format "onIframeLoad(this, \"%s\")" annotation-tooltip-id)}]
     [:div {:hx-get      (format "/api/page/%d/annotation" page-id)
            ;; HACK, TODO: to get the annotation load after the page got loaded
-           :hx-trigger  "load delay:500ms"
-           :hx-ext      "ubinote-swap-response"}]
+           :hx-ext      "ubinote-swap-response"
+           :hx-trigger  "load delay:500ms"}]
     [:div {:id         annotation-tooltip-id
            :class      "position-absolute z-3 bg-primary text-white"
            :style      "padding: 3px 8px; cursor: pointer;"
+           :hx-ext     "ubinote-swap-response"
            :hx-post    "/api/annotation"
            :hx-vals    (format "js:{coordinate: %s,
                                page_id: %d}"
@@ -50,7 +51,6 @@
                                        page-iframe-id
                                        page-iframe-id)
                                page-id)
-           :hx-swap    "none"
            :hx-trigger "click"}
      [:i {:class "bi bi-pencil"}]]]))
 
