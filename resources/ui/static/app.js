@@ -423,6 +423,28 @@ function onIframeLoad(iframe, newAnnotationBtnId) {
   iframeWindow.onClickAnnotation = onClickAnnotation;
 }
 
+// the id for iframe that contains the page view
+const PAGE_IFRAME_ID = "ubinote-page-content";
+
+// the dom id that wraps text for highlight
+// it'll be created on the page iframe
+function getAnnotationOnIframeId(annotationId) {
+  return "ubinote-annotation-" + annotationId;
+}
+
+// the dom id that is used for popover of an annotation
+// it'll be created on the main document
+function getPopoverId(annotationId) {
+  return "ubinote-popover-" + annotationId;
+}
+
+function deleteAnnotation(id) {
+  document.getElementById(PAGE_IFRAME_ID).contentDocument.querySelectorAll("#" + getAnnotationOnIframeId(id)).forEach((node) => {
+    removeHighlight(node)
+  });
+  document.getElementById(getPopoverId(id)).remove();
+}
+
 const IS_DEV = window.location.hostname == "localhost";
 //if (IS_DEV) htmx.logAll();
 
@@ -436,17 +458,20 @@ htmx.defineExtension("ubinote-swap-response", {
   //},
   //isInlineSwap: function(swapStyle) {return false;},
   handleSwap: function(swapStyle, target, fragment, settleInfo) {
-    const iframeDocument = document.getElementById("ubinote-page-content").contentWindow.document;
-    const iframeBody = iframeDocument.body;
+    const iframeBody = document.getElementById(PAGE_IFRAME_ID).contentWindow.document.body;
     const newNodes = []
     fragment.childNodes.forEach(function(node) {
       const attrs = node.getAttributeNames().reduce((acc, name) => {
         return {...acc, [name]: node.getAttribute(name)};
       }, {});
       const coordinate = JSON.parse(attrs["ubinote-annotation-coordinate"]);
+      const annotationId = attrs["ubinote-annotation-id"];
       const range = toRange(iframeBody, coordinate);
-      const popoverId = "ubinote-popover-" + Math.floor(Math.random() * 1000000);
-      highlightRange(range, node.nodeName, {...attrs, onclick: `onClickAnnotation("${popoverId}", ${coordinate.start}, ${coordinate.end})`});
+      const popoverId = getPopoverId(annotationId);
+      highlightRange(range, node.nodeName,
+        {...attrs,
+          onclick: `onClickAnnotation("${popoverId}", ${coordinate.start}, ${coordinate.end})`,
+          id: getAnnotationOnIframeId(annotationId)});
       // these divs are apppend to the document, not iframedocument because it's easier to manage
       // bootstrap, htmx will works on it
       const popoverNode = document.createElement("div");

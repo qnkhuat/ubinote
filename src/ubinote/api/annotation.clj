@@ -2,7 +2,7 @@
   (:require
    [cheshire.core :as json]
    [compojure.coercions :refer [as-int]]
-   [compojure.core :refer [context defroutes PUT POST DELETE]]
+   [compojure.core :refer [context defroutes POST DELETE]]
    [malli.core :as mc]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]

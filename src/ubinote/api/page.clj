@@ -41,6 +41,7 @@
   [:span
    {;; custom attribute handled by `ubinote-swap-response` extension
     :ubinote-annotation-coordinate (json/generate-string coordinate)
+    :ubinote-annotation-id         id
     :class                         (case color
                                      "yellow" "ubinote-highlight-yellow")}
    ;; the popover when click on highlight
@@ -56,6 +57,8 @@
      [:textarea {:name "content" :placeholder "Comment"}]
      [:button {:type "submit"} "Comment"]]
     [:button {:hx-delete  (format "/api/annotation/%d" id)
+              (keyword "hx-on::after-request") (format "deleteAnnotation(%d)" id)
+              :hx-swap    "none"
               :hx-trigger "click"
               :class      "btn btn-danger"}
      "DELETE"]]])
