@@ -439,6 +439,7 @@ function getPopoverId(annotationId) {
 }
 
 function deleteAnnotation(id) {
+  // an annotation can be spanned as multiple divs
   document.getElementById(PAGE_IFRAME_ID).contentDocument.querySelectorAll("#" + getAnnotationOnIframeId(id)).forEach((node) => {
     removeHighlight(node)
   });
