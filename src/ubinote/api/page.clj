@@ -106,15 +106,21 @@
 
 (defmethod ui/render :page-public-link
   [_component {:keys [public_uuid id]}]
-  [:div {:id "ubinote-create-public-link"}
-   "Public link: "
-   [:a {:href (str "/page/public/" public_uuid)}
-    (str "/page/public/" public_uuid)]
-   [:button {:class      "btn"
-             :hx-trigger "click"
-             :hx-target  "#ubinote-create-public-link"
-             :hx-delete  (format "/api/page/%d/public" id)}
-    "Disable"]])
+  (let [public-age-url (str "/page/public/" public_uuid)]
+    [:div {:id "ubinote-create-public-link"
+           :hx-trigger :click
+           :hx-get  "/api/age"}
+
+     "Public link: "
+     [:a {:href    public-age-url
+          :x-data (format "{publicPageURL: \"%s\"}" public-age-url)
+          :x-init "publicPageURL = `${window.location.protocol}//${window.location.host}` + publicPageURL "}
+      [:span {:x-text "publicPageURL"}]]
+     [:button {:class      "btn"
+               :hx-trigger "click"
+               :hx-target  "#ubinote-create-public-link"
+               :hx-delete  (format "/api/page/%d/public" id)}
+      "Disable"]]))
 
 (defmethod ui/render :page-create-public-link
   [_component {:keys [id]}]

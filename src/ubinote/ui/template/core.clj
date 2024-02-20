@@ -67,10 +67,10 @@
     (cond-> children
       navbar?
       with-nav-bar)
-    #_(when scripts?
-        [:script {:src "//unpkg.com/alpinejs" :defer true}])
     (when scripts?
-      [:script {:src "https://unpkg.com/hyperscript.org@0.9.12"}])
+      [:script {:src "//unpkg.com/alpinejs" :defer true}])
+    #_(when scripts?
+        [:script {:src "https://unpkg.com/hyperscript.org@0.9.12"}])
     #_(when scripts?
         [:script {:src "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"}])
     (when scripts?
