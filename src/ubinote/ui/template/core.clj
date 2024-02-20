@@ -67,13 +67,16 @@
     (cond-> children
       navbar?
       with-nav-bar)
+    #_(when scripts?
+        [:script {:src "//unpkg.com/alpinejs" :defer true}])
     (when scripts?
       [:script {:src "https://unpkg.com/hyperscript.org@0.9.12"}])
+    #_(when scripts?
+        [:script {:src "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"}])
     (when scripts?
       [:script {:src         "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
                 :integrity   "sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
                 :crossorigin "anonymous"}])]])
-
 
 (defn html-response
   "Given a children, render it as a whole page.

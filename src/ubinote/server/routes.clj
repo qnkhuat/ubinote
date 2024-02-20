@@ -28,6 +28,6 @@
 
   ;; new page system
   (GET "/" _req (require-login ui.page/index))
-  (GET "/page/:id" [id :<< as-int] (require-login (partial ui.page/view-page id)))
+  (GET "/page/:id" [id :<< as-int :as req] (require-login (partial ui.page/view-page id req)))
   (GET "/login" _req ui.page/login)
   (route/not-found ui.page/not-found))

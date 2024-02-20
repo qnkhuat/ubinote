@@ -50,14 +50,14 @@
     [:div {:class "comments"}
      (map #(ui/render :comment %) comments)]
     [:form {:hx-post    (format "/api/annotation/%d/comment" id)
-            (keyword "hx-on::after-request") "this.reset()"
+            :hx-on--after-request "this.reset()"
             :hx-target  "previous .comments"
             :hx-swap    "beforebegin"
             :hx-trigger "submit"}
      [:textarea {:name "content" :placeholder "Comment"}]
-     [:button {:type "submit"} "Comment"]]
+     [:button {:type "submit" :class "btn"} "Comment"]]
     [:button {:hx-delete  (format "/api/annotation/%d" id)
-              (keyword "hx-on::after-request") (format "deleteAnnotation(%d)" id)
+              :hx-on--after-request (format "deleteAnnotation(%d)" id)
               :hx-swap    "none"
               :hx-trigger "click"
               :class      "btn btn-danger"}
@@ -104,6 +104,26 @@
       (response/content-type "text/html")
       (response/header "X-Frame-Options" "SAMEORIGIN")))
 
+(defmethod ui/render :page-public-link
+  [_component {:keys [public_uuid id]}]
+  [:div {:id "ubinote-create-public-link"}
+   "Public link: "
+   [:a {:href (str "/page/public/" public_uuid)}
+    (str "/page/public/" public_uuid)]
+   [:button {:class      "btn"
+             :hx-trigger "click"
+             :hx-target  "#ubinote-create-public-link"
+             :hx-delete  (format "/api/page/%d/public" id)}
+    "Disable"]])
+
+(defmethod ui/render :page-create-public-link
+  [_component {:keys [id]}]
+  [:button {:class      "btn"
+            :hx-trigger "click"
+            :hx-swap    "outerHTML"
+            :hx-post    (format "/api/page/%d/public" id)}
+   "Create public link"])
+
 (defn- public-page
   [id _req]
   (let [page (api.u/check-404 (tc/select-one :m/page :id id))
@@ -111,7 +131,7 @@
     (when (:public_uuid page)
       (throw (ex-info "Page is already public" {:status-code 400})))
     (tc/update! :m/page id {:public_uuid uuid})
-    uuid))
+    (ui/hiccup->html-response (ui/render :page-public-link {:public_uuid uuid :id id}))))
 
 (defn- disable-public
   [id _req]
@@ -119,7 +139,12 @@
     (when-not (:public_uuid page)
       (throw (ex-info "Page is not public" {:status-code 400})))
     (tc/update! :m/page id {:public_uuid nil})
-    api.u/generic-200-response))
+    (ui/hiccup->html-response
+     [:button {:class "btn"
+               :hx-trigger "click"
+               :hx-swap    "outerHTML"
+               :hx-post    (format "/api/page/%d/public" id)}
+      "Create public link"])))
 
 (defn- delete-page
   [id _req]
