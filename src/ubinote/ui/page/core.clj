@@ -70,8 +70,8 @@
            [:ul {:class "dropdown-menu dropdown-menu-end"}
             [:li {:class "dropdown-item"}
              (if-let [uuid (:public_uuid page)]
-               (ui/render :page-public-link {:id id :public_uuid uuid} nil)
-               (ui/render :page-create-public-link {:id id} nil))]]]]]]])
+               (ui/render :page-public-link {:id id :public_uuid uuid})
+               (ui/render :page-create-public-link {:id id}))]]]]]]])
     [:div {:id    "ubinote-page-content-wrapper"
            :class "position-relative"}
      [:iframe {:id          "ubinote-page-content"

@@ -33,13 +33,13 @@
 (defn- get-page-annotation
   [id _req]
   (->> (tc/hydrate (tc/select :m/annotation :page_id id) :comments)
-       (map #(ui/render :annotation % nil))
+       (map #(ui/render :annotation %))
        ui/hiccup->html-response))
 
-;; Options:
-;; - public?: whether the annotation will be rended on a public page?"
-(defmethod ui/render :annotation
-  [_component {:keys [id coordinate color comments] :as _annotation} {:keys [public?]}]
+(defn render-annotation
+  "Options:
+  - public?: whether the annotation will be rended on a public page?"
+  [{:keys [id coordinate color comments] :as _annotation} public?]
   [:span
    {;; custom attribute handled by `ubinote-swap-response` extension
     :ubinote-annotation-coordinate (json/generate-string coordinate)
@@ -50,7 +50,7 @@
    [:div {:class "border border-black rounded bg-white p-2 position-relative"
           :style "width: 400px;"}
     [:div {:class "comments"}
-     (map #(ui/render :comment % nil) comments)
+     (map #(ui/render :comment %) comments)
      (when (and public? (zero? (count comments)))
        [:p "No comments"])]
     (when-not public?
@@ -67,15 +67,18 @@
                 :hx-swap    "none"
                 :hx-trigger "click"
                 :class      "btn btn-danger"}
-       "DELETE"])
-    ]])
+       "DELETE"])]])
+
+(defmethod ui/render :annotation
+  [_component annotation]
+  (render-annotation annotation false))
 
 (defn- list-pages
   [_req]
   (tc/select :m/page))
 
 (defmethod ui/render :pages-table
-  [_component data _props]
+  [_component data]
   [:table {:class "table table-hover"}
    [:thead
     [:tr
@@ -100,7 +103,7 @@
 (defn- list-pages-html
   [_req]
   (->> (tc/select :m/page {:order-by [[:created_at :desc]]})
-       (ui/render :pages-table nil)
+       (ui/render :pages-table)
        ui/hiccup->html-response))
 
 (defn- get-page-content
@@ -112,8 +115,8 @@
       (response/header "X-Frame-Options" "SAMEORIGIN")))
 
 (defmethod ui/render :page-public-link
-  [_component {:keys [public_uuid id]} _props]
-  (let [public-age-url (str "/page/public/" public_uuid)]
+  [_component {:keys [public_uuid id]}]
+  (let [public-age-url (str "/public/page/" public_uuid)]
     [:div {:id "ubinote-create-public-link"
            :hx-trigger :click
            :hx-get  "/api/age"}
@@ -130,7 +133,7 @@
       "Disable"]]))
 
 (defmethod ui/render :page-create-public-link
-  [_component {:keys [id]} _props]
+  [_component {:keys [id]}]
   [:button {:class      "btn"
             :hx-trigger "click"
             :hx-swap    "outerHTML"
@@ -144,7 +147,7 @@
     (when (:public_uuid page)
       (throw (ex-info "Page is already public" {:status-code 400})))
     (tc/update! :m/page id {:public_uuid uuid})
-    (ui/hiccup->html-response (ui/render :page-public-link {:public_uuid uuid :id id} nil))))
+    (ui/hiccup->html-response (ui/render :page-public-link {:public_uuid uuid :id id}))))
 
 (defn- disable-public
   [id _req]

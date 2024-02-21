@@ -3,6 +3,7 @@
    [compojure.core :refer [context defroutes GET]]
    [ring.util.response :as response]
    [toucan2.core :as tc]
+   [ubinote.api.page :as api.page]
    [ubinote.api.util :as api.u]
    [ubinote.models.page :as page]
    [ubinote.ui.core :as ui]))
@@ -20,10 +21,14 @@
       (response/content-type "text/html")
       (response/header "X-Frame-Options" "SAMEORIGIN")))
 
+(defmethod ui/render :public-annotation
+  [_component annotation]
+  (api.page/render-annotation annotation true))
+
 (defn- get-public-page-annotation
   [uuid _req]
   (->> (tc/hydrate (tc/select :m/annotation :page_id (tc/select-one-pk :m/page :public_uuid uuid)) :comments)
-       (map #(ui/render :annotation % {:public? true}))
+       (map #(ui/render :public-annotation %))
        ui/hiccup->html-response))
 
 (defroutes routes

@@ -26,7 +26,7 @@
            (update :coordinate #(json/parse-string % keyword)))
        (api.u/validate NewAnnotation)
        (tc/insert-returning-instance! :m/annotation)
-       (ui/render :annotation nil)
+       (ui/render :annotation)
        ui/hiccup->html-response))
 
 (def NewComment
@@ -36,7 +36,7 @@
    [:content       :string]])
 
 (defmethod ui/render :comment
-  [_component {:keys [id content creator_email] :as _comment} _props]
+  [_component {:keys [id content creator_email] :as _comment}]
   [:div {:id    (format "ubinote-comment-%d" id)
          :class "bg-white my-1"}
    [:p content]
@@ -50,7 +50,7 @@
        (api.u/validate NewComment)
        (tc/insert-returning-instance! :m/comment)
        (merge {:creator_email (:email @api.u/*current-user*)})
-       (ui/render :comment nil)
+       (ui/render :comment)
        ui/hiccup->html-response))
 
 (defn- delete-annotation
