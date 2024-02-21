@@ -27,8 +27,9 @@
   #_(GET "*" _req (resource-response "frontend/index.html"))
 
   ;; new page system
+  ;; TODO these routing seems weird
   (GET "/" _req (require-login ui.page/index))
   (GET "/page/:id" [id :<< as-int :as req] (require-login (partial ui.page/view-page id req)))
-  (GET "/public/page/:uuid" [uuid :as req] (require-login (partial ui.page/view-page-public uuid req)))
+  (GET "/public/page/:uuid" [uuid :as req] (fn [handler] (ui.page/view-page-public uuid req)))
   (GET "/login" _req ui.page/login)
   (route/not-found ui.page/not-found))
