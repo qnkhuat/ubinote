@@ -12,7 +12,7 @@
             :hx-post           "/api/page"
             :hx-on--after-swap "this.reset()"}
      [:input {:type        "text"
-              :placeholder " Archive a page"
+              :placeholder "Archive a page"
               :name        "url"}]
      [:button {:class   "btn btn-primary"
                :type    "submit"
@@ -109,6 +109,37 @@
 
 (defn view-page-public
   [page-uuid _req]
-  (if-let [page #p (tc/select-one :m/page :public_uuid page-uuid)]
+  (if-let [page (tc/select-one :m/page :public_uuid page-uuid)]
     (view-page* page true)
     not-found))
+
+(defn user-page
+  []
+  (ui/html-response
+   [:div {:class "container-fluid"}
+    [:form {:id                "new-user"
+            :hx-swap           "none"
+            :hx-post           "/api/user"
+            :hx-on--after-swap "this.reset()"}
+     [:label {:for "first_name" :class "d-block"} "First name"]
+     [:input {:type "text"
+              :name "first_name" :class "d-block"}]
+     [:label {:for "last_name" :class "d-block"} "Last name"]
+     [:input {:type "text" :name "last_name" :class "d-block"}]
+     [:label {:for "email" :class "d-block"} "Email"]
+     [:input {:type "email"
+              :class "d-block"
+              :name "email"}]
+     [:label {:for "password" :class "d-block"}
+      "Password"]
+     [:input {:type "password"
+              :class "d-block"
+              :name "password"}]
+     [:button {:class   "btn btn-primary"
+               :type    "submit"
+               :hx-swap "none"}
+      "New"]]
+    [:div {:id         "page-table"
+           :hx-trigger "load, trigger-list-user from:body"
+           :hx-get     "/api/user"}]]))
+

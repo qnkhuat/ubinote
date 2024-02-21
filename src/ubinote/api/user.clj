@@ -4,7 +4,8 @@
    [compojure.core :refer [context defroutes GET POST]]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
-   [ubinote.models.common.schema :as schema]))
+   [ubinote.models.common.schema :as schema]
+   [ubinote.ui.core :as ui]))
 
 (def NewUser
   [:map
@@ -14,19 +15,38 @@
    [:password   schema/Password]])
 
 (defn create-user
-  [{:keys [body] :as _req}]
-  (api.u/validate NewUser body)
-  ;; TODO: catch exception when create duplicate users
-  (tc/insert-returning-instance! :m/user body))
+  [{:keys [params] :as _req}]
+  (api.u/validate NewUser params)
+  (tc/insert! :m/user params)
+  (api.u/htmx-trigger api.u/generic-200-response "trigger-list-user"))
 
 (defn get-user
   [id _req]
   (-> (tc/select-one :m/user :id id)
       api.u/check-404))
 
-(defn list-users
+(defmethod ui/render :users-table
+  [_component users]
+  [:table {:class "table table-hover"}
+   [:thead
+    [:tr
+     [:th "ID"]
+     [:th "Email"]
+     [:th "Name"]
+     [:th "Joined date"]]]
+   [:tbody
+    (for [user users]
+      [:tr {:class "page-row"}
+       [:td (:id user)]
+       [:td (:email user)]
+       [:td (str (:first_name user) " " (:last_name user))]
+       [:td (str (:created_at user))]])]])
+
+(defn- list-users
   [_req]
-  (tc/select :m/user))
+  (->> (tc/select :m/user {:order-by [[:created_at :asc]]})
+       (ui/render :users-table)
+       ui/hiccup->html-response))
 
 (defn current-user
   [_req]
