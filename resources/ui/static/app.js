@@ -340,7 +340,6 @@ function withClickOutside(targetElement, callback, theDocument = document, once=
   theDocument.addEventListener("click", handleClick);
 }
 
-
 function isSelecting(selection) {
   const boundingRect = selection.getRangeAt(0).getBoundingClientRect();
   return !selection.isCollapsed && boundingRect.width > 1;
@@ -355,9 +354,9 @@ function resizeIframe(obj) {
 function rangeToToolTopPosition(event, range) {
   const boundingRect = range.getBoundingClientRect()
   return {
-    // - 18 to make the button left-aligned with the cursor
+    // - 18 to shift the tooltip so it aligns with the cursor
     x: Math.min(event.clientX, boundingRect.right) - 18,
-    // + 10 to shift the tooltop down a bit
+    // + 10 for some padding between selection and tooltip
     y: boundingRect.bottom + 10,
   }
 }
