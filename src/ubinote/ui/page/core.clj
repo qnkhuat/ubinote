@@ -22,63 +22,6 @@
            :hx-trigger "load, trigger-list-page from:body"
            :hx-get     "/api/page/html"}]]))
 
-(def ^:private new-annotation-btn-id "ubinote-new-annotation-btn")
-(def ^:private page-iframe-id "ubinote-page-content")
-
-(defn view-page
-  [page-id req]
-  (let [page (tc/select-one :m/page page-id)]
-    (ui/html-response
-     [:div
-      [:div {:id "ubinote-page-options"}
-       [:nav {:class "navbar navbar-expand-lg bg-secondary"}
-        [:div {:class "container-fluid text-light"}
-         [:a {:class "navbar-nav text-light"
-              :href  (:url page)}
-          (:title page)]
-         [:div {:class "d-flex"}
-          [:div {:class "dropdown"}
-           [:button {:class "btn dropdown-toggle"
-                     :data-bs-toggle "dropdown"
-                     :data-bs-auto-close "false"
-                     :type  "button"}
-            [:i {:class "bi bi-share"}]]
-           [:ul {:class "dropdown-menu dropdown-menu-end"}
-            [:li {:class "dropdown-item"}
-             (if-let [uuid (:public_uuid page)]
-               (ui/render :page-public-link {:id page-id :public_uuid uuid})
-               (ui/render :page-create-public-link {:id page-id}))]]]]]]]
-      [:div {:id    "ubinote-page-content-wrapper"
-             :class "position-relative"}
-       [:iframe {:id          "ubinote-page-content"
-                 :title       "Ubinote page content"
-                 :scrolling   "no"
-                 :frameborder "0"
-                 :style       "width: 100%; display: flex; position: relative;"
-                 :src         (format "/api/page/%d/content" page-id)
-                 :onload      (format "onIframeLoad(this, \"%s\")" new-annotation-btn-id)}]
-       [:div {:hx-get      (format "/api/page/%d/annotation" page-id)
-              ;; HACK, TODO: to get the annotation load after the page got loaded
-              :hx-ext      "ubinote-swap-response"
-              :hx-trigger  "load delay:500ms"}]
-       [:div {:id         new-annotation-btn-id
-              :class      "position-absolute z-3 bg-primary text-white"
-              :style      "padding: 3px 8px; cursor: pointer;"
-              :hx-ext     "ubinote-swap-response"
-              :hx-post    "/api/annotation"
-              :hx-on--after-request
-              (format "this.style.visibility = 'hidden'; document.getElementById(\"%s\").contentWindow.getSelection().empty()"
-                      page-iframe-id)
-              :hx-vals    (format "js:{coordinate: %s,
-                                  page_id: %d}"
-                                  (format "fromRange(document.getElementById(\"%s\").contentWindow.document.body,
-                                          document.getElementById(\"%s\").contentWindow.getSelection().getRangeAt(0))"
-                                          page-iframe-id
-                                          page-iframe-id)
-                                  page-id)
-              :hx-trigger "click"}
-        [:i {:class "bi bi-pencil"}]]]])))
-
 (def login
   (ui/html-response
    [:div {:id "login-page"}
@@ -102,3 +45,70 @@
     [:a {:href "/login"} "Login"]]
    :navbar? false
    :scripts false))
+
+(def ^:private new-annotation-btn-id "ubinote-new-annotation-btn")
+(def ^:private page-iframe-id "ubinote-page-content")
+
+(defn view-page*
+  [{:keys [id public_uuid] :as page} public?]
+  (ui/html-response
+   [:div
+    (when-not public?
+      [:div {:id "ubinote-page-options"}
+       [:nav {:class "navbar navbar-expand-lg bg-secondary"}
+        [:div {:class "container-fluid text-light"}
+         [:a {:class "navbar-nav text-light"
+              :href  (:url page)}
+          (:title page)]
+         [:div {:class "d-flex"}
+          [:div {:class "dropdown"}
+           [:button {:class "btn dropdown-toggle"
+                     :data-bs-toggle "dropdown"
+                     :data-bs-auto-close "false"
+                     :type  "button"}
+            [:i {:class "bi bi-share"}]]
+           [:ul {:class "dropdown-menu dropdown-menu-end"}
+            [:li {:class "dropdown-item"}
+             (if-let [uuid (:public_uuid page)]
+               (ui/render :page-public-link {:id id :public_uuid uuid} nil)
+               (ui/render :page-create-public-link {:id id} nil))]]]]]]])
+    [:div {:id    "ubinote-page-content-wrapper"
+           :class "position-relative"}
+     [:iframe {:id          "ubinote-page-content"
+               :title       "Ubinote page content"
+               :scrolling   "no"
+               :frameborder "0"
+               :style       "width: 100%; display: flex; position: relative;"
+               :src         (format "/api/page/%d/content" id)
+               :onload      (format "onIframeLoad(this, \"%s\", %s)" new-annotation-btn-id public?)}]
+     [:div {:hx-get      (if-not public? (format "/api/page/%d/annotation" id) (format "/api/public/page/%s/annotation" public_uuid))
+            ;; HACK, TODO: to get the annotation load after the page got loaded
+            :hx-ext      "ubinote-swap-response"
+            :hx-trigger  "load delay:500ms"}]
+     (when-not public?
+       [:div {:id         new-annotation-btn-id
+              :class      "position-absolute z-3 bg-primary text-white"
+              :style      "padding: 3px 8px; cursor: pointer;"
+              :hx-ext     "ubinote-swap-response"
+              :hx-post    "/api/annotation"
+              :hx-on--after-request
+              (format "this.style.visibility = 'hidden'; document.getElementById(\"%s\").contentWindow.getSelection().empty()"
+                      page-iframe-id)
+              :hx-vals    (format "js:{coordinate: fromRange(document.getElementById(\"%s\").contentWindow.document.body,
+                                  document.getElementById(\"%s\").contentWindow.getSelection().getRangeAt(0)),
+                                  page_id: %d}"
+                                  page-iframe-id
+                                  page-iframe-id
+                                  id)
+              :hx-trigger "click"}
+        [:i {:class "bi bi-pencil"}]])]]))
+
+(defn view-page
+  [page-id _req]
+  (view-page* (tc/select-one :m/page page-id) false))
+
+(defn view-page-public
+  [page-uuid _req]
+  (if-let [page #p (tc/select-one :m/page :public_uuid page-uuid)]
+    (view-page* page true)
+    not-found))

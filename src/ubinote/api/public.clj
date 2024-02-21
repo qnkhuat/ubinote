@@ -4,7 +4,8 @@
    [ring.util.response :as response]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
-   [ubinote.models.page :as page]))
+   [ubinote.models.page :as page]
+   [ubinote.ui.core :as ui]))
 
 (defn get-public-page
   [uuid _req]
@@ -19,7 +20,14 @@
       (response/content-type "text/html")
       (response/header "X-Frame-Options" "SAMEORIGIN")))
 
+(defn- get-public-page-annotation
+  [uuid _req]
+  (->> (tc/hydrate (tc/select :m/annotation :page_id (tc/select-one-pk :m/page :public_uuid uuid)) :comments)
+       (map #(ui/render :annotation % {:public? true}))
+       ui/hiccup->html-response))
+
 (defroutes routes
   (context "/page" []
            (GET "/:uuid" [uuid] (partial get-public-page uuid))
+           (GET "/:uuid/annotation" [uuid] (partial get-public-page-annotation uuid))
            (GET "/:uuid/content" [uuid] (partial get-public-page-content uuid))))

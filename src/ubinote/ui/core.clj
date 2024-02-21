@@ -10,5 +10,5 @@
   with-nav-bar])
 
 (defmulti render
-  (fn [component _data]
+  (fn [component _data _props]
     component))

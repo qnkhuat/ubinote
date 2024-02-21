@@ -461,6 +461,7 @@ htmx.defineExtension("ubinote-swap-response", {
     const iframeBody = document.getElementById(PAGE_IFRAME_ID).contentWindow.document.body;
     const newNodes = []
     fragment.childNodes.forEach(function(node) {
+      console.log("NODE", node);
       const attrs = node.getAttributeNames().reduce((acc, name) => {
         return {...acc, [name]: node.getAttribute(name)};
       }, {});

@@ -33,11 +33,13 @@
 (defn- get-page-annotation
   [id _req]
   (->> (tc/hydrate (tc/select :m/annotation :page_id id) :comments)
-       (map #(ui/render :annotation %))
+       (map #(ui/render :annotation % nil))
        ui/hiccup->html-response))
 
+;; Options:
+;; - public?: whether the annotation will be rended on a public page?"
 (defmethod ui/render :annotation
-  [_component {:keys [id coordinate color comments] :as _annotation}]
+  [_component {:keys [id coordinate color comments] :as _annotation} {:keys [public?]}]
   [:span
    {;; custom attribute handled by `ubinote-swap-response` extension
     :ubinote-annotation-coordinate (json/generate-string coordinate)
@@ -48,27 +50,32 @@
    [:div {:class "border border-black rounded bg-white p-2 position-relative"
           :style "width: 400px;"}
     [:div {:class "comments"}
-     (map #(ui/render :comment %) comments)]
-    [:form {:hx-post    (format "/api/annotation/%d/comment" id)
-            :hx-on--after-request "this.reset()"
-            :hx-target  "previous .comments"
-            :hx-swap    "beforebegin"
-            :hx-trigger "submit"}
-     [:textarea {:name "content" :placeholder "Comment"}]
-     [:button {:type "submit" :class "btn"} "Comment"]]
-    [:button {:hx-delete  (format "/api/annotation/%d" id)
-              :hx-on--after-request (format "deleteAnnotation(%d)" id)
-              :hx-swap    "none"
-              :hx-trigger "click"
-              :class      "btn btn-danger"}
-     "DELETE"]]])
+     (map #(ui/render :comment % nil) comments)
+     (when (and public? (zero? (count comments)))
+       [:p "No comments"])]
+    (when-not public?
+      [:form {:hx-post    (format "/api/annotation/%d/comment" id)
+              :hx-on--after-request "this.reset()"
+              :hx-target  "previous .comments"
+              :hx-swap    "beforebegin"
+              :hx-trigger "submit"}
+       [:textarea {:name "content" :placeholder "Comment"}]
+       [:button {:type "submit" :class "btn"} "Comment"]])
+    (when-not public?
+      [:button {:hx-delete  (format "/api/annotation/%d" id)
+                :hx-on--after-request (format "deleteAnnotation(%d)" id)
+                :hx-swap    "none"
+                :hx-trigger "click"
+                :class      "btn btn-danger"}
+       "DELETE"])
+    ]])
 
 (defn- list-pages
   [_req]
   (tc/select :m/page))
 
 (defmethod ui/render :pages-table
-  [_component data]
+  [_component data _props]
   [:table {:class "table table-hover"}
    [:thead
     [:tr
@@ -93,7 +100,7 @@
 (defn- list-pages-html
   [_req]
   (->> (tc/select :m/page {:order-by [[:created_at :desc]]})
-       (ui/render :pages-table)
+       (ui/render :pages-table nil)
        ui/hiccup->html-response))
 
 (defn- get-page-content
@@ -105,7 +112,7 @@
       (response/header "X-Frame-Options" "SAMEORIGIN")))
 
 (defmethod ui/render :page-public-link
-  [_component {:keys [public_uuid id]}]
+  [_component {:keys [public_uuid id]} _props]
   (let [public-age-url (str "/page/public/" public_uuid)]
     [:div {:id "ubinote-create-public-link"
            :hx-trigger :click
@@ -123,7 +130,7 @@
       "Disable"]]))
 
 (defmethod ui/render :page-create-public-link
-  [_component {:keys [id]}]
+  [_component {:keys [id]} _props]
   [:button {:class      "btn"
             :hx-trigger "click"
             :hx-swap    "outerHTML"
@@ -137,7 +144,7 @@
     (when (:public_uuid page)
       (throw (ex-info "Page is already public" {:status-code 400})))
     (tc/update! :m/page id {:public_uuid uuid})
-    (ui/hiccup->html-response (ui/render :page-public-link {:public_uuid uuid :id id}))))
+    (ui/hiccup->html-response (ui/render :page-public-link {:public_uuid uuid :id id} nil))))
 
 (defn- disable-public
   [id _req]
