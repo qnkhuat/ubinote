@@ -100,7 +100,7 @@
                       :class     "btn btn-danger"}
              "DELETE"]]])]])
 
-(defn- list-pages-html
+(defn- list-pages
   [_req]
   (->> (tc/select :m/page {:order-by [[:created_at :desc]]})
        (ui/render :pages-table)
@@ -171,7 +171,6 @@
 (defroutes routes
   (POST "/" [] add-page)
   (GET "/" [] list-pages)
-  (GET "/html" [] list-pages-html)
   (context "/:id" [id :<< as-int]
            (GET "/" [] (partial get-page id))
            (GET "/annotation" [] (partial get-page-annotation id))

@@ -20,7 +20,7 @@
       "New"]]
     [:div {:id         "page-table"
            :hx-trigger "load, trigger-list-page from:body"
-           :hx-get     "/api/page/html"}]]))
+           :hx-get     "/api/page"}]]))
 
 (def login
   (ui/html-response
