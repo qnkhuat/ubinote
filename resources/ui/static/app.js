@@ -351,11 +351,19 @@ function resizeIframe(obj) {
   obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
 }
 
-function rangeToToolTopPosition(event, range) {
+function rangeToToolTopPosition(event, range, tooltipWidth) {
+  const iframeWidth = document.getElementById(PAGE_IFRAME_ID).contentWindow.innerWidth;
   const boundingRect = range.getBoundingClientRect()
+  // - 18 to shift the tooltip so it aligns with the cursor
+  let x = Math.min(event.clientX, boundingRect.right) - 18
+  // ensure the tooltip will not be overflow
+  if (x < 0) {
+    x = 1
+  } else if (x + tooltipWidth > iframeWidth){
+    x = iframeWidth - tooltipWidth - 1;
+  }
   return {
-    // - 18 to shift the tooltip so it aligns with the cursor
-    x: Math.min(event.clientX, boundingRect.right) - 18,
+    x: x,
     // + 10 for some padding between selection and tooltip
     y: boundingRect.bottom + 10,
   }
@@ -396,8 +404,9 @@ function onIframeLoad(iframe, newAnnotationBtnId) {
     // if user is selecting, show tooltip
     const selection = iframeWindow.getSelection();
     const tooltip = document.getElementById(newAnnotationBtnId);
+    const tooltipWidth = tooltip.getBoundingClientRect().width;
     if (isSelecting(selection) ) {
-      const {x, y} = rangeToToolTopPosition(event, selection.getRangeAt(0));
+      const {x, y} = rangeToToolTopPosition(event, selection.getRangeAt(0), tooltipWidth);
       tooltip.style.visibility = "visible";
       tooltip.style.top = `${y}px`;
       tooltip.style.left = `${x}px`;
@@ -411,9 +420,9 @@ function onIframeLoad(iframe, newAnnotationBtnId) {
     const event = iframeWindow.event;
     event.stopPropagation();
     const range = toRange(iframeWindow.document.body, {start, end});
-    const position = rangeToToolTopPosition(event, range);
-    const iframeDistantToTop = window.pageYOffset + iframe.getBoundingClientRect().top;
     const targetElement = document.getElementById(popoverId);
+    const position = rangeToToolTopPosition(event, range, targetElement.getBoundingClientRect().width);
+    const iframeDistantToTop = window.pageYOffset + iframe.getBoundingClientRect().top;
     targetElement.style.top = iframeDistantToTop + position.y + "px";
     targetElement.style.left = position.x + "px";
     targetElement.style.visibility = "visible";

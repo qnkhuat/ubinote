@@ -40,8 +40,8 @@
 
   ;; TODO these routings look weird
   (GET "/" _req (require-login ui.page/index))
-  (GET "/page/:id" [id :<< as-int :as req] (require-login (partial ui.page/view-page id req)))
-  (GET "/public/page/:uuid" [uuid :as req] (fn [_handler] (ui.page/view-page-public uuid req)))
+  (GET "/page/:id" [id :<< as-int ] (require-login (partial ui.page/view-page id)))
+  (GET "/public/page/:uuid" [uuid ] #(ui.page/view-page-public uuid %))
   (GET "/user" _req (require-login ui.page/user-page))
   (GET "/login" _req (require-setup ui.page/login))
   (GET "/setup" _req ui.page/setup)

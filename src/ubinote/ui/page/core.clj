@@ -85,7 +85,7 @@
 (def ^:private new-annotation-btn-id "ubinote-new-annotation-btn")
 (def ^:private page-iframe-id "ubinote-page-content")
 
-(defn view-page*
+(defn- view-page*
   [{:keys [id public_uuid] :as page} public?]
   (ui/html-response
    [:div
@@ -137,7 +137,8 @@
                                   page-iframe-id
                                   id)
               :hx-trigger "click"}
-        [:i {:class "bi bi-pencil"}]])]]))
+        [:p "New"]
+        #_[:i {:class "bi bi-pencil"}]])]]))
 
 (defn view-page
   [page-id _req]
@@ -185,4 +186,3 @@
     [:div {:id         "page-table"
            :hx-trigger "load, trigger-list-user from:body"
            :hx-get     "/api/user"}]]))
-
