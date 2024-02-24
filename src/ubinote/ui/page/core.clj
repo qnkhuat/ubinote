@@ -11,15 +11,19 @@
     [:form {:id                "new-page"
             :hx-swap           "none"
             :hx-post           "/api/page"
-            :hx-on--after-swap "this.reset()"}
-     [:input {:type        "text"
-              :placeholder "Archive a page"
-              :name        "url"}]
-     [:button {:class   "btn btn-primary"
-               :type    "submit"
-               :hx-swap "none"}
-      "New"]]
+            :hx-on--after-swap "this.reset()"
+            :class "mt-3"}
+     [:div {:class "form-group d-flex"}
+      [:input {:type        "text"
+               :class "w-100 me-1 rounded border-success"
+               :placeholder "Archive a page"
+               :name        "url"}]
+      [:button {:class   "btn btn-primary"
+                :type    "submit"
+                :hx-swap "none"}
+       "New"]]]
     [:div {:id         "page-table"
+           :class      "mt-3"
            :hx-trigger "load, trigger-list-page from:body"
            :hx-get     "/api/page"}]]))
 
