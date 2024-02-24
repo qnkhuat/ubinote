@@ -3,10 +3,12 @@
    [cheshire.core :as json]
    [compojure.coercions :refer [as-int]]
    [compojure.core :refer [context defroutes POST DELETE]]
+   [java-time :as t]
    [malli.core :as mc]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
-   [ubinote.ui.core :as ui]))
+   [ubinote.ui.core :as ui]
+   [ubinote.util :as u]))
 
 (def NewAnnotation
   (mc/schema
@@ -36,11 +38,16 @@
    [:content       :string]])
 
 (defmethod ui/render :comment
-  [_component {:keys [id content creator_email] :as _comment}]
+  [_component {:keys [id content creator_email created_at] :as _comment}]
   [:div {:id    (format "ubinote-comment-%d" id)
-         :class "bg-white my-1"}
-   [:p content]
-   [:p (str " - " creator_email)]])
+         :class "bg-white my-1 border-top border-dark pt-1"}
+   [:div {:class "d-flex justify-content-between"}
+    [:p {:class "fw-bold" :style "font-size: 0.8rem;"} creator_email]
+    [:p {:class "fw-bold" :style "font-size: 0.8rem;"}
+     (str (u/format-milliseconds (- (u/->millis-from-epoch (t/local-date-time))
+                                  (u/->millis-from-epoch created_at)) :relative true)
+      " ago")]]
+   [:p content]])
 
 (defn create-comment
   [id {:keys [params] :as _req}]

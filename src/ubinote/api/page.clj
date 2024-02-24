@@ -27,7 +27,7 @@
 
 (defn- get-page
   [id _req]
-  (-> (api.u/check-404 (tc/select-one :m/page :id id))
+  (-> (api.u/check-404 id)
       (tc/hydrate :user [:annotations :comments])))
 
 (defn- get-page-annotation
@@ -49,25 +49,30 @@
    ;; the popover when click on highlight
    [:div {:class "border border-black rounded bg-white p-2 position-relative"
           :style "width: 400px;"}
-    [:div {:class "comments"}
-     (map #(ui/render :comment %) comments)
-     (when (and public? (zero? (count comments)))
-       [:p "No comments"])]
     (when-not public?
-      [:form {:hx-post    (format "/api/annotation/%d/comment" id)
-              :hx-on--after-request "this.reset()"
-              :hx-target  "previous .comments"
-              :hx-swap    "beforebegin"
-              :hx-trigger "submit"}
-       [:textarea {:name "content" :placeholder "Comment"}]
-       [:button {:type "submit" :class "btn"} "Comment"]])
-    (when-not public?
-      [:button {:hx-delete  (format "/api/annotation/%d" id)
-                :hx-on--after-request (format "deleteAnnotation(%d)" id)
-                :hx-swap    "none"
-                :hx-trigger "click"
-                :class      "btn btn-danger"}
-       "DELETE"])]])
+      [:div {:class "d-flex justify-content-end pb-2"}
+       [:button {:hx-delete  (format "/api/annotation/%d" id)
+                 :hx-on--after-request (format "deleteAnnotation(%d)" id)
+                 :hx-swap    "none"
+                 :hx-trigger "click"
+                 :class      "btn btn-danger"}
+        "DE"]])
+    [:div {:class "comments-and-form pe-2"}
+     [:div {:class "comments"}
+      (map #(ui/render :comment %) comments)
+      (when (and public? (zero? (count comments)))
+        [:p "No comments"])]
+     (when-not public?
+       [:form {:hx-post    (format "/api/annotation/%d/comment" id)
+               :hx-on--after-request "this.reset()"
+               :hx-target  "previous .comments"
+               :hx-swap    "beforeend"
+               :hx-trigger "submit"}
+        [:textarea {:name        "content"
+                    :class       "w-100 mb-2"
+                    :placeholder "Something interesting"}]
+        [:button {:type "submit" :class "btn btn-primary"} "Comment"]])]]])
+
 
 (defmethod ui/render :annotation
   [_component annotation]

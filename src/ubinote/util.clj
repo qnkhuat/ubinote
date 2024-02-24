@@ -1,6 +1,9 @@
 (ns ubinote.util
   (:require
-   [clojure.data :refer [diff]]))
+   [clojure.data :refer [diff]]
+   [java-time :as t])
+  (:import
+   (java.time Instant LocalDate LocalDateTime LocalTime OffsetDateTime OffsetTime ZonedDateTime)))
 
 (defmacro ignore-exceptions
   "Simple macro which wraps the given expression in a try/catch block and ignores the exception if caught."
@@ -59,3 +62,14 @@
   "Format a time interval in seconds into something more readable."
   ^String [seconds & options]
   (apply format-milliseconds (* 1000.0 seconds) options))
+
+(defn ->millis-from-epoch [t]
+  (when t
+    (condp instance? t
+      Instant        (t/to-millis-from-epoch t)
+      OffsetDateTime (t/to-millis-from-epoch t)
+      ZonedDateTime  (t/to-millis-from-epoch t)
+      LocalDate      (->millis-from-epoch (t/offset-date-time t (t/local-time 0) (t/zone-offset 0)))
+      LocalDateTime  (->millis-from-epoch (t/offset-date-time t (t/zone-offset 0)))
+      LocalTime      (->millis-from-epoch (t/offset-date-time (t/local-date "1970-01-01") t (t/zone-offset 0)))
+      OffsetTime     (->millis-from-epoch (t/offset-date-time (t/local-date "1970-01-01") t (t/zone-offset t))))))
