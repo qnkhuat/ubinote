@@ -25,7 +25,6 @@
          (read-system-props)
          (read-system-env)))
 
-
 ;; TODO: validate config with spec
 (def default
   {:un-run-mode          "prod"
@@ -35,7 +34,7 @@
    :un-single-file-bin   nil          ;; path to single-file binary
    :un-root              ".ubinote"}) ;; root to store and serve archived files
 
-;; MB_DB_CONNECTION_URI=jdbc:postgresql://localhost:5432/metabase-test?user=postgres
+;; MB_DB_CONNECTION_URI=jdbc:postgresql://localhost:5432/ubinote?user=postgres
 
 (def env (merge default (read-env)))
 
@@ -83,9 +82,12 @@
 (def is-prod?
   (= run-mode :prod))
 
-;; TODO: cache this
+
+#_(toucan2.core/delete! :m/user)
+(def ^:private db-setup* (atom false))
+
 (defn setup?
   "Did the app set up successfully?
   Meaning we created an user."
   []
-  (some? (tc/select-one :m/user)))
+  (or @db-setup* (reset! db-setup* (tc/exists? :m/user))))

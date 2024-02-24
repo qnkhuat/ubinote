@@ -4,7 +4,8 @@
    [ubinote.ui.core :as ui]
    [ubinote.ui.template.core :as template]))
 
-(def index
+(defn index
+  [_req]
   (ui/html-response
    [:div {:class "container-fluid"}
     [:form {:id                "new-page"
@@ -22,29 +23,60 @@
            :hx-trigger "load, trigger-list-page from:body"
            :hx-get     "/api/page"}]]))
 
-(def login
-  (ui/html-response
-   [:div {:id "login-page"}
-    [:h1 "Login page"]
-    [:form {:hx-post "/api/session"}
-     [:label {:for "email"} "Email: "]
-     [:input {:type "email" :name "email"}]
-     [:label {:for "password"} "Password: "]
-     [:input {:type "password" :name "password"}]
-     [:button {:type "submit"} "Login"]]]
-   :navbar? false
-   :scripts false))
-
 (def not-found
   (template/html-response [:p "Not found :("]))
 
-(def unauthorized
+(defn login
+  [_req]
+  (ui/html-response
+   [:div {:id   "login-page"
+          :class "container-fluid mt-3"
+          :style "width: 400px;"}
+    [:h1 "Login"]
+    [:form {:hx-post "/api/session"}
+     [:div {:class "mb-3"}
+      [:label {:for "email" :class "d-block"} "Email: "]
+      [:input {:type "email" :name "email" :class "form-control"}]]
+     [:div {:class "mb-3"}
+      [:label {:for "password"} "Password:"]
+      [:input {:type "password" :name "password" :class "form-control"}]]
+     [:button {:type "submit" :class "btn btn-primary"} "Login"]]]))
+
+(defn setup
+  [_req]
   (template/html-response
-   [:div
-    [:h1 "Unauthorized"]
-    [:a {:href "/login"} "Login"]]
-   :navbar? false
-   :scripts false))
+   [:div {:class "container-fluid mt-3"
+          :style "width: 400px;"}
+    [:h1 "Welcome to Ubinote!"]
+    [:form {:id      "new-user"
+            :hx-swap "none"
+            :hx-post "/api/setup"}
+     [:div {:class "mb-3"}
+      [:label {:for "first_name"} "First name"]
+      [:input {:type  "text"
+               :class "form-control"
+               :name  "first_name"}]]
+     [:div {:class "mb-3"}
+      [:label {:for "last_name"} "Last name"]
+      [:input {:type  "text"
+               :class "form-control"
+               :name  "last_name"}]]
+     [:div {:class "mb-3"}
+      [:label {:for "email"} "Email"]
+      [:input {:type  "email"
+               :class "form-control"
+               :name  "email"}]]
+     [:div {:class "mb-3"}
+      [:label {:for "password"}
+       "Password"]
+      [:input {:type  "password"
+               :class "form-control"
+               :name  "password"}]]
+     [:button {:class   "btn btn-primary"
+               :type    "submit"
+               :hx-swap "none"}
+      "Start"]]]
+   :navbar? false))
 
 (def ^:private new-annotation-btn-id "ubinote-new-annotation-btn")
 (def ^:private page-iframe-id "ubinote-page-content")
@@ -114,7 +146,7 @@
     not-found))
 
 (defn user-page
-  []
+  [_req]
   (ui/html-response
    [:div {:class "container-fluid"}
     [:form {:id                "new-user"
