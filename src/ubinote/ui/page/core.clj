@@ -15,15 +15,15 @@
             :class "mt-3"}
      [:div {:class "form-group d-flex"}
       [:input {:type        "text"
-               :class "w-100 me-1 rounded border-primary"
+               :class "w-100 border-primary p-2"
                :placeholder "Archive a page"
                :name        "url"}]
-      [:button {:class   "btn btn-primary"
+      [:button {:class   "btn btn-primary rounded-0"
                 :type    "submit"
                 :hx-swap "none"}
        "New"]]]
     [:div {:id         "page-table"
-           :class      "mt-3"
+           :class      "mt-3 px-3"
            :hx-trigger "load, trigger-list-page from:body"
            :hx-get     "/api/page"}]]))
 
@@ -44,7 +44,7 @@
      [:div {:class "mb-3"}
       [:label {:for "password"} "Password:"]
       [:input {:type "password" :name "password" :class "form-control"}]]
-     [:button {:type "submit" :class "btn btn-primary"} "Login"]]]))
+     [:button {:type "submit" :class "btn btn-primary rounded-0"} "Login"]]]))
 
 (defn setup
   [_req]
@@ -76,7 +76,7 @@
       [:input {:type  "password"
                :class "form-control"
                :name  "password"}]]
-     [:button {:class   "btn btn-primary"
+     [:button {:class   "btn btn-primary rounded-0"
                :type    "submit"
                :hx-swap "none"}
       "Start"]]]
@@ -98,7 +98,7 @@
           (:title page)]
          [:div {:class "d-flex"}
           [:div {:class "dropdown"}
-           [:button {:class "btn dropdown-toggle"
+           [:button {:class "btn dropdown-toggle rounded-0"
                      :data-bs-toggle "dropdown"
                      :data-bs-auto-close "false"
                      :type  "button"}
@@ -178,7 +178,7 @@
       [:input {:type "password"
                :class "form-control"
                :name "password"}]]
-     [:button {:class   "btn btn-primary"
+     [:button {:class   "btn btn-primary rounded-0"
                :type    "submit"
                :hx-swap "none"}
       "Create"]]
