@@ -15,7 +15,7 @@
             :class "mt-3"}
      [:div {:class "form-group d-flex"}
       [:input {:type        "text"
-               :class "w-100 me-1 rounded border-success"
+               :class "w-100 me-1 rounded border-primary"
                :placeholder "Archive a page"
                :name        "url"}]
       [:button {:class   "btn btn-primary"
@@ -39,7 +39,7 @@
     [:h1 "Login"]
     [:form {:hx-post "/api/session"}
      [:div {:class "mb-3"}
-      [:label {:for "email" :class "d-block"} "Email: "]
+      [:label {:for "email"} "Email: "]
       [:input {:type "email" :name "email" :class "form-control"}]]
      [:div {:class "mb-3"}
       [:label {:for "password"} "Password:"]
@@ -156,25 +156,32 @@
     [:form {:id                "new-user"
             :hx-swap           "none"
             :hx-post           "/api/user"
-            :hx-on--after-swap "this.reset()"}
-     [:label {:for "first_name" :class "d-block"} "First name"]
-     [:input {:type "text"
-              :name "first_name" :class "d-block"}]
-     [:label {:for "last_name" :class "d-block"} "Last name"]
-     [:input {:type "text" :name "last_name" :class "d-block"}]
-     [:label {:for "email" :class "d-block"} "Email"]
-     [:input {:type "email"
-              :class "d-block"
-              :name "email"}]
-     [:label {:for "password" :class "d-block"}
-      "Password"]
-     [:input {:type "password"
-              :class "d-block"
-              :name "password"}]
+            :hx-on--after-swap "this.reset()"
+            :class             "container-fluid my-3"
+            :style             "width: 400px;"}
+     [:div {:class "form-group "}
+      [:label {:for "first_name" :class ""} "First name"]
+      [:input {:type "text"
+               :name "first_name"
+               :class "form-control"}]]
+     [:div {:class "form-group mb-3"}
+      [:label {:for "last_name" :class ""} "Last name"]
+      [:input {:type "text" :name "last_name" :class "form-control"}]]
+     [:div {:class "form-group mb-3"}
+      [:label {:for "email"} "Email"]
+      [:input {:type "email"
+               :class "form-control"
+               :name "email"}]]
+     [:div {:class "form-group mb-3"}
+      [:label {:for "password" :class ""}
+       "Password"]
+      [:input {:type "password"
+               :class "form-control"
+               :name "password"}]]
      [:button {:class   "btn btn-primary"
                :type    "submit"
                :hx-swap "none"}
-      "New"]]
+      "Create"]]
     [:div {:id         "page-table"
            :hx-trigger "load, trigger-list-user from:body"
            :hx-get     "/api/user"}]]))
