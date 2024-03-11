@@ -80,10 +80,6 @@
   [_component annotation]
   (render-annotation annotation false))
 
-(defn- list-pages
-  [_req]
-  (tc/select :m/page))
-
 (defmethod ui/render :pages-table
   [_component data]
   [:table {:class "table table-hover"}
@@ -105,7 +101,7 @@
        [:td (str (:updated_at page))]
        [:td [:button {:hx-delete (format "/api/page/%d" (:id page))
                       :class     "btn btn-danger"}
-             "DELETE"]]])]])
+             [:i {:class "bi bi-trash"}]]]])]])
 
 (defn- list-pages
   [_req]

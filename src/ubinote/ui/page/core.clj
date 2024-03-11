@@ -23,7 +23,7 @@
                 :hx-swap "none"}
        "New"]]]
     [:div {:id         "page-table"
-           :class      "mt-3 px-3"
+           :class      "mt-3"
            :hx-trigger "load, trigger-list-page from:body"
            :hx-get     "/api/page"}]]))
 
