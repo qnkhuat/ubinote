@@ -55,9 +55,9 @@
                  :hx-on--after-request (format "deleteAnnotation(%d)" id)
                  :hx-swap    "none"
                  :hx-trigger "click"
-                 :class      "btn btn-danger"}
-        "DE"]])
-    [:div {:class "comments-and-form pe-2"}
+                 :class      "btn btn-sm btn-danger"}
+        [:i {:class "bi bi-trash"}]]])
+    [:div {:class "comments-and-form"}
      [:div {:class "comments"}
       (map #(ui/render :comment %) comments)
       (when (and public? (zero? (count comments)))
@@ -67,12 +67,14 @@
                :hx-on--after-request "this.reset()"
                :hx-target  "previous .comments"
                :hx-swap    "beforeend"
-               :hx-trigger "submit"}
+               :hx-trigger "submit"
+               :class      "overflow-hidden"}
         [:textarea {:name        "content"
+                    :style       "height: 100px;"
                     :class       "w-100 mb-2"
                     :placeholder "Something interesting"}]
-        [:button {:type "submit" :class "btn btn-primary"} "Comment"]])]]])
-
+        [:button {:type "submit" :class "btn btn-sm btn-primary float-end"}
+         [:i {:class "bi bi-send"}]]])]]])
 
 (defmethod ui/render :annotation
   [_component annotation]

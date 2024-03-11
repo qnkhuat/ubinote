@@ -137,8 +137,7 @@
                                   page-iframe-id
                                   id)
               :hx-trigger "click"}
-        [:p "New"]
-        #_[:i {:class "bi bi-pencil"}]])]]))
+        [:i {:class "bi bi-highlighter"}]])]]))
 
 (defn view-page
   [page-id _req]
