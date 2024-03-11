@@ -40,7 +40,7 @@
 (defmethod ui/render :comment
   [_component {:keys [id content creator_email created_at] :as _comment}]
   [:div {:id    (format "ubinote-comment-%d" id)
-         :class "bg-white mb-2 border-top border-dark pt-1"}
+         :class "bg-white mb-2 border-top border-dark pt-2"}
    [:div {:class "d-flex justify-content-between"}
     [:p {:class "fw-bold mb-0" :style "font-size: 0.8rem;"} creator_email]
     [:p {:class "fw-bold mb-0" :style "font-size: 0.8rem;"}
