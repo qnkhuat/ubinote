@@ -1,7 +1,6 @@
 (ns build
   (:require
-    [clojure.java.shell :refer [sh]]
-    [clojure.tools.build.api :as b]))
+   [clojure.tools.build.api :as b]))
 
 (defmacro ignore-exceptions
   "Simple macro which wraps the given expression in a try/catch block and ignores the exception if caught."
@@ -14,22 +13,10 @@
 (def uber-file "target/ubinote.jar")
 
 (defn clean [_]
-  (b/delete {:path "target/"})
-  ;; clean for frontend
-  (b/delete {:path "node_modules/"})
-  (b/delete {:path "resources/frontend/build/"})
-  (ignore-exceptions
-    (sh "rm" "-rf" "resources/frontend/build_*")))
+  (b/delete {:path "target/"}))
 
-(defn- build-frontend
+(defn- build-uberjar
   []
-  (println "Building frontend")
-  (sh "npm" "install")
-  (sh "npm" "run" "build"))
-
-(defn- build-backend
-  []
-  (println "Building backend")
   (b/copy-dir {:src-dirs   ["src" "resources"]
                :target-dir class-dir})
   (b/compile-clj {:basis     basis
@@ -42,8 +29,8 @@
   (println (format "Jar built: %s" uber-file)))
 
 (defn uberjar [_]
-  (println "Start to build")
+  (println "Build start")
   (clean nil)
-  (build-frontend)
-  (build-backend)
+  (println "Arificat cleaned")
+  (build-uberjar)
   (println "Built successfully!"))

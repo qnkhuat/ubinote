@@ -115,7 +115,8 @@
   (-> (api.u/check-404 (tc/select-one-fn :path :m/page :id id))
       (response/file-response {:root page/root})
       (response/content-type "text/html")
-      (response/header "X-Frame-Options" "SAMEORIGIN")))
+      (response/header "X-Frame-Options" "SAMEORIGIN")
+      (api.u/htmx-trigger "trigger-load-annotation")))
 
 (defmethod ui/render :page-public-link
   [_component {:keys [public_uuid id]}]

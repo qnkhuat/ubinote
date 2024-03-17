@@ -42,8 +42,8 @@
   [:div {:id    (format "ubinote-comment-%d" id)
          :class "bg-white mb-2 border-top border-dark pt-2"}
    [:div {:class "d-flex justify-content-between"}
-    [:p {:class "fw-bold mb-0" :style "font-size: 0.8rem;"} creator_email]
-    [:p {:class "fw-bold mb-0" :style "font-size: 0.8rem;"}
+    [:p {:class "fw-semibold mb-0" :style "font-size: 0.8rem;"} creator_email]
+    [:p {:class "fw-semibold mb-0" :style "font-size: 0.8rem;"}
      (str (u/format-milliseconds (- (u/->millis-from-epoch (t/local-date-time))
                                   (u/->millis-from-epoch created_at)) :relative true)
       " ago")]]

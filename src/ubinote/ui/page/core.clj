@@ -117,10 +117,11 @@
                :style       "width: 100%; display: flex; position: relative;"
                :src         (if-not public? (format "/api/page/%d/content" id) (format "/api/public/page/%s/content" public_uuid))
                :onload      (format "onIframeLoad(this, \"%s\", %s)" new-annotation-btn-id public?)}]
-     [:div {:hx-get      (if-not public? (format "/api/page/%d/annotation" id) (format "/api/public/page/%s/annotation" public_uuid))
-            ;; HACK, TODO: to get the annotation load after the page got loaded
-            :hx-ext      "ubinote-swap-response"
-            :hx-trigger  "load delay:500ms"}]
+     [:div#ubinote-page-annotation-trigger
+      {:hx-get     (if-not public? (format "/api/page/%d/annotation" id) (format "/api/public/page/%s/annotation" public_uuid))
+       :hx-ext     "ubinote-swap-response"
+       ;; trigered by onIframeLoad
+       :hx-trigger "trigger-load-annotation from:body"}]
      (when-not public?
        [:div {:id         new-annotation-btn-id
               :class      "position-absolute z-3 bg-primary text-white"

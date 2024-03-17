@@ -429,6 +429,9 @@ function onIframeLoad(iframe, newAnnotationBtnId) {
     withClickOutside(targetElement, () => {targetElement.style.visibility = "hidden";}, iframeWindow.document);
   }
   iframeWindow.onClickAnnotation = onClickAnnotation;
+
+  htmx.trigger("#ubinote-page-annotation-trigger", "trigger-load-annotation", {});
+
 }
 
 // the id for iframe that contains the page view
@@ -455,7 +458,7 @@ function deleteAnnotation(id) {
 }
 
 const IS_DEV = window.location.hostname == "localhost";
-//if (IS_DEV) htmx.logAll();
+if (IS_DEV) htmx.logAll();
 
 
 htmx.defineExtension("ubinote-swap-response", {
@@ -470,7 +473,6 @@ htmx.defineExtension("ubinote-swap-response", {
     const iframeBody = document.getElementById(PAGE_IFRAME_ID).contentWindow.document.body;
     const newNodes = []
     fragment.childNodes.forEach(function(node) {
-      console.log("NODE", node);
       const attrs = node.getAttributeNames().reduce((acc, name) => {
         return {...acc, [name]: node.getAttribute(name)};
       }, {});
