@@ -98,11 +98,11 @@
           (:title page)]
          [:div {:class "d-flex"}
           [:div {:class "dropdown"}
-           [:button {:class "btn dropdown-toggle rounded-0"
+           [:button {:class "btn dropdown-toggle rounded-0 text-white"
                      :data-bs-toggle "dropdown"
                      :data-bs-auto-close "false"
                      :type  "button"}
-            [:i {:class "bi bi-share"}]]
+            [:i {:class "bi bi-share text-white"}]]
            [:ul {:class "dropdown-menu dropdown-menu-end"}
             [:li {:class "dropdown-item"}
              (if-let [uuid (:public_uuid page)]
