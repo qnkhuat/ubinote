@@ -321,7 +321,10 @@ function toRange(root, selector = {}) {
 // ---------------------- END EXTERNAL LIB: dom-anchor-text-position ----------------------
 // handle clickoutside a node, call the callback when it's clicked outside the node
 // by default remove the listener after the first click outside
-function withClickOutside(targetElement, callback, theDocument = document, once=true) {
+function withClickOutside(targetElement, callback, originalEvent=null, theDocument = document, once=true) {
+  // original event is the event that triggered the creation of this withClickOutside
+  // it's used to prevent the callback to be called when the original event is propagating up
+  // it could set to null if you don't need that behavior
   function handleClick(event) {
     let clickedEl = event.target;
     do {
@@ -332,10 +335,11 @@ function withClickOutside(targetElement, callback, theDocument = document, once=
       // Go up the DOM
       clickedEl = clickedEl.parentNode;
     } while (clickedEl);
-    // This is a click outside.
-    callback();
-    // remove event listener if only trigger once
-    if (once) theDocument.removeEventListener("click", handleClick);
+    // This is a click outside, but make sure it's not trigger by the origianl event propgating up
+    if (originalEvent == null || event != originalEvent) {
+      callback(targetElement)
+      // remove event listener if only trigger once
+      if (once) { theDocument.removeEventListener("click", handleClick)};};
   }
   theDocument.addEventListener("click", handleClick);
 }
@@ -418,15 +422,14 @@ function onIframeLoad(iframe, newAnnotationBtnId, annotationTriggerId) {
   // step 4: inject click on annotation tracker
   function onClickAnnotation(popoverId, start, end) {
     const event = iframeWindow.event;
-    event.stopPropagation();
     const range = toRange(iframeWindow.document.body, {start, end});
     const targetElement = document.getElementById(popoverId);
     const position = rangeToToolTopPosition(event, range, targetElement.getBoundingClientRect().width);
     const iframeDistantToTop = window.pageYOffset + iframe.getBoundingClientRect().top;
+    withClickOutside(targetElement, (elt) => targetElement.style.visibility = "hidden", event, iframeWindow.document);
     targetElement.style.top = iframeDistantToTop + position.y + "px";
     targetElement.style.left = position.x + "px";
     targetElement.style.visibility = "visible";
-    withClickOutside(targetElement, () => {targetElement.style.visibility = "hidden";}, iframeWindow.document);
   }
   iframeWindow.onClickAnnotation = onClickAnnotation;
 
@@ -460,7 +463,7 @@ function deleteAnnotation(id) {
 }
 
 const IS_DEV = window.location.hostname == "localhost";
-if (IS_DEV) htmx.logAll();
+//if (IS_DEV) htmx.logAll();
 
 htmx.defineExtension("ubinote-swap-response", {
   //onEvent: function(name, evt) {
