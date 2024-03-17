@@ -27,7 +27,8 @@
            :hx-trigger "load, trigger-list-page from:body"
            :hx-get     "/api/page"}]]))
 
-(def not-found
+(defn not-found
+  []
   (template/html-response [:p "Not found :("]))
 
 (defn login
@@ -121,7 +122,7 @@
       {:hx-get     (if-not public? (format "/api/page/%d/annotation" id) (format "/api/public/page/%s/annotation" public_uuid))
        :hx-ext     "ubinote-swap-response"
        ;; trigered by onIframeLoad
-       :hx-trigger "trigger-load-annotation from:body"}]
+       :hx-trigger "trigger-load-annotation from:body once"}]
      (when-not public?
        [:div {:id         new-annotation-btn-id
               :class      "position-absolute z-3 bg-primary text-white"
@@ -148,7 +149,7 @@
   [page-uuid _req]
   (if-let [page (tc/select-one :m/page :public_uuid page-uuid)]
     (view-page* page true)
-    not-found))
+    (not-found)))
 
 (defn user-page
   [_req]

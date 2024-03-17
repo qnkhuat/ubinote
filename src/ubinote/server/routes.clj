@@ -45,4 +45,4 @@
   (GET "/user" _req (require-login ui.page/user-page))
   (GET "/login" _req (require-setup ui.page/login))
   (GET "/setup" _req ui.page/setup)
-  (route/not-found ui.page/not-found))
+  (route/not-found (ui.page/not-found)))

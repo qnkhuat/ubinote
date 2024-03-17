@@ -430,8 +430,12 @@ function onIframeLoad(iframe, newAnnotationBtnId) {
   }
   iframeWindow.onClickAnnotation = onClickAnnotation;
 
-  htmx.trigger("#ubinote-page-annotation-trigger", "trigger-load-annotation", {});
-
+  function onLoadTrigger(elt) {
+    htmx.trigger("#ubinote-page-annotation-trigger", "trigger-load-annotation", {})
+    // trigger this only once when htmx is loaded
+    htmx.off("body", "htmx:load", onLoadTrigger);
+  }
+  htmx.on("body", "htmx:load", onLoadTrigger)
 }
 
 // the id for iframe that contains the page view
@@ -459,7 +463,6 @@ function deleteAnnotation(id) {
 
 const IS_DEV = window.location.hostname == "localhost";
 if (IS_DEV) htmx.logAll();
-
 
 htmx.defineExtension("ubinote-swap-response", {
   //onEvent: function(name, evt) {

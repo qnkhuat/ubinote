@@ -83,7 +83,6 @@
   (= run-mode :prod))
 
 
-#_(toucan2.core/delete! :m/user)
 (def ^:private db-setup* (atom false))
 
 (defn setup?

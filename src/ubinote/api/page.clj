@@ -124,7 +124,6 @@
     [:div {:id "ubinote-create-public-link"
            :hx-trigger :click
            :hx-get  "/api/age"}
-
      "Public link: "
      [:a {:href    public-age-url
           :x-data (format "{publicPageURL: \"%s\"}" public-age-url)
