@@ -488,7 +488,6 @@ htmx.defineExtension("ubinote-swap-response", {
       // these divs are apppend to the document, not iframedocument because it's easier to manage
       // bootstrap, htmx will works on it
       const popoverNode = document.createElement("div");
-      //htmx.swap()
       node.childNodes.forEach((child) => {
         popoverNode.appendChild(child);
       });
@@ -496,7 +495,7 @@ htmx.defineExtension("ubinote-swap-response", {
       popoverNode.style.position = "absolute";
       popoverNode.style.visibility = "hidden";
       popoverNode.style.top = "0px";
-      //document.body.appendChild(popoverNode);
+      document.body.appendChild(popoverNode);
       newNodes.push(popoverNode);
     })
     // return the new nodes so htmx can manage them
