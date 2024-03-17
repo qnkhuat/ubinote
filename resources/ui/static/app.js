@@ -369,7 +369,7 @@ function rangeToToolTopPosition(event, range, tooltipWidth) {
   }
 }
 
-function onIframeLoad(iframe, newAnnotationBtnId) {
+function onIframeLoad(iframe, newAnnotationBtnId, annotationTriggerId) {
   // step 0: update iframe Document state
   resizeIframe(iframe);
 
@@ -430,12 +430,10 @@ function onIframeLoad(iframe, newAnnotationBtnId) {
   }
   iframeWindow.onClickAnnotation = onClickAnnotation;
 
-  function onLoadTrigger(elt) {
-    htmx.trigger("#ubinote-page-annotation-trigger", "trigger-load-annotation", {})
-    // trigger this only once when htmx is loaded
-    htmx.off("body", "htmx:load", onLoadTrigger);
-  }
-  htmx.on("body", "htmx:load", onLoadTrigger)
+  // make sure htmx processed this DOM before triggering it
+  // since it's possible for the iframe to load all contents before htmx proessed all the DOM
+  htmx.process(document.getElementById(annotationTriggerId));
+  htmx.trigger(`#${annotationTriggerId}`, "trigger-load-annotation", {})
 }
 
 // the id for iframe that contains the page view

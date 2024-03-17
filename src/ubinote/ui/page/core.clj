@@ -84,6 +84,7 @@
    :navbar? false))
 
 (def ^:private new-annotation-btn-id "ubinote-new-annotation-btn")
+(def ^:private annotation-trigger-id "ubinote-page-annotation-trigger")
 (def ^:private page-iframe-id "ubinote-page-content")
 
 (defn- view-page*
@@ -117,12 +118,13 @@
                :frameborder "0"
                :style       "width: 100%; display: flex; position: relative;"
                :src         (if-not public? (format "/api/page/%d/content" id) (format "/api/public/page/%s/content" public_uuid))
-               :onload      (format "onIframeLoad(this, \"%s\", %s)" new-annotation-btn-id public?)}]
-     [:div#ubinote-page-annotation-trigger
-      {:hx-get     (if-not public? (format "/api/page/%d/annotation" id) (format "/api/public/page/%s/annotation" public_uuid))
+               :onload      (format "onIframeLoad(this, \"%s\", \"%s\")" new-annotation-btn-id  annotation-trigger-id)}]
+     [:div
+      {:id         annotation-trigger-id
+       :hx-get     (if-not public? (format "/api/page/%d/annotation" id) (format "/api/public/page/%s/annotation" public_uuid))
        :hx-ext     "ubinote-swap-response"
        ;; trigered by onIframeLoad
-       :hx-trigger "trigger-load-annotation from:body once"}]
+       :hx-trigger "trigger-load-annotation from:body"}]
      (when-not public?
        [:div {:id         new-annotation-btn-id
               :class      "position-absolute z-3 bg-primary text-white"

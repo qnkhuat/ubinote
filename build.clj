@@ -31,6 +31,6 @@
 (defn uberjar [_]
   (println "Build start")
   (clean nil)
-  (println "Arificat cleaned")
+  (println "Cleaned artifacts")
   (build-uberjar)
   (println "Built successfully!"))
