@@ -494,7 +494,9 @@ htmx.defineExtension("ubinote-swap-response", {
       });
       popoverNode.id = popoverId;
       popoverNode.style.position = "absolute";
-      document.body.appendChild(popoverNode);
+      popoverNode.style.visibility = "hidden";
+      popoverNode.style.top = "0px";
+      //document.body.appendChild(popoverNode);
       newNodes.push(popoverNode);
     })
     // return the new nodes so htmx can manage them

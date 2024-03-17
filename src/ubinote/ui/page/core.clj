@@ -128,7 +128,10 @@
      (when-not public?
        [:div {:id         new-annotation-btn-id
               :class      "position-absolute z-3 bg-primary text-white"
-              :style      "padding: 3px 8px; cursor: pointer;"
+              :style      {:padding    "3px 8px"
+                           :visibility "hidden"
+                           :top        "0px"
+                           :cursor     "pointer"}
               :hx-ext     "ubinote-swap-response"
               :hx-post    "/api/annotation"
               :hx-on--after-request
