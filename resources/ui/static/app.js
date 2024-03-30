@@ -403,13 +403,13 @@ function onIframeLoad(iframe, newAnnotationBtnId, annotationTriggerId) {
       `
   iframeWindow.document.head.appendChild(style);
 
-  // step 3: inject mouse up tracker
+  // step 2: inject mouse up tracker
   iframeWindow.document.addEventListener("mouseup", (event) => {
     // if user is selecting, show tooltip
     const selection = iframeWindow.getSelection();
     const tooltip = document.getElementById(newAnnotationBtnId);
     const tooltipWidth = tooltip.getBoundingClientRect().width;
-    if (isSelecting(selection) ) {
+    if (isSelecting(selection) && tooltip.style.visibility == "hidden") {
       const {x, y} = rangeToToolTopPosition(event, selection.getRangeAt(0), tooltipWidth);
       tooltip.style.visibility = "visible";
       tooltip.style.top = `${y}px`;
@@ -419,7 +419,7 @@ function onIframeLoad(iframe, newAnnotationBtnId, annotationTriggerId) {
     }
   })
 
-  // step 4: inject click on annotation tracker
+  // step 3: inject click on annotation tracker
   function onClickAnnotation(popoverId, start, end) {
     const event = iframeWindow.event;
     const range = toRange(iframeWindow.document.body, {start, end});
