@@ -15,7 +15,7 @@
 
 (def supported-dbms
   "List of dbms we support."
-  #{:postgres :h2})
+  #{:postgres :h2 :sqlite})
 
 ;; ------------------------------------------- Extend jdbc protocols -------------------------------------------
 (defn clob->str
@@ -71,7 +71,8 @@
 
 (def ^:private db-type->dialect-name
   {:postgresql :ansi
-   :h2         :h2})
+   :h2         :h2
+   :sqlite     :ansi})
 
 (defn db-type
   "Return the db type based on connection-url"
@@ -89,10 +90,12 @@
      "DEFRAG_ALWAYS"  "TRUE"
      :connection-url  connection-url}
     (case (db-type connection-url)
-      :h2         {:classname       "org.h2.Driver"
-                   :subprotocol     "h2:file"}
-      :postgresql {:classname       "org.postgresql.Driver"
-                   :subprotocol     "postgresql"}))))
+      :sqlite     {:classname   "org.sqlite.JDBC"
+                   :subprotocol "sqlite"}
+      :h2         {:classname   "org.h2.Driver"
+                   :subprotocol "h2:file"}
+      :postgresql {:classname   "org.postgresql.Driver"
+                   :subprotocol "postgresql"}))))
 
 (defn- english-upper-case
   "Use this function when you need to upper-case an identifier or table name. Similar to `clojure.string/upper-case`
@@ -108,7 +111,7 @@
  (update (sql/get-dialect :ansi) :quote (fn [quote]
                                           (comp english-upper-case quote))))
 
-(def ^:dynamic *application-db*
+(def ^:private application-db
   (db-details (cfg/config-str :db-connection-url)))
 
 (m/defmethod tc.pipeline/build :around :default
@@ -120,9 +123,10 @@
                                          :dialect (db-type->dialect-name (db-type)))]
     (next-method query-type model parsed-args resolved-query)))
 
+
 (m/defmethod tc/do-with-connection :default
   [_connectable f]
-  (tc/do-with-connection *application-db* f))
+  (tc/do-with-connection application-db f))
 
 (reset! t2.honeysql/global-options
         {:quoted       true

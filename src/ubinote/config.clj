@@ -28,7 +28,8 @@
 ;; TODO: validate config with spec
 (def default
   {:un-run-mode          "prod"
-   :un-db-connection-url (format "jdbc:h2:file:%s" (.getAbsolutePath (io/file "ubinote")))
+   ;:un-db-connection-url (format "jdbc:h2:file:%s" (.getAbsolutePath (io/file "ubinote")))
+   :un-db-connection-url (format "jdbc:sqlite:file:%s" (.getAbsolutePath (io/file "ubinote.sqlite")))
    :un-port              "8000"
    :un-max-session-age   "20160"      ;; session length in minutes (14 days)
    :un-single-file-bin   nil          ;; path to single-file binary
@@ -82,11 +83,10 @@
 (def is-prod?
   (= run-mode :prod))
 
-
 (def ^:private db-setup* (atom false))
 
 (defn setup?
   "Did the app set up successfully?
   Meaning we created an user."
   []
-  (or @db-setup* (reset! db-setup* (tc/exists? :m/user))))
+  (or @db-setup* (reset! db-setup* (try (tc/exists? :m/user) (catch Exception _e false)))))

@@ -31,6 +31,7 @@
   org.clojure/java.jdbc                     {:mvn/version "0.7.12"}
   com.h2database/h2                         {:mvn/version "2.1.210"}  ; H2 driver
   org.postgresql/postgresql                 {:mvn/version "42.2.13"}  ; Postgres driver
+  org.xerial/sqlite-jdbc                    {:mvn/version "3.45.2.0"} ; sqlite jdbc driver
   com.mchange/c3p0                          {:mvn/version "0.9.5.5"}
   io.github.camsaul/toucan2                 {:mvn/version "1.0.537"}
 

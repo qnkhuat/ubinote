@@ -12,7 +12,7 @@
 (def basis (b/create-basis {:project "deps.edn"}))
 (def uber-file "target/ubinote.jar")
 
-(defn clean [_]
+(defn clean []
   (b/delete {:path "target/"}))
 
 (defn- build-uberjar
@@ -30,7 +30,7 @@
 
 (defn uberjar [_]
   (println "Build start")
-  (clean nil)
+  (clean)
   (println "Cleaned artifacts")
   (build-uberjar)
   (println "Built successfully!"))

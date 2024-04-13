@@ -1,7 +1,7 @@
 (ns ubinote.migration
   "This migration should works for both h2 and postgres"
   (:require
-   [clojure.string :as string]
+   [clojure.string :as str]
    [clojure.tools.logging :as log]
    [next.jdbc :as jdbc]
    [toucan2.core :as tc]
@@ -9,15 +9,29 @@
 
 (def migrations (atom []))
 
-(def postgres? (= :postgresql (db/db-type)))
+(defn- create-index [table field]
+  (format "CREATE INDEX idx_%s_%s ON %s (%s);" table field table field))
+
+(defn- postgres?->sqlite
+  "If protgres db, leave it as it, otherwise convert to h2."
+  [query]
+  (case (db/db-type)
+    :postgres
+    query
+
+    :sqlite
+    (case (str/upper-case query)
+      "NOW()" "CURRENT_TIMESTAMP"
+      "SERIAL" "INTEGER" ;; integer primary key
+      query)))
 
 (defn- create-migrations-table-if-needed! []
   (log/info "Creating migration table if needed...")
   (tc/with-connection [conn]
-    (with-open [stmt (jdbc/prepare conn ["CREATE TABLE IF NOT EXISTS migration (
-                                         name VARCHAR PRIMARY KEY NOT NULL,
-                                         created_at TIMESTAMP NOT NULL DEFAULT now());"])]
-      (jdbc/execute! stmt))))
+    (jdbc/execute! conn [(format "CREATE TABLE IF NOT EXISTS migration (
+                                 name VARCHAR PRIMARY KEY NOT NULL,
+                                 created_at TIMESTAMP NOT NULL DEFAULT %s);"
+                                 (postgres?->sqlite "now()"))])))
 
 (defn- previous-migrations []
   (or (tc/select-fn-set :name :m/migration) #{}))
@@ -33,12 +47,13 @@
         (tc/with-transaction [conn]
           (log/info "Running migration" migration-name)
           (try
-           (with-open [stmt (jdbc/prepare conn [statement-or-map])]
-             (jdbc/execute! stmt)
-             (tc/insert! :conn conn :m/migration :name migration-name))
+           (log/infof "Migration statement: %s" statement-or-map)
+           (jdbc/execute! conn [statement-or-map])
+           (tc/insert! :m/migration :name migration-name)
            (catch Exception e
              (throw (ex-info (format "Data migration %s failed: %s" migration-name (.getMessage e)) (or (ex-data e) {})))))))))
   (log/info "Migrations finished"))
+#_(migrate!*)
 
 (def ^{:doc "Memoized migrate!* to only run once."} migrate!
   (memoize migrate!*))
@@ -58,73 +73,59 @@
   `(defmigration* ~(str migration-name) ~sql-statement-or-map))
 
 ;; --------------------------- Utils ---------------------------
-(defn- create-index [table field]
-  (format "CREATE INDEX idx_%s_%s ON %s (%s);" table field table field))
-
-(defn- postgres?->h2
-  "If protgres db, leave it as it, otherwise convert to h2."
-  [query]
-  (if postgres?
-    query
-    (case (string/upper-case query)
-      "TEXT"   "CLOB"
-      ;; intentionally have a space here
-      "[]"     "ARRAY")))
-
 
 ;; --------------------------- Migrations ---------------------------
 (defmigration create-user-table
   ;; we user core_user instead user because user is a preserved table for most dbs
   ;; TODO: can we use TEXT for email, got future not supported when apply not null for CLOB on h2
   (str "CREATE TABLE core_user (
-       id SERIAL PRIMARY KEY NOT NULL,
-       email VARCHAR(254) NOT NULL UNIQUE,"
-       "first_name VARCHAR(254) NOT NULL,
+       id "(postgres?->sqlite "SERIAL")" PRIMARY KEY NOT NULL,
+       email VARCHAR(254) NOT NULL UNIQUE,
+       first_name VARCHAR(254) NOT NULL,
        last_name VARCHAR(254) NOT NULL,
        password VARCHAR(254) NOT NULL,
-       created_at TIMESTAMP NOT NULL DEFAULT now(),
-       updated_at TIMESTAMP NOT NULL DEFAULT now()
-       );"
+       created_at TIMESTAMP NOT NULL DEFAULT "(postgres?->sqlite "now()")",
+       updated_at TIMESTAMP NOT NULL DEFAULT "(postgres?->sqlite "now()")");"
        (create-index "core_user" "email")))
 
 (defmigration create-page-table
   (str "CREATE TABLE page (
-       id SERIAL PRIMARY KEY NOT NULL,
+       id "(postgres?->sqlite "SERIAL")" PRIMARY KEY NOT NULL,
        creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        url VARCHAR(254) NOT NULL,
        tags VARCHAR(32),
        domain VARCHAR(254) NOT NULL,
        path VARCHAR(254) NOT NULL,
        title VARCHAR(254),
-       description " (postgres?->h2 "TEXT") ","
+       description " (postgres?->sqlite "TEXT") ","
        "status VARCHAR(16) NOT NULL,
-       created_at TIMESTAMP NOT NULL DEFAULT now(),
-       updated_at TIMESTAMP NOT NULL DEFAULT now());"
+       created_at TIMESTAMP NOT NULL DEFAULT "(postgres?->sqlite "now()")",
+       updated_at TIMESTAMP NOT NULL DEFAULT "(postgres?->sqlite "now()")");"
        (create-index "page" "creator_id")
        (create-index "page" "url")
        (create-index "page" "path")))
 
 (defmigration create-annotation-table
   (str "CREATE TABLE annotation (
-       id SERIAL PRIMARY KEY NOT NULL,
+       id "(postgres?->sqlite "SERIAL")" PRIMARY KEY NOT NULL,
        creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        page_id INTEGER NOT NULL REFERENCES page (id) ON DELETE CASCADE,
        color VARCHAR(32) NOT NULL,
        coordinate VARCHAR(254) NOT NULL,
-       created_at TIMESTAMP NOT NULL DEFAULT now(),
-       updated_at TIMESTAMP NOT NULL DEFAULT now());"
+       created_at TIMESTAMP NOT NULL DEFAULT "(postgres?->sqlite "now()")",
+       updated_at TIMESTAMP NOT NULL DEFAULT "(postgres?->sqlite "now()")");"
        (create-index "annotation" "creator_id")
        (create-index "annotation" "page_id")
        (create-index "annotation" "coordinate")))
 
 (defmigration create-comment-table
   (str "CREATE TABLE comment (
-       id SERIAL PRIMARY KEY NOT NULL,
+       id "(postgres?->sqlite "SERIAL")" PRIMARY KEY NOT NULL,
        creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
        annotation_id INTEGER NOT NULL REFERENCES annotation (id) ON DELETE CASCADE,
-       content " (postgres?->h2 "TEXT") " NOT NULL,"
-       "created_at TIMESTAMP NOT NULL DEFAULT now(),
-       updated_at TIMESTAMP NOT NULL DEFAULT now());"
+       content " (postgres?->sqlite "TEXT") " NOT NULL,"
+       "created_at TIMESTAMP NOT NULL DEFAULT "(postgres?->sqlite "now()")",
+       updated_at TIMESTAMP NOT NULL DEFAULT "(postgres?->sqlite "now()")");"
        (create-index "comment" "creator_id")
        (create-index "comment" "annotation_id")))
 
@@ -132,7 +133,7 @@
   (str "CREATE TABLE session (
        id VARCHAR(254) PRIMARY KEY NOT NULL,
        creator_id INTEGER NOT NULL REFERENCES core_user (id) ON DELETE CASCADE,
-       created_at TIMESTAMP NOT NULL DEFAULT now());"
+       created_at TIMESTAMP NOT NULL DEFAULT "(postgres?->sqlite "now()")");"
        (create-index "session" "id")))
 
 (defmigration create-password-salt

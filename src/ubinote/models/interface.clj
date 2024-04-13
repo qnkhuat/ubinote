@@ -8,10 +8,10 @@
 (def json-out (fn [x] (json/parse-string x keyword)))
 
 (defn- add-created-at-timestamp [obj & _]
-  (assoc obj :created_at :%now))
+  (assoc obj :created_at [:raw "CURRENT_TIMESTAMP"]))
 
 (defn- add-updated-at-timestamp [obj & _]
-  (assoc obj :updated_at :%now))
+  (assoc obj :updated_at [:raw "CURRENT_TIMESTAMP"]))
 
 (tc/define-before-insert :hooks/timestamped
   [instance]

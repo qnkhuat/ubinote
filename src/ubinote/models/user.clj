@@ -53,7 +53,8 @@
          {:email (str/lower-case email)}))
 
 (tc/define-before-update :m/user
-  [{:keys [password] :as user}]
-  (merge user
-         (when password
-           (hash-password user))))
+  [user]
+  (let [{:keys [password]} (tc/changes user)]
+    (merge user
+           (when password
+             (hash-password user)))))

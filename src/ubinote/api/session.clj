@@ -30,6 +30,18 @@
         (mw.session/set-session-cookie {} session)
         (api.u/htmx-redirect "/"))))
 
+#_(tc/debug
+   (tc/insert-returning-pk! :m/session {:user_id 1}))
+
+#_(tc/insert-returning-instance! :m/session {:user_id 1})
+
+#_(tc/select-one :m/session)
+#_(tc/debug
+   (tc/update-returning-pks! :m/user 1 {:first_name "NEW NGOC"}))
+#_(tc/select-one-pk :m/session)
+
+#_toucan2.jdbc.pipeline
+
 (defn delete-session
   [req]
   (let [session-id (:ubinote-session-id req)]
