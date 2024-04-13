@@ -3,11 +3,11 @@
    [cheshire.core :as json]
    [compojure.coercions :refer [as-int]]
    [compojure.core :refer [context defroutes POST DELETE]]
-   [java-time :as t]
+   [java-time.api :as t]
    [malli.core :as mc]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
-   [ubinote.ui.core :as ui]
+   [ubinote.ui :as ui]
    [ubinote.util :as u]))
 
 (def NewAnnotation

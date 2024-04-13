@@ -42,7 +42,7 @@
  :aliases
  {; clj -M:dev
   :dev
-  {:extra-paths ["dev/src"]
+  {:extra-paths ["dev/src" "test/"]
    :extra-deps  {cider/cider-nrepl   {:mvn/version "0.27.1"}
                  hashp/hashp         {:mvn/version "0.2.1"}}
    :jvm-opts  ["-Dun.run.mode=dev"
@@ -54,7 +54,7 @@
 
   ; clj -M:run
   :run
-  {:main-opts ["-m" "ubinote.core"]}
+  {:main-opts ["-m" "ubinote"]}
 
   ; clj -X:h2-shell
   :h2-shell

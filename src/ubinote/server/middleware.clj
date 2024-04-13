@@ -2,7 +2,7 @@
   (:require
    [cheshire.generate :as json.generate]
    [compojure.response :refer [Renderable]]
-   [java-time :as t]
+   [java-time.api :as t]
    [ring.middleware.cookies :refer [wrap-cookies]]
    [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
    [ring.middleware.keyword-params :refer [wrap-keyword-params]]
@@ -17,7 +17,7 @@
 
 ;; For java.time classes use the date util function that writes them as ISO-8601
 (json.generate/add-encoder Temporal (fn [t json-generator]
-                                      (.writeString json-generator (java-time/format t))))
+                                      (.writeString json-generator (t/format t))))
 
 (defn- wrap-resp-if-needed
   " Enable endpoint to be able to just return an object or nil

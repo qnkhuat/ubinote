@@ -1,8 +1,8 @@
-(ns ubinote.ui.page.core
+(ns ubinote.ui.page
   (:require
    [toucan2.core :as tc]
-   [ubinote.ui.core :as ui]
-   [ubinote.ui.template.core :as template]))
+   [ubinote.ui :as ui]
+   [ubinote.ui.template :as template]))
 
 (defn index
   [_req]

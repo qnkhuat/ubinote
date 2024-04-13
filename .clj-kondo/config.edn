@@ -1,13 +1,14 @@
 {:linters
  {:unsorted-required-namespaces {:level :warning}
-
+  :refer-all                    {:level :warning :exclude [clojure.test]}
   :consistent-alias
   {:aliases
    {cheshire.core                                      json
     toucan2.core                                       tc
     hiccup2.core                                       h
+    ubinote.api.util                                   api.u
     ubinote.config                                     cfg
+    ubinote.util.core                                  u
     ubinote.ui.core                                    ui
     ubinote.ui.page.core                               ui.page
-    ubinote.ui.template.core                           template
-    ubinote.api.util                                   api.u}}}}
+    ubinote.ui.template.core                           template}}}}

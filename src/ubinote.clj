@@ -1,4 +1,4 @@
-(ns ubinote.core
+(ns ubinote
   (:gen-class)
   (:require
    [ubinote.server :as server]))

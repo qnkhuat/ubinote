@@ -5,7 +5,7 @@
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
    [ubinote.models.common.schema :as schema]
-   [ubinote.ui.core :as ui]))
+   [ubinote.ui :as ui]))
 
 (def NewUser
   [:map

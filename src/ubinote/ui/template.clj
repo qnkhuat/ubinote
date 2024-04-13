@@ -1,4 +1,4 @@
-(ns ubinote.ui.template.core
+(ns ubinote.ui.template
   (:require
    [clojure.string :as str]
    [hiccup.page :as h.page]

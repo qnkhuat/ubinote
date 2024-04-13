@@ -7,7 +7,7 @@
    [ubinote.api.routes :as api.routes]
    [ubinote.api.util :as api.u]
    [ubinote.config :as cfg]
-   [ubinote.ui.page.core :as ui.page]))
+   [ubinote.ui.page :as ui.page]))
 
 ;; TODO: should be a middleware
 ;; TODO#2: these redirect should be a real direct, not a rendering

@@ -6,7 +6,7 @@
    [ubinote.api.page :as api.page]
    [ubinote.api.util :as api.u]
    [ubinote.models.page :as page]
-   [ubinote.ui.core :as ui]))
+   [ubinote.ui :as ui]))
 
 (defn get-public-page
   [uuid _req]

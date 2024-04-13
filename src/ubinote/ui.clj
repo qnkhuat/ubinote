@@ -1,7 +1,7 @@
-(ns ubinote.ui.core
+(ns ubinote.ui
   (:require
    [potemkin :as p]
-   [ubinote.ui.template.core :as template]))
+   [ubinote.ui.template :as template]))
 
 (p/import-vars
  [template
