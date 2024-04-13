@@ -2,6 +2,7 @@
 *.mv.db
 *.trace.db
 .ubinote/
+local/
 
 # clojure
 pom.xml
