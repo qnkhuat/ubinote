@@ -8,12 +8,14 @@
    [ubinote.models.page :as page]
    [ubinote.server.db :as db]
    [ubinote.server.middleware :as middleware]
-   [ubinote.server.routes :as routes]))
+   [ubinote.server.routes :as routes]
+   [ubinote.toucan2]))
 
 (comment
  ;; make sure all models are loaded
  models/keepme
- db/keepme)
+ db/keepme
+ ubinote.toucan2/keepme)
 
 ;; ensure we use a `BasicContextSelector` instead of a `ClassLoaderContextSelector` for log4j2. Ensures there is only
 ;; one LoggerContext instead of one per classpath root. Practical effect is that now `(LogManager/getContext true)`

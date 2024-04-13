@@ -47,7 +47,7 @@
         (tc/with-transaction [conn]
           (log/info "Running migration" migration-name)
           (try
-           (log/infof "Migration statement: %s" statement-or-map)
+           (log/infof "Migration statement:\n%s" statement-or-map)
            (jdbc/execute! conn [statement-or-map])
            (tc/insert! :m/migration :name migration-name)
            (catch Exception e

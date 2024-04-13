@@ -8,7 +8,7 @@
     hiccup2.core                                       h
     ubinote.api.util                                   api.u
     ubinote.config                                     cfg
-    ubinote.util.core                                  u
-    ubinote.ui.core                                    ui
-    ubinote.ui.page.core                               ui.page
-    ubinote.ui.template.core                           template}}}}
+    ubinote.util                                       u
+    ubinote.ui                                         ui
+    ubinote.ui.page                                    ui.page
+    ubinote.ui.template                                template}}}}
