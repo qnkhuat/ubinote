@@ -54,7 +54,7 @@
 
 (tc/define-before-update :m/user
   [user]
-  (let [{:keys [password]} (tc/changes user)]
+  (let [{:keys [password] :as changes} (tc/changes user)]
     (merge user
            (when password
-             (hash-password user)))))
+             (hash-password changes)))))

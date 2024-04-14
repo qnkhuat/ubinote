@@ -1,6 +1,5 @@
 (ns ubinote.toucan2
   (:require
-   [clojure.java.jdbc :as jdbc]
    [honey.sql :as sql]
    [methodical.core :as m]
    [toucan2.core :as tc]
@@ -13,14 +12,6 @@
 (comment
  ;; need this so toucan2 works properly with sqlite
  ubinote.toucan2.sqlite3)
-
-;; ------------------------------------------- Extend jdbc protocols -------------------------------------------
-
-;; Proudly stolen from https://github.com/metabase/metabase/blob/master/src/metabase/jdbc_protocols.clj
-(extend-protocol jdbc/IResultSetReadColumn
-  org.postgresql.util.PGobject
-  (result-set-read-column [clob _ _]
-    (.getValue clob)))
 
 ;; ------------------------------------------- Toucan2 setup -------------------------------------------
 

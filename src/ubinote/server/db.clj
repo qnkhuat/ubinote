@@ -12,10 +12,9 @@
 ;; ------------------------------------------- DB connections -------------------------------------------
 (defn- connection-pool
   [{:keys [connection-url classname] :as spec}]
-  ;; https://github.com/metabase/toucan/blob/29a921750f3051dce350255cfbd33512428bc3f8/docs/connection-pools.md#creating-the-connection-pool
   {:datasource (doto (ComboPooledDataSource.)
                  (.setDriverClass                  classname)
-                 (.setJdbcUrl                      connection-url #_(str "jdbc:" subprotocol ":" subname))
+                 (.setJdbcUrl                      connection-url)
                  (.setMaxIdleTimeExcessConnections (* 30 60))   ; 30 seconds
                  (.setMaxIdleTime                  (* 3 60 60)) ; 3 minutes
                  (.setInitialPoolSize              3)
@@ -52,6 +51,6 @@
       :postgresql {:classname   "org.postgresql.Driver"
                    :subprotocol "postgresql"}))))
 
-(def application-db
+(def ^:dynamic *application-db*
   "The application db details."
   (db-details (cfg/config-str :db-connection-url)))
