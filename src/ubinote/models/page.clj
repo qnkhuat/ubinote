@@ -12,7 +12,6 @@
    [ubinote.util.b64 :as b64]
    [ubinote.util.fs :as fs]))
 
-
 ;; ------------------------------- Toucan methods -------------------------------
 
 (m/defmethod tc/table-name :m/page

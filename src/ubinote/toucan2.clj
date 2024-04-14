@@ -8,7 +8,6 @@
    [ubinote.server.db :as db]
    [ubinote.toucan2.sqlite3]))
 
-
 (comment
  ;; need this so toucan2 works properly with sqlite
  ubinote.toucan2.sqlite3)

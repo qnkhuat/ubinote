@@ -34,7 +34,7 @@
   [id _req]
   (->> (tc/hydrate (tc/select :m/annotation :page_id id) :comments)
        (map #(ui/render :annotation %))
-       ui/hiccup->html-response))
+       ui/render-hiccup-fragment))
 
 (defn render-annotation
   "Options:
@@ -63,12 +63,12 @@
       (when (and public? (zero? (count comments)))
         [:p "No comments"])]
      (when-not public?
-       [:form {:hx-post    (format "/api/annotation/%d/comment" id)
+       [:form {:hx-post              (format "/api/annotation/%d/comment" id)
                :hx-on--after-request "this.reset()"
-               :hx-target  "previous .comments"
-               :hx-swap    "beforeend"
-               :hx-trigger "submit"
-               :class      "overflow-hidden"}
+               :hx-target            "previous .comments"
+               :hx-swap              "beforeend"
+               :hx-trigger           "submit"
+               :class                "overflow-hidden"}
         [:textarea {:name        "content"
                     :style       "height: 100px;"
                     :class       "w-100 mb-2"
@@ -107,7 +107,7 @@
   [_req]
   (->> (tc/select :m/page {:order-by [[:created_at :desc]]})
        (ui/render :pages-table)
-       ui/hiccup->html-response))
+       ui/render-hiccup-fragment))
 
 (defn- get-page-content
   "Returns the static file of the page"
@@ -149,7 +149,7 @@
     (when (:public_uuid page)
       (throw (ex-info "Page is already public" {:status-code 400})))
     (tc/update! :m/page id {:public_uuid uuid})
-    (ui/hiccup->html-response (ui/render :page-public-link {:public_uuid uuid :id id}))))
+    (ui/render-hiccup-fragment (ui/render :page-public-link {:public_uuid uuid :id id}))))
 
 (defn- disable-public
   [id _req]
@@ -157,7 +157,7 @@
     (when-not (:public_uuid page)
       (throw (ex-info "Page is not public" {:status-code 400})))
     (tc/update! :m/page id {:public_uuid nil})
-    (ui/hiccup->html-response
+    (ui/render-hiccup-fragment
      [:button {:class "btn"
                :hx-trigger "click"
                :hx-swap    "outerHTML"

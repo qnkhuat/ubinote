@@ -51,3 +51,12 @@
       LocalDateTime  (->millis-from-epoch (t/offset-date-time t (t/zone-offset 0)))
       LocalTime      (->millis-from-epoch (t/offset-date-time (t/local-date "1970-01-01") t (t/zone-offset 0)))
       OffsetTime     (->millis-from-epoch (t/offset-date-time (t/local-date "1970-01-01") t (t/zone-offset t))))))
+
+(defn timestamp->ago-text
+  "Returns a text from now to timestamp
+
+    (timestamp->ago-text 2-hours-ago-timestamp) ;; => two hours ago"
+  [timestamp]
+  (str (format-milliseconds (- (->millis-from-epoch (t/local-date-time))
+                               (->millis-from-epoch timestamp)) :relative true)
+       " ago"))

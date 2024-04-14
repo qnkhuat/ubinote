@@ -29,7 +29,7 @@
   [uuid _req]
   (->> (tc/hydrate (tc/select :m/annotation :page_id (tc/select-one-pk :m/page :public_uuid uuid)) :comments)
        (map #(ui/render :public-annotation %))
-       ui/hiccup->html-response))
+       ui/render-hiccup-fragment))
 
 (defroutes routes
   (context "/page" []

@@ -6,7 +6,8 @@
    [ring.util.codec :as codec]
    [toucan2.core :as tc]
    [ubinote.server :as server]
-   [ubinote.server.middleware.session :as mw.session]))
+   [ubinote.server.middleware.session :as mw.session]
+   [ubinote.ui.template :as template]))
 
 (defonce ^:private instance* (atom nil))
 
@@ -26,16 +27,16 @@
 (defn- build-query-string
   [query-parameters]
   (str/join \& (letfn [(url-encode [s]
-                                  (cond-> s
-                                    (keyword? s) name
-                                    (some? s)    codec/url-encode))
+                         (cond-> s
+                           (keyword? s) name
+                           (some? s)    codec/url-encode))
                        (encode-key-value [k v]
                          (str (url-encode k) \= (url-encode v)))]
-                      (flatten (for [[k value-or-values] query-parameters]
-                                 (if (sequential? value-or-values)
-                                   (for [v value-or-values]
-                                     (encode-key-value k v))
-                                   [(encode-key-value k value-or-values)]))))))
+                 (flatten (for [[k value-or-values] query-parameters]
+                            (if (sequential? value-or-values)
+                              (for [v value-or-values]
+                                (encode-key-value k v))
+                              [(encode-key-value k value-or-values)]))))))
 
 (defn- build-mock-request
   [{:keys [query url body method session-id]}]
@@ -63,14 +64,17 @@
   ([user-id method url query body]
    (let [session-id (or (tc/select-one-pk :m/session :user_id user-id)
                         (tc/insert-returning-pk! :m/session {:user_id user-id}))]
-     (-> (build-mock-request {:url        url
-                              :method     method
-                              :query      query
-                              :body       body
-                              :session-id session-id})
-         server/app
-         :body
-         (json/parse-string keyword)))))
+     (binding [template/*return-raw-hiccup* true]
+       (let [resp (-> (build-mock-request {:url        url
+                                           :method     method
+                                           :query      query
+                                           :body       body
+                                           :session-id session-id})
+                      server/app)
+             body (:body resp)]
+         (case (get-in resp [:headers "Content-Type"])
+           "text/html" body ;; this should be hiccup
+           (json/parse-string_keyword body)))))))
 
 (defmacro p
   "#p, but to use in pipelines like `(-> 1 inc dev/p inc)`.

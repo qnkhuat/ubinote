@@ -16,14 +16,22 @@
        (pos? (count x))
        (coll? (first x))))
 
-(defn hiccup->html-response
-  "Render a hiccup html response."
+(def ^:dynamic *return-raw-hiccup*
+  "Used for dev purposes so we can return http responses with raw hiccup.
+
+     (dev/user-http-request 1 :get \"/comment/1\")"
+  false)
+
+(defn render-hiccup-fragment
+  "Render a hiccup fragment to html"
   ([form]
-   (hiccup->html-response form nil))
-  ([resp doctype]
-   (-> (if (multi-html-response? resp)
-         (str/join (map #(h/html {} doctype %) resp))
-         (str (h/html {} doctype resp)))
+   (render-hiccup-fragment form nil))
+  ([form doctype]
+   (-> (if *return-raw-hiccup*
+         form
+         (if (multi-html-response? form)
+           (str/join (map #(h/html {} doctype %) form))
+           (str (h/html {} doctype form))))
        response/response
        (response/content-type "text/html"))))
 
@@ -93,4 +101,4 @@
 
   By defaul the rendered page will have htmx, bootstrap and a navbar."
   [children & options]
-  (hiccup->html-response (apply bare-html children options) (h.page/doctype :html5)))
+  (render-hiccup-fragment (apply bare-html children options) (h.page/doctype :html5)))

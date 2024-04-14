@@ -5,6 +5,7 @@
   {:aliases
    {cheshire.core                                      json
     toucan2.core                                       tc
+    net.cgrand.enlive-html                             html
     hiccup2.core                                       h
     ubinote.api.util                                   api.u
     ubinote.config                                     cfg

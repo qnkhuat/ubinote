@@ -19,4 +19,5 @@
   format-seconds
   format-milliseconds
   format-microseconds
-  ->millis-from-epoch])
+  ->millis-from-epoch
+  timestamp->ago-text])

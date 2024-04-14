@@ -46,7 +46,7 @@
   [_req]
   (->> (tc/select :m/user {:order-by [[:created_at :asc]]})
        (ui/render :users-table)
-       ui/hiccup->html-response))
+       ui/render-hiccup-fragment))
 
 (defn current-user
   [_req]

@@ -6,9 +6,15 @@
 (p/import-vars
  [template
   html-response
-  hiccup->html-response
+  render-hiccup-fragment
   with-nav-bar])
 
 (defmulti render
   (fn [component _data]
     component))
+
+(defmethod render :default
+  [component data]
+  (throw (ex-info "No render implementation for:" component {:component component
+                                                             :data      data})))
+

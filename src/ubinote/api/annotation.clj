@@ -3,12 +3,10 @@
    [cheshire.core :as json]
    [compojure.coercions :refer [as-int]]
    [compojure.core :refer [context defroutes POST DELETE]]
-   [java-time.api :as t]
    [malli.core :as mc]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
-   [ubinote.ui :as ui]
-   [ubinote.util :as u]))
+   [ubinote.ui :as ui]))
 
 (def NewAnnotation
   (mc/schema
@@ -29,25 +27,13 @@
        (api.u/validate NewAnnotation)
        (tc/insert-returning-instance! :m/annotation)
        (ui/render :annotation)
-       ui/hiccup->html-response))
+       ui/render-hiccup-fragment))
 
 (def NewComment
   [:map
    [:annotation_id :int]
    [:creator_id    :int]
    [:content       :string]])
-
-(defmethod ui/render :comment
-  [_component {:keys [id content creator_email created_at] :as _comment}]
-  [:div {:id    (format "ubinote-comment-%d" id)
-         :class "bg-white mb-2 border-top border-dark pt-2"}
-   [:div {:class "d-flex justify-content-between"}
-    [:p {:class "fw-semibold mb-0" :style "font-size: 0.8rem;"} creator_email]
-    [:p {:class "fw-semibold mb-0" :style "font-size: 0.8rem;"}
-     (str (u/format-milliseconds (- (u/->millis-from-epoch (t/local-date-time))
-                                  (u/->millis-from-epoch created_at)) :relative true)
-      " ago")]]
-   [:p {:class "mb-0" :style "white-space: pre-wrap;"} content]])
 
 (defn create-comment
   [id {:keys [params] :as _req}]
@@ -58,7 +44,7 @@
        (tc/insert-returning-instance! :m/comment)
        (merge {:creator_email (:email @api.u/*current-user*)})
        (ui/render :comment)
-       ui/hiccup->html-response))
+       ui/render-hiccup-fragment))
 
 (defn- delete-annotation
   [id _req]
