@@ -7,9 +7,14 @@
    [toucan2.core :as tc]
    [toucan2.honeysql2 :as tc.honeysql]
    [toucan2.pipeline :as tc.pipeline]
-   [ubinote.server.db :as db])
+   [ubinote.server.db :as db]
+   [ubinote.toucan2.sqlite3])
   (:import
    java.io.BufferedReader))
+
+(comment
+ ;; need this so toucan2 works properly with sqlite
+ ubinote.toucan2.sqlite3)
 
 ;; ------------------------------------------- Extend jdbc protocols -------------------------------------------
 (defn clob->str

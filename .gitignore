@@ -1,6 +1,7 @@
 # Server
 *.mv.db
 *.trace.db
+*.sqlite
 .ubinote/
 local/
 

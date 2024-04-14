@@ -53,7 +53,6 @@
            (catch Exception e
              (throw (ex-info (format "Data migration %s failed: %s" migration-name (.getMessage e)) (or (ex-data e) {})))))))))
   (log/info "Migrations finished"))
-#_(migrate!*)
 
 (def ^{:doc "Memoized migrate!* to only run once."} migrate!
   (memoize migrate!*))
