@@ -27,7 +27,7 @@
 
 (m/defmethod tc/do-with-connection :default
   [_connectable f]
-  (tc/do-with-connection db/application-db f))
+  (tc/do-with-connection db/*application-db* f))
 
 (reset! tc.honeysql/global-options
         {:quoted       true
