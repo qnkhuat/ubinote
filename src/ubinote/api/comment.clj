@@ -1,7 +1,7 @@
 (ns ubinote.api.comment
   (:require
    [compojure.coercions :refer [as-int]]
-   [compojure.core :refer [context defroutes GET PUT POST]]
+   [compojure.core :refer [context defroutes DELETE GET PUT POST]]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
    [ubinote.ui :as ui]
@@ -20,9 +20,14 @@
      [:span {:class "fw-semibold pe-1"
              :style {:font-size "0.8rem"}}
       (u/timestamp->ago-text created_at)]
-     [:span {:class  "fw-semibold text-clickable"
+     [:span {:class  "fw-semibold text-primary cursor-pointer text-decoration-underline pe-1"
              :hx-put (format "/api/comment/%d" id)
-             :style  {:font-size "0.8rem"}} "Save"]]]
+             :style  {:font-size "0.8rem"}} "Save"]
+     [:span {:class      "fw-semibold text-danger cursor-pointer text-decoration-underline"
+             :hx-confirm "Are you sure?"
+             :hx-delete  (format "/api/comment/%d" id)
+             :style      {:font-size "0.8rem"}} "Delete"]]]
+
    [:div
     [:textarea {:class "w-100 mb-2"
                 :style {:white-space :pre-wrap}
@@ -42,7 +47,7 @@
      [:span {:class "fw-semibold pe-1"
              :style {:font-size "0.8rem"}}
       (u/timestamp->ago-text created_at)]
-     [:span {:class "fw-semibold text-clickable"
+     [:span {:class "fw-semibold text-primary cursor-pointer text-decoration-underline"
              :style {:font-size "0.8rem"}
              :hx-get (format "/api/comment/%d/edit" id)} "Edit"]]]
    [:p {:class "mb-0" :style "white-space: pre-wrap;"} content]])
@@ -77,8 +82,14 @@
        (ui/render :comment)
        ui/render-hiccup-fragment))
 
+(defn delete-comment
+  [id _req]
+  (tc/delete! :m/comment id)
+  api.u/generic-200-response)
+
 (defroutes routes
- (POST  "/" [] (partial create-comment))
- (context "/:id" [id :<< as-int]
-          (PUT "/" [] (partial update-comment id))
-          (GET "/edit" [] (partial edit-comment-form id))))
+  (POST  "/" [] (partial create-comment))
+  (context "/:id" [id :<< as-int]
+           (DELETE "/" [] (partial delete-comment id))
+           (PUT "/" [] (partial update-comment id))
+           (GET "/edit" [] (partial edit-comment-form id))))
