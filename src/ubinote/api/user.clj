@@ -16,7 +16,7 @@
 
 (defn create-user
   [{:keys [params] :as _req}]
-  (api.u/validate NewUser params)
+  (api.u/decode NewUser params)
   (tc/insert! :m/user params)
   (api.u/htmx-trigger api.u/generic-200-response "trigger-list-user"))
 

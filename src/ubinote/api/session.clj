@@ -23,7 +23,7 @@
 
 (defn create-session
   [{:keys [params] :as req}]
-  (api.u/validate NewSession params)
+  (api.u/decode NewSession params)
   (let [user    (api.u/check-401 (verify-user (:email params) (:password params)))
         session {:id (tc/insert-returning-pk! :m/session {:user_id (:id user)})}]
     (-> req

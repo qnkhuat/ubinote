@@ -24,26 +24,9 @@
            (assoc :creator_id api.u/*current-user-id*)
            (update :page_id parse-long)
            (update :coordinate #(json/parse-string % keyword)))
-       (api.u/validate NewAnnotation)
+       (api.u/decode NewAnnotation)
        (tc/insert-returning-instance! :m/annotation)
        (ui/render :annotation)
-       ui/render-hiccup-fragment))
-
-(def NewComment
-  [:map
-   [:annotation_id :int]
-   [:creator_id    :int]
-   [:content       :string]])
-
-(defn create-comment
-  [id {:keys [params] :as _req}]
-  (->> (assoc (dissoc params :id)
-              :annotation_id id
-              :creator_id    api.u/*current-user-id*)
-       (api.u/validate NewComment)
-       (tc/insert-returning-instance! :m/comment)
-       (merge {:creator_email (:email @api.u/*current-user*)})
-       (ui/render :comment)
        ui/render-hiccup-fragment))
 
 (defn- delete-annotation
@@ -55,5 +38,4 @@
 (defroutes routes
   (POST "/" [] create-annotation)
   (context "/:id" [id :<< as-int]
-           (POST  "/comment" [] (partial create-comment id))
            (DELETE "/" [] (partial delete-annotation id))))

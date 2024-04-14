@@ -1,7 +1,7 @@
 (ns ubinote.api.comment
   (:require
    [compojure.coercions :refer [as-int]]
-   [compojure.core :refer [context defroutes GET PUT]]
+   [compojure.core :refer [context defroutes GET PUT POST]]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
    [ubinote.ui :as ui]
@@ -59,7 +59,24 @@
        (ui/render :comment-edit)
        ui/render-hiccup-fragment))
 
+(def NewComment
+  [:map
+   [:annotation_id :int]
+   [:creator_id    :int]
+   [:content       :string]])
+
+(defn create-comment
+  [{:keys [params] :as _req}]
+  (->> (assoc params
+              :creator_id api.u/*current-user-id*)
+       (api.u/decode NewComment)
+       (tc/insert-returning-instance! :m/comment)
+       (merge {:creator_email (:email @api.u/*current-user*)})
+       (ui/render :comment)
+       ui/render-hiccup-fragment))
+
 (defroutes routes
-  (context "/:id" [id :<< as-int]
-           (PUT "/" [] (partial update-comment id))
-           (GET "/edit" [] (partial edit-comment-form id))))
+ (POST  "/" [] (partial create-comment))
+ (context "/:id" [id :<< as-int]
+          (PUT "/" [] (partial update-comment id))
+          (GET "/edit" [] (partial edit-comment-form id))))

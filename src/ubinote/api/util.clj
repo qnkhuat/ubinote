@@ -4,6 +4,7 @@
    [hiccup2.core :as h]
    [malli.core :as mc]
    [malli.error :as me]
+   [malli.transform :as mtx]
    [ring.util.response :as response]))
 
 ;; the value of these dynamics var will be bind by [[ubinote.server.middleware.session/wrap-current-user-info]]
@@ -44,14 +45,22 @@
      (throw (ex-info (or "Not found." e-msg) {:status-code 404})))
    x))
 
-(defn validate
-  "Throw an error if value does not match schema, else returns value."
+(def api-transformer
+  "Transformer used on values coming over the API."
+  (mtx/transformer
+   (mtx/string-transformer)
+   (mtx/json-transformer)
+   (mtx/default-value-transformer)))
+
+(defn decode
+  "Coerece the value with schema, throw an error if invalid."
   [schema value]
-  (if-let [error (me/humanize (mc/explain schema value))]
-    (throw (ex-info "Invalid value" {:status-code  400
-                                     :error-message  "Data input does not match schema"
-                                     :error-data     error}))
-    value))
+  (try
+    ((mc/coercer schema api-transformer) value)
+    (catch Exception e e
+     (throw (ex-info "Invalid value" {:status-code 400
+                                      :error-message (me/humanize (get-in (ex-data e) [:data :explain]))
+                                      :error-data    value})))))
 
 (def generic-200-response
   {:status 200 :body nil})

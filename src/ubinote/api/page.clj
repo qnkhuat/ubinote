@@ -21,7 +21,7 @@
 (defn- add-page
   [{:keys [params] :as _req}]
   (let [page (->> (assoc params :creator_id api.u/*current-user-id*)
-                  (api.u/validate NewPage)
+                  (api.u/decode NewPage)
                   page/create-page!)]
     (api.u/htmx-trigger page "trigger-list-page")))
 
@@ -63,7 +63,8 @@
       (when (and public? (zero? (count comments)))
         [:p "No comments"])]
      (when-not public?
-       [:form {:hx-post              (format "/api/annotation/%d/comment" id)
+       [:form {:hx-post              "/api/comment"
+               :hx-vals              (json/generate-string {:annotation_id #p id})
                :hx-on--after-request "this.reset()"
                :hx-target            "previous .comments"
                :hx-swap              "beforeend"
