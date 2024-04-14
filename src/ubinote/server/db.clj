@@ -7,7 +7,7 @@
 
 (def supported-dbms
   "List of dbms we support."
-  #{:postgres :h2 :sqlite})
+  #{:postgres :sqlite})
 
 ;; ------------------------------------------- DB connections -------------------------------------------
 (defn- connection-pool
@@ -49,8 +49,6 @@
     (case (db-type connection-url)
       :sqlite     {:classname   "org.sqlite.JDBC"
                    :subprotocol "sqlite"}
-      :h2         {:classname   "org.h2.Driver"
-                   :subprotocol "h2:file"}
       :postgresql {:classname   "org.postgresql.Driver"
                    :subprotocol "postgresql"}))))
 

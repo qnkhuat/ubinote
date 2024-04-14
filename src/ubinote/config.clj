@@ -28,7 +28,6 @@
 ;; TODO: validate config with spec
 (def default
   {:un-run-mode          "prod"
-   ;:un-db-connection-url (format "jdbc:h2:file:%s" (.getAbsolutePath (io/file "ubinote")))
    :un-db-connection-url (format "jdbc:sqlite:file:%s" (.getAbsolutePath (io/file "ubinote.sqlite")))
    :un-port              "8000"
    :un-max-session-age   "20160"      ;; session length in minutes (14 days)

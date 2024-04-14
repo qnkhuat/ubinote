@@ -29,7 +29,6 @@
 
   ;; database
   org.clojure/java.jdbc                     {:mvn/version "0.7.12"}
-  com.h2database/h2                         {:mvn/version "2.1.210"}  ; H2 driver
   org.postgresql/postgresql                 {:mvn/version "42.2.13"}  ; Postgres driver
   org.xerial/sqlite-jdbc                    {:mvn/version "3.45.2.0"} ; sqlite jdbc driver
   com.mchange/c3p0                          {:mvn/version "0.9.5.5"}
@@ -55,12 +54,6 @@
   ; clj -M:run
   :run
   {:main-opts ["-m" "ubinote"]}
-
-  ; clj -X:h2-shell
-  :h2-shell
-  {:extra-paths ["dev/src"]
-   :exec-fn     dev.h2-shell/shell
-   :java-opts   ["-Dfile.encoding=UTF-8"]}
 
   ; clj -T:build uberjar
   :build

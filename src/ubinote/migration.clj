@@ -1,5 +1,5 @@
 (ns ubinote.migration
-  "This migration should works for both h2 and postgres"
+  "This migration should works for both sqlite and postgres"
   (:require
    [clojure.string :as str]
    [clojure.tools.logging :as log]
@@ -13,7 +13,7 @@
   (format "CREATE INDEX idx_%s_%s ON %s (%s);" table field table field))
 
 (defn- postgres?->sqlite
-  "If protgres db, leave it as it, otherwise convert to h2."
+  "If protgres db, leave it as it, otherwise convert to sqlite"
   [query]
   (case (db/db-type)
     :postgres
@@ -76,7 +76,7 @@
 ;; --------------------------- Migrations ---------------------------
 (defmigration create-user-table
   ;; we user core_user instead user because user is a preserved table for most dbs
-  ;; TODO: can we use TEXT for email, got future not supported when apply not null for CLOB on h2
+  ;; TODO: can we use TEXT for email, got future not supported when apply not null
   (str "CREATE TABLE core_user (
        id "(postgres?->sqlite "SERIAL")" PRIMARY KEY NOT NULL,
        email VARCHAR(254) NOT NULL UNIQUE,
