@@ -1,0 +1,5 @@
+.text-clickable {
+ color: #0d6efd; /* primary color in boostrap */
+ text-decoration: underline;
+ cursor: pointer;
+}

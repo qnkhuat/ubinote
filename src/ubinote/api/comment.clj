@@ -17,12 +17,12 @@
     [:p {:class "fw-semibold mb-0"
          :style {:font-size "0.8rem"}} (:email user)]
     [:div
-     [:span {:class "fw-semibold"
+     [:span {:class "fw-semibold pe-1"
              :style {:font-size "0.8rem"}}
       (u/timestamp->ago-text created_at)]
-     [:span {:class  "fw-semibold color-primary"
+     [:span {:class  "fw-semibold text-clickable"
              :hx-put (format "/api/comment/%d" id)
-             :style  {:font-size "0.8rem"}} " Save"]]]
+             :style  {:font-size "0.8rem"}} "Save"]]]
    [:div
     [:textarea {:class "w-100 mb-2"
                 :style {:white-space :pre-wrap}
@@ -36,13 +36,15 @@
          :hx-target "this"
          :hx-swap   "outerHTML"}
    [:div {:class "d-flex justify-content-between"}
-    [:p {:class "fw-semibold mb-0" :style {:font-size "0.8rem"}} (or creator_email (:email user))]
+    [:p {:class "fw-semibold mb-0"
+         :style {:font-size "0.8rem"}} (or creator_email (:email user))]
     [:div
-     [:span {:class "fw-semibold" :style {:font-size "0.8rem"}}
+     [:span {:class "fw-semibold pe-1"
+             :style {:font-size "0.8rem"}}
       (u/timestamp->ago-text created_at)]
-     [:span {:class "fw-semibold color-primary"
+     [:span {:class "fw-semibold text-clickable"
              :style {:font-size "0.8rem"}
-             :hx-get (format "/api/comment/%d/edit" id)} " Edit"]]]
+             :hx-get (format "/api/comment/%d/edit" id)} "Edit"]]]
    [:p {:class "mb-0" :style "white-space: pre-wrap;"} content]])
 
 (defn update-comment

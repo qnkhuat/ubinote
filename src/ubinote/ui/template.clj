@@ -53,7 +53,7 @@
   [:link {:crossorigin "anonymous"
           :rel         "stylesheet"
           :integrity   "sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-          :href        (if cfg/is-dev? "/static/bootstrap.min.css" "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css")}])
+          :href        (if false #_cfg/is-dev? "/static/bootstrap.min.css" "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css")}])
 
 (def ^:private bootstrap-icon-css
   [:link {:rel  "stylesheet"
@@ -63,7 +63,7 @@
   [:script {:src (if cfg/is-dev? "/static/htmx_1.9.10.js" "https://unpkg.com/htmx.org@1.9.10")}])
 
 (def ^:private bootstrap-js
-  [:script {:src         (if cfg/is-dev?
+  [:script {:src         (if false #_cfg/is-dev?
                            "/static/bootstrap.bundle.min.js"
                            "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js")
             :integrity   "sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
@@ -80,8 +80,9 @@
    [:head
     [:meta {:charset "utf-8"}]
     [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
-    (when scripts?
-      bootstrap-css)
+    [:link {:rel  "stylesheet"
+            :href "/static/global.css"}]
+    (when scripts? bootstrap-css)
     (when scripts? bootstrap-icon-css)
     (when cfg/is-dev? [:script {:src "/static/termlog.js"}])
     (when scripts? htmx-js)
