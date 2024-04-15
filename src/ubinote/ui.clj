@@ -14,7 +14,5 @@
     component))
 
 (defmethod render :default
-  [component data]
-  (throw (ex-info "No render implementation for:" component {:component component
-                                                             :data      data})))
-
+  [component _data]
+  (throw (ex-info "No render implementation for:" component {:component component})))

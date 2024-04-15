@@ -74,7 +74,7 @@
              body (:body resp)]
          (case (get-in resp [:headers "Content-Type"])
            "text/html" body ;; this should be hiccup
-           (json/parse-string_keyword body)))))))
+           (json/parse-string keyword body)))))))
 
 (defmacro p
   "#p, but to use in pipelines like `(-> 1 inc dev/p inc)`.
@@ -82,6 +82,3 @@
   See https://github.com/weavejester/hashp"
   [form]
   (hashp/p* form))
-
-(defn -main []
-  (start!))

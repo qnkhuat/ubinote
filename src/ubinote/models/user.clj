@@ -20,10 +20,6 @@
 
 (tc/define-default-fields :m/user default-user-columns)
 
-(m/defmethod tc.hydrate/model-for-automagic-hydration [:default :user]
-  [_original-model _k]
-  :m/user)
-
 (m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :user :default]
   [_original-model _dest-key _hydrating-model]
   [:user_id])

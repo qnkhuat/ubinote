@@ -59,12 +59,12 @@
         [:i {:class "bi bi-trash"}]]])
     [:div {:class "comments-and-form"}
      [:div {:class "comments"}
-      (map #(ui/render :comment %) comments)
+      (map #(ui/render :annotation-comment %) comments)
       (when (and public? (zero? (count comments)))
         [:p "No comments"])]
      (when-not public?
        [:form {:hx-post              "/api/comment"
-               :hx-vals              (json/generate-string {:annotation_id #p id})
+               :hx-vals              (json/generate-string {:annotation_id id})
                :hx-on--after-request "this.reset()"
                :hx-target            "previous .comments"
                :hx-swap              "beforeend"

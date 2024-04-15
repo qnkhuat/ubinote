@@ -5,7 +5,6 @@
    [methodical.core :as m]
    [net.cgrand.enlive-html :as html]
    [toucan2.core :as tc]
-   [toucan2.tools.hydrate :as tc.hydrate]
    [ubinote.api.util :as api.u]
    [ubinote.cmd :as cmd]
    [ubinote.config :as cfg]
@@ -19,14 +18,6 @@
   "page")
 
 (derive :m/page :hooks/timestamped)
-
-(m/defmethod tc.hydrate/model-for-automagic-hydration [:default :page]
-  [_original-model _k]
-  :m/page)
-
-(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :page :default]
-  [_original-model _dest-key _hydrating-model]
-  [:page_id])
 
 ;; ------------------------------- Create page fns -------------------------------
 

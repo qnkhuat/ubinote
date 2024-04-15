@@ -7,7 +7,7 @@
    [ubinote.ui :as ui]
    [ubinote.util :as u]))
 
-(defmethod ui/render :comment-edit
+(defmethod ui/render :annotation-comment-edit
   [_component {:keys [id content user created_at] :as _comment}]
   [:form {:id        (format "ubinote-comment-%d" id)
           :class     "bg-white mb-2 border-top border-dark pt-2"
@@ -34,7 +34,7 @@
                 :name  "content"}
      content]]])
 
-(defmethod ui/render :comment
+(defmethod ui/render :annotation-comment
   [_component {:keys [id content creator_email user created_at] :as _comment}]
   [:div {:id        (format "ubinote-comment-%d" id)
          :class     "bg-white mb-2 border-top border-dark pt-2"
@@ -57,13 +57,13 @@
   (let [{:keys [content]} params]
     (tc/update! :m/comment id {:content content})
     (->> (api.u/check-404 (tc/hydrate (tc/select-one :m/comment id) :user))
-         (ui/render :comment)
+         (ui/render :annotation-comment)
          ui/render-hiccup-fragment)))
 
 (defn edit-comment-form
   [id _req]
   (->> (api.u/check-404 (tc/hydrate (tc/select-one :m/comment id) :user))
-       (ui/render :comment-edit)
+       (ui/render :annotation-comment-edit)
        ui/render-hiccup-fragment))
 
 (def NewComment
@@ -79,7 +79,7 @@
        (api.u/decode NewComment)
        (tc/insert-returning-instance! :m/comment)
        (merge {:creator_email (:email @api.u/*current-user*)})
-       (ui/render :comment)
+       (ui/render :annotation-comment)
        ui/render-hiccup-fragment))
 
 (defn delete-comment
@@ -87,8 +87,16 @@
   (tc/delete! :m/comment id)
   api.u/generic-200-response)
 
+(defn get-comments
+  [_req]
+  (ui/render-hiccup-fragment (map #(ui/render :comment %) (tc/select :m/comment {:order-by [:updated_at :desc]}))))
+
+(defmethod ui/render :comment
+  [_component data])
+
 (defroutes routes
-  (POST  "/" [] (partial create-comment))
+  (POST  "/" [] get-comments)
+  (POST  "/" [] create-comment)
   (context "/:id" [id :<< as-int]
            (DELETE "/" [] (partial delete-comment id))
            (PUT "/" [] (partial update-comment id))

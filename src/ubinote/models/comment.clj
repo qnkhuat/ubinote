@@ -23,3 +23,10 @@
                                                        :where     [:in :c.annotation_id (map :id annotations)]
                                                        :order-by  [[:c.created_at :asc]]})))]
     (map #(assoc % :comments (get annotation-id->comments (:id %) [])) annotations)))
+
+
+(m/defmethod tc.hydrate/batched-hydrate [:m/comment :comment_page]
+  [_model _k comments]
+  #p comments
+  (def comments comments)
+  comments)

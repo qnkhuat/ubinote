@@ -2,7 +2,6 @@
   (:require
    [methodical.core :as m]
    [toucan2.core :as tc]
-   [toucan2.tools.hydrate :as tc.hydrate]
    [ubinote.models.interface :as mi]))
 
 ;; --------------------------- Toucan methods  ---------------------------
@@ -26,15 +25,9 @@
 
 ;; hydrations
 
-(m/defmethod tc.hydrate/simple-hydrate [:m/page :annotations]
-  [_model _k instance]
-  (assoc instance :annotations (tc/select :m/annotation :page_id (:id instance))))
-
-(m/defmethod tc.hydrate/model-for-automagic-hydration [:default :annotation]
-  [_original-model _k]
-  :m/annotation)
-
-;; hydrate anything that has :annotation_id with an annotation
-(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :annotation :default]
-  [_original-model _dest-key _hydrating-model]
-  [:annotation_id])
+(m/defmethod tc/batched-hydrate [:m/page :annotations]
+  [_model _k pages]
+  (when (seq pages)
+    (let [annotations          (tc/select :m/annotation :page_id [:in (map :id pages)])
+          page-id->annotations (group-by :page_id annotations)]
+      (map #(assoc % :annotations (get page-id->annotations (:id %))) pages))))

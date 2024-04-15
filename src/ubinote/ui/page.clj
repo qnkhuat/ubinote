@@ -192,3 +192,18 @@
     [:div {:id         "page-table"
            :hx-trigger "load, trigger-list-user from:body"
            :hx-get     "/api/user"}]]))
+
+(defn comments-page
+  [_req]
+  (let [comments  (tc/hydrate (tc/select :m/comment {:order-by [:updated_at :desc]
+                                                     :limit    2})
+                              :page)]
+    (ui/html-response
+     [:div {:class "container-fluid"}
+      (for [cmt comments]
+        (:content cmt))])))
+
+#_(tc/debug
+   (tc/hydrate (tc/select-one :m/comment {:order-by [:updated_at :desc]
+                                          :limit    2})
+               :page_ye))
