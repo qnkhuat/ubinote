@@ -3,7 +3,6 @@
    [clojure.string :as str]
    [methodical.core :as m]
    [toucan2.core :as tc]
-   [toucan2.tools.hydrate :as tc.hydrate]
    [ubinote.util.password :as passwd]))
 
 ;; --------------------------- Toucan methods  ---------------------------
@@ -20,17 +19,7 @@
 
 (tc/define-default-fields :m/user default-user-columns)
 
-(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:default :user :default]
-  [_original-model _dest-key _hydrating-model]
-  [:user_id])
-
-(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:m/page :user :default]
-  [_original-model _dest-key _hydrating-model]
-  [:creator_id])
-
-(m/defmethod tc.hydrate/fk-keys-for-automagic-hydration [:m/comment :user :default]
-  [_original-model _dest-key _hydrating-model]
-  [:creator_id])
+(m/defmethod tc/model-for-automagic-hydration [:default :creator] [_original-model _k] :m/user)
 
 ;; life cycles
 

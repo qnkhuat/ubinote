@@ -1,5 +1,7 @@
 (ns ubinote.server.middleware.exceptions
-  (:require [clojure.tools.logging :as log]))
+  (:require
+   [clojure.tools.logging :as log]
+   [ubinote.ui.page :as ui.page]))
 
 (defn wrap-api-exceptions
   "Run the wrapped code and override with a 400 error response for schema validation error
@@ -12,17 +14,12 @@
        ;; TODO: mask the value for schemas error, because it mays contain user's password
        (let [{:keys [status-code error-data]} (ex-data e)
              error-message                    (ex-message e)
-             body                             (cond
+             resp                             (cond
                                                (and status-code (or error-message error-data))
-                                               {:error_message (or error-message "Unknown error")
-                                                :error_data    (or error-data nil)}
+                                               (ui.page/error (format "%d: Error: %s" status-code (or error-message "Unknown error")))
 
                                                :else
                                                (do
-                                                (log/error "Unknown exception in api" e)
-                                                {:error_messsage "Internal error"
-                                                 :error_data     nil}))
-             status-code (or status-code
-                             500)]
-         {:status status-code
-          :body   body})))))
+                                                (log/error "Unknown error in api" e)
+                                                (ui.page/error "500: Unknown exception in api")))]
+         resp)))))

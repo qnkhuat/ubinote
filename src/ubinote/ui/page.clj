@@ -32,6 +32,10 @@
   []
   (template/html-response [:p "Not found :("]))
 
+(defn error
+  [error]
+  (template/html-response [:p error]))
+
 (defn login
   [_req]
   (ui/html-response
@@ -215,8 +219,7 @@
 
 (defn comments-page
   [_req]
-  (let [comments (tc/hydrate (tc/select :m/comment {:order-by [:updated_at :desc]
-                                                    :limit    2})
+  (let [comments (tc/hydrate (tc/select :m/comment {:order-by [[:updated_at :desc]]})
                              :comment-info)]
     (ui/html-response
      [:div {:class "container-fluid"}

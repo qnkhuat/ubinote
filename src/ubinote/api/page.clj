@@ -25,11 +25,6 @@
                   page/create-page!)]
     (api.u/htmx-trigger page "trigger-list-page")))
 
-(defn- get-page
-  [id _req]
-  (-> (api.u/check-404 id)
-      (tc/hydrate :user [:annotations :comments])))
-
 (defn- get-page-annotation
   [id _req]
   (->> (tc/hydrate (tc/select :m/annotation :page_id id) :comments)
@@ -175,7 +170,6 @@
   (POST "/" [] add-page)
   (GET "/" [] list-pages)
   (context "/:id" [id :<< as-int]
-           (GET "/" [] (partial get-page id))
            (GET "/annotation" [] (partial get-page-annotation id))
            (DELETE "/" [] (partial delete-page id))
            (POST "/public" [] (partial public-page id))

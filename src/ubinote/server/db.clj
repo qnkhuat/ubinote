@@ -35,7 +35,10 @@
   ([]
    (db-type (cfg/config-str :db-connection-url)))
   ([connection-url]
-   (keyword (second (re-find #"jdbc:([^:]+):" connection-url)))))
+   (let [db-type (keyword (second (re-find #"jdbc:([^:]+):" connection-url)))]
+     (case db-type
+       :postgresql :postgres
+       db-type))))
 
 (defn- db-details
   [connection-url]
@@ -46,10 +49,10 @@
      "DEFRAG_ALWAYS"  "TRUE"
      :connection-url  connection-url}
     (case (db-type connection-url)
-      :sqlite     {:classname   "org.sqlite.JDBC"
-                   :subprotocol "sqlite"}
-      :postgresql {:classname   "org.postgresql.Driver"
-                   :subprotocol "postgresql"}))))
+      :sqlite   {:classname   "org.sqlite.JDBC"
+                 :subprotocol "sqlite"}
+      :postgres {:classname   "org.postgresql.Driver"
+                 :subprotocol "postgresql"}))))
 
 (def ^:dynamic *application-db*
   "The application db details."

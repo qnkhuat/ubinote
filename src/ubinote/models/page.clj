@@ -15,7 +15,7 @@
 
 (m/defmethod tc/table-name :m/page
   [_model]
-  "page")
+  :page)
 
 (derive :m/page :hooks/timestamped)
 
