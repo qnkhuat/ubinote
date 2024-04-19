@@ -9,7 +9,8 @@
    [ubinote.api.util :as api.u]
    [ubinote.models.common.schema :as schema]
    [ubinote.models.page :as page]
-   [ubinote.ui :as ui]))
+   [ubinote.ui :as ui]
+   [ubinote.util :as u]))
 
 (def NewPage
   (mc/schema
@@ -46,11 +47,12 @@
           :style "width: 400px;"}
     (when-not public?
       [:div {:class "d-flex justify-content-end pb-2"}
-       [:button {:hx-delete  (format "/api/annotation/%d" id)
+       [:button {:hx-delete            (format "/api/annotation/%d" id)
                  :hx-on--after-request (format "deleteAnnotation(%d)" id)
-                 :hx-swap    "none"
-                 :hx-trigger "click"
-                 :class      "btn btn-sm btn-danger"}
+                 :hx-confirm           "Are you sure?"
+                 :hx-swap              "none"
+                 :hx-trigger           "click"
+                 :class                "btn btn-sm btn-danger"}
         [:i {:class "bi bi-trash"}]]])
     [:div {:class "comments-and-form"}
      [:div {:class "comments"}
@@ -84,7 +86,7 @@
      [:th "Title"]
      [:th "Domain"]
      [:th "URL"]
-     [:th "Last Updated"]
+     [:th "Created At"]
      [:th "Delete"]]]
    [:tbody {:hx-confirm "Are you sure?"
             :hx-swap    "outerHTML"
@@ -94,7 +96,7 @@
        [:td [:a {:href (format "/page/%d" (:id page))} (:title page)]]
        [:td (:domain page)]
        [:td [:a {:href (:url page)} (:url page)]]
-       [:td (str (:updated_at page))]
+       [:td (u/timestamp->ago-text (:created_at page))]
        [:td [:button {:hx-delete (format "/api/page/%d" (:id page))
                       :class     "btn btn-danger"}
              [:i {:class "bi bi-trash"}]]]])]])
