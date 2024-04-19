@@ -91,9 +91,6 @@
   [_req]
   (ui/render-hiccup-fragment (map #(ui/render :comment %) (tc/select :m/comment {:order-by [:updated_at :desc]}))))
 
-(defmethod ui/render :comment
-  [_component data])
-
 (defroutes routes
   (POST  "/" [] get-comments)
   (POST  "/" [] create-comment)

@@ -49,7 +49,7 @@
                            @#'mw.session/ubinote-session-header session-id}
           :query-string   (build-query-string query)
           :request-method method
-          :uri            (str "/api" url)}
+          :uri            url}
          (when (seq body)
            {:body (java.io.ByteArrayInputStream.
                    (.getBytes (if (string? body)
@@ -57,24 +57,26 @@
                                 (json/generate-string body))))})))))
 
 (defn user-http-request
-  ([user-id method url]
-   (user-http-request user-id method url {} nil))
-  ([user-id method url query]
-   (user-http-request user-id method url query nil))
-  ([user-id method url query body]
-   (let [session-id (or (tc/select-one-pk :m/session :user_id user-id)
-                        (tc/insert-returning-pk! :m/session {:user_id user-id}))]
-     (binding [template/*return-raw-hiccup* true]
-       (let [resp (-> (build-mock-request {:url        url
-                                           :method     method
-                                           :query      query
-                                           :body       body
-                                           :session-id session-id})
-                      server/app)
-             body (:body resp)]
-         (case (get-in resp [:headers "Content-Type"])
-           "text/html" body ;; this should be hiccup
-           (json/parse-string keyword body)))))))
+ ([method url]
+  (user-http-request (tc/select-one-pk :m/user) method url {} nil))
+ ([user-id method url]
+  (user-http-request user-id method url {} nil))
+ ([user-id method url query]
+  (user-http-request user-id method url query nil))
+ ([user-id method url query body]
+  (let [session-id (or (tc/select-one-pk :m/session :user_id user-id)
+                       (tc/insert-returning-pk! :m/session {:user_id user-id}))]
+    (binding [template/*return-raw-hiccup* true]
+      (let [resp (-> (build-mock-request {:url        url
+                                          :method     method
+                                          :query      query
+                                          :body       body
+                                          :session-id session-id})
+                     server/app)
+            body (:body resp)]
+        (case (get-in resp [:headers "Content-Type"])
+          "text/html" body ;; this should be hiccup
+          (json/parse-string keyword body)))))))
 
 (defmacro p
   "#p, but to use in pipelines like `(-> 1 inc dev/p inc)`.

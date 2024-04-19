@@ -2,7 +2,8 @@
   (:require
    [toucan2.core :as tc]
    [ubinote.ui :as ui]
-   [ubinote.ui.template :as template]))
+   [ubinote.ui.template :as template]
+   [ubinote.util :as u]))
 
 (defn index
   [_req]
@@ -165,7 +166,7 @@
             :hx-post           "/api/user"
             :hx-on--after-swap "this.reset()"
             :class             "container-fluid my-3"
-            :style             "width: 400px;"}
+            :style             {:width "400px"}}
      [:div {:class "form-group "}
       [:label {:for "first_name" :class ""} "First name"]
       [:input {:type "text"
@@ -193,17 +194,33 @@
            :hx-trigger "load, trigger-list-user from:body"
            :hx-get     "/api/user"}]]))
 
+(defmethod ui/render :comment
+  [_component cmt]
+  (let [page (:page cmt)]
+    [:div {:id (format "comment-%d" (:id cmt))
+           :class "mt-2 pt-2 border-top container-fluid"
+           :style {:width "600px"}}
+     [:a {:href (format "/page/%d" (:id page))
+          :class "mb-2"}
+      (:title page)]
+     [:p {:class "mb-0"}
+      (:content cmt)]
+     [:p {:style {:font-size "0.8rem"}
+          :class "mb-0"}
+      [:span {:class ""}
+       (format "by %s" (get-in cmt [:creator :email]))]
+      [:span " "]
+      [:span {:style {:font-size "0.8rem"}}
+       (u/timestamp->ago-text (:updated_at cmt))]]]))
+
 (defn comments-page
   [_req]
-  (let [comments  (tc/hydrate (tc/select :m/comment {:order-by [:updated_at :desc]
-                                                     :limit    2})
-                              :page)]
+  (let [comments (tc/hydrate (tc/select :m/comment {:order-by [:updated_at :desc]
+                                                    :limit    2})
+                             :comment-info)]
     (ui/html-response
      [:div {:class "container-fluid"}
-      (for [cmt comments]
-        (:content cmt))])))
-
-#_(tc/debug
-   (tc/hydrate (tc/select-one :m/comment {:order-by [:updated_at :desc]
-                                          :limit    2})
-               :page_ye))
+      [:h1 {:style {:text-align :center}
+            :class "mt-2"}
+       "Recent comments"]
+      (into [:div (map #(ui/render :comment %) comments)])])))
