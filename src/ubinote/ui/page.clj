@@ -197,9 +197,9 @@
 (defmethod ui/render :comment
   [_component cmt]
   (let [page (:page cmt)]
-    [:div {:id (format "comment-%d" (:id cmt))
-           :class "mt-2 pt-2 border-top container-fluid"
-           :style {:width "600px"}}
+    [:div {:id    (format "comment-%d" (:id cmt))
+           :class "mt-3 pt-3 border-top"
+           :style {:width "700px"}}
      [:a {:href (format "/page/%d" (:id page))
           :class "mb-2"}
       (:title page)]
@@ -223,4 +223,6 @@
       [:h1 {:style {:text-align :center}
             :class "mt-2"}
        "Recent comments"]
-      (into [:div (map #(ui/render :comment %) comments)])])))
+      [:div {:class "mx-auto"
+             :style {:max-width :fit-content}}
+       (map #(ui/render :comment %) comments)]])))

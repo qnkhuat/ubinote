@@ -45,6 +45,8 @@
       "Ubinote"]
      (when (and (cfg/setup?) (some? api.u/*current-user-id*))
        [:div {:class "d-flex"}
+        [:a {:class "text-light text-decoration-none me-2"
+             :href  "/comments"} "Comments"]
         [:a {:class "text-light text-decoration-none"
              :href  "/user"} "User"]])]]
    children])
