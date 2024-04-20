@@ -5,6 +5,7 @@
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
    [ubinote.ui :as ui]
+   [ubinote.ui.trigger :as ui.trigger]
    [ubinote.util :as u]))
 
 (defmethod ui/render :annotation-comment-edit
@@ -74,18 +75,20 @@
 
 (defn create-comment
   [{:keys [params] :as _req}]
-  (->> (assoc params
-              :creator_id api.u/*current-user-id*)
-       (api.u/decode NewComment)
-       (tc/insert-returning-instance! :m/comment)
-       (merge {:creator_email (:email @api.u/*current-user*)})
-       (ui/render :annotation-comment)
-       ui/render-hiccup-fragment))
+  (let [cmt (api.u/decode NewComment (assoc params
+                                            :creator_id api.u/*current-user-id*))]
+    (->> cmt
+         (tc/insert-returning-instance! :m/comment)
+         (merge {:creator_email (:email @api.u/*current-user*)})
+         (ui/render :annotation-comment)
+         ui/render-hiccup-fragment
+         (ui.trigger/update-annotation-color-if-needed (:annotation_id cmt)))))
 
 (defn delete-comment
   [id _req]
-  (tc/delete! :m/comment id)
-  api.u/generic-200-response)
+  (let [cmt (api.u/check-404 (tc/select-one :m/comment id))]
+   (tc/delete! :m/comment id)
+   (ui.trigger/update-annotation-color-if-needed (:annotation_id cmt) api.u/generic-200-response)))
 
 (defroutes routes
   (POST  "/" [] create-comment)

@@ -89,6 +89,7 @@
     (when cfg/is-dev? [:script {:src "/static/termlog.js"}])
     (when scripts? htmx-js)
     [:script {:src "/static/app.js"}]]
+
    [:body {:hx-boosted "true"}
     (cond-> children
       navbar?

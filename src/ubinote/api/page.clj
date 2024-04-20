@@ -7,6 +7,7 @@
    [ring.util.response :as response]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
+   [ubinote.models.annotation :as annotation]
    [ubinote.models.common.schema :as schema]
    [ubinote.models.page :as page]
    [ubinote.ui :as ui]
@@ -35,13 +36,12 @@
 (defn render-annotation
   "Options:
   - public?: whether the annotation will be rended on a public page?"
-  [{:keys [id coordinate color comments] :as _annotation} public?]
+  [{:keys [id coordinate comments] :as _annotation} public?]
   [:span
    {;; custom attribute handled by `ubinote-swap-response` extension
     :ubinote-annotation-coordinate (json/generate-string coordinate)
     :ubinote-annotation-id         id
-    :class                         (case color
-                                     "yellow" "ubinote-highlight-yellow")}
+    :class                         (annotation/annotation-color-class (seq comments))}
    ;; the popover when click on highlight
    [:div {:class "border border-black rounded bg-white p-2 position-relative"
           :style "width: 400px;"}

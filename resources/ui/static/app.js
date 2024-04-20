@@ -444,7 +444,7 @@ const PAGE_IFRAME_ID = "ubinote-page-content";
 
 // the dom id that wraps text for highlight
 // it'll be created on the page iframe
-function getAnnotationOnIframeId(annotationId) {
+function getAnnotationId(annotationId) {
   return "ubinote-annotation-" + annotationId;
 }
 
@@ -456,7 +456,7 @@ function getPopoverId(annotationId) {
 
 function deleteAnnotation(id) {
   // an annotation can be spanned as multiple divs
-  document.getElementById(PAGE_IFRAME_ID).contentDocument.querySelectorAll("#" + getAnnotationOnIframeId(id)).forEach((node) => {
+  document.getElementById(PAGE_IFRAME_ID).contentDocument.querySelectorAll("#" + getAnnotationId(id)).forEach((node) => {
     removeHighlight(node)
   });
   document.getElementById(getPopoverId(id)).remove();
@@ -487,7 +487,7 @@ htmx.defineExtension("ubinote-swap-response", {
       highlightRange(range, node.nodeName,
         {...attrs,
           onclick: `onClickAnnotation("${popoverId}", ${coordinate.start}, ${coordinate.end})`,
-          id: getAnnotationOnIframeId(annotationId)});
+          id: getAnnotationId(annotationId)});
       // these divs are apppend to the document, not iframedocument because it's easier to manage
       // bootstrap, htmx will works on it
       const popoverNode = document.createElement("div");
@@ -508,3 +508,16 @@ htmx.defineExtension("ubinote-swap-response", {
   //  return null;
   //}
 })
+
+window.onload = function () {
+  document.body.addEventListener("trigger-update-annotation-color", function(evt){
+    const iframeDocument = document.getElementById(PAGE_IFRAME_ID).contentDocument;
+    const payload = evt.detail;
+    const annotationId = getAnnotationId(payload["annotation-id"]);
+    // remove ubinote-highlight-xxx class and add the new payload.newClass
+    iframeDocument.querySelectorAll(`#${annotationId}`).forEach((node) => {
+      node.classList.remove(...Array.from(node.classList).filter((cls) => cls.startsWith("ubinote-highlight-")));
+      node.classList.add(payload["new-class"]);
+    })
+  })
+}

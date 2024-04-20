@@ -1,5 +1,6 @@
 (ns ubinote.api.util
   (:require
+   [cheshire.core :as json]
    [clojure.string :as str]
    [hiccup2.core :as h]
    [malli.core :as mc]
@@ -97,7 +98,17 @@
 
 (defn htmx-trigger
   [resp trigger]
-  (assert (str/starts-with? trigger "trigger-") "trigger should start with trigger-")
-  (-> resp
-      ->response
-      (response/header "HX-Trigger" trigger)))
+  (let [trigger (cond
+                  (map? trigger)
+                  (do
+                   (assert (every? (comp #(str/starts-with? % "trigger-") name) (keys trigger)) "trigger should start with trigger-")
+                   (json/generate-string trigger))
+
+                  :else
+                  (do
+                   (assert (str/starts-with? trigger "trigger-") "trigger should start with trigger-")
+                   trigger))]
+
+    (-> resp
+        ->response
+        (response/header "HX-Trigger" trigger))))

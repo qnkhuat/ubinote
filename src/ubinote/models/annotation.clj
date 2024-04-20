@@ -31,3 +31,9 @@
     (let [annotations          (tc/select :m/annotation :page_id [:in (map :id pages)])
           page-id->annotations (group-by :page_id annotations)]
       (map #(assoc % :annotations (get page-id->annotations (:id %))) pages))))
+
+(defn annotation-color-class
+  [has-comments?]
+  (if has-comments?
+    "ubinote-highlight-green"
+    "ubinote-highlight-yellow"))
