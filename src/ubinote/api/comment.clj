@@ -16,7 +16,7 @@
           :hx-swap   "outerHTML"}
    [:div {:class "d-flex justify-content-between"}
     [:p {:class "fw-semibold mb-0"
-         :style {:font-size "0.8rem"}} (:email #p creator)]
+         :style {:font-size "0.8rem"}} (:email creator)]
     [:div
      [:span {:class "fw-semibold pe-1"
              :style {:font-size "0.8rem"}}
