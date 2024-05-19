@@ -75,8 +75,8 @@
 
 (defn ^:private bare-html
   [children & {:keys [scripts? navbar?]
-               :or   {scripts?   true
-                      navbar?    true}
+               :or   {scripts? true
+                      navbar?  true}
                :as _options}]
   [:html {:lang "en"}
    [:head

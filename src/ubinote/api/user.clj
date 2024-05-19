@@ -1,7 +1,7 @@
 (ns ubinote.api.user
   (:require
    [compojure.coercions :refer [as-int]]
-   [compojure.core :refer [context defroutes GET POST]]
+   [compojure.core :refer [context defroutes DELETE GET POST]]
    [toucan2.core :as tc]
    [ubinote.api.util :as api.u]
    [ubinote.models.common.schema :as schema]
@@ -33,14 +33,20 @@
      [:th "ID"]
      [:th "Email"]
      [:th "Name"]
-     [:th "Joined date"]]]
-   [:tbody
+     [:th "Joined date"]
+     [:th "Delete"]]]
+   [:tbody {:hx-confirm "Are you sure?"
+            :hx-swap    "outerHTML"
+            :hx-target  "closest tr"}
     (for [user users]
       [:tr {:class "page-row"}
        [:td (:id user)]
        [:td (:email user)]
        [:td (str (:first_name user) " " (:last_name user))]
-       [:td (str (:created_at user))]])]])
+       [:td (str (:created_at user))]
+       [:td [:button {:hx-delete (format "/api/user/%d" (:id user))
+                      :class     "btn btn-danger"}
+             [:i {:class "bi bi-trash"}]]]])]])
 
 (defn- list-users
   [_req]
@@ -52,9 +58,16 @@
   [_req]
   (api.u/check-404 @api.u/*current-user*))
 
+(defn delete-user
+  [id _req]
+  (api.u/check-404 (tc/select-one :m/user id))
+  (tc/delete! :m/user id)
+  api.u/generic-200-response)
+
 (defroutes routes
   (GET "/" [] list-users)
   (POST "/" [] create-user)
   (GET "/current" [] current-user)
   (context "/:id" [id :<< as-int]
-           (GET "/" [] (partial get-user id))))
+           (GET "/" [] (partial get-user id))
+           (DELETE "/" [] (partial delete-user id))))
