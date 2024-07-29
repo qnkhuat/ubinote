@@ -95,7 +95,7 @@
     (tc/insert-returning-instance! :m/page (assoc new-page
                                                   :domain domain
                                                   :path relative
-                                                  :title title
+                                                  :title (some not-empty [title url])
                                                   :status "archived"))))
 
 (defn delete-page
